@@ -8,9 +8,19 @@ pagination_next: null
 pagination_prev: null
 ---
 
-import ImagesCatalog from "@site/src/components/ImagesCatalog";
+import ImageCards from "@site/src/components/ImageCards";
 
 The catalog covers three Bluefin image families: **Bluefin**, **Bluefin Classic**
 (published by `ublue-os`), and **Utah**.
 
-<ImagesCatalog />
+## Bluefin and Bluefin Server
+
+<ImageCards group="preferred" />
+
+---
+
+## Other Bluefin Images
+
+Bluefin offers other images for different use cases and preferences. All are supported by the Bluefin team.
+
+<ImageCards group="other" />

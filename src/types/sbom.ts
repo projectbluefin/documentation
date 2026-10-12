@@ -1,7 +1,7 @@
 /**
  * TypeScript interfaces for the SBOM attestation cache.
  * Written to static/data/sbom-attestations.json by scripts/fetch-github-sbom.js
- * and consumed by ImagesCatalog.tsx and FeedItems.tsx.
+ * and consumed by ImageCards.tsx and FeedItems.tsx.
  */
 
 export interface AttestationResult {

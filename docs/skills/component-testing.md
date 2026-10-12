@@ -85,6 +85,10 @@ memory and rendered to a string inside that same runner.
      renderToStaticMarkup(React.createElement(Component, props));
    ```
 
+   The `.css` stub makes every `styles.x` render as `undefined`, so never
+   match CSS-module class names in the markup. Assert on text, `title`,
+   `aria-*`, or `role` instead.
+
    When a component composes sibling components, stub those sibling imports in
    the same require shim and assert the composition contract (for example,
    chart identifiers and visible section labels) without mounting a second

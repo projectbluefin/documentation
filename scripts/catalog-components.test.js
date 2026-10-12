@@ -59,9 +59,7 @@ function render(component, props) {
   return renderToStaticMarkup(React.createElement(component, props));
 }
 
-const imagesModule = loadComponent(
-  path.join(COMPONENTS_DIR, "ImagesCatalog.tsx"),
-);
+const imagesModule = loadComponent(path.join(COMPONENTS_DIR, "ImageCards.tsx"));
 const driverVersions = {
   unavailable: true,
   stateReason: "SBOM cache unavailable",
@@ -102,8 +100,9 @@ const stableCatalog = {
   ],
 };
 
-test("ImagesCatalog renders the unavailable reason", () => {
+test("ImageCards renders the unavailable reason", () => {
   const html = render(imagesModule.default, {
+    group: "other",
     initialCatalog: {
       products: [],
       unavailable: true,
@@ -115,8 +114,9 @@ test("ImagesCatalog renders the unavailable reason", () => {
   assert.ok(html.includes("SBOM cache contains no release data"));
 });
 
-test("ImagesCatalog renders awaiting initial release for unpublished streams and hides commands", () => {
+test("ImageCards renders awaiting initial release for unpublished images and hides commands", () => {
   const html = render(imagesModule.default, {
+    group: "other",
     initialCatalog: {
       products: [
         {
@@ -147,11 +147,6 @@ test("ImagesCatalog renders awaiting initial release for unpublished streams and
 
   assert.ok(
     html.includes(
-      "Awaiting initial release: <code>testing</code> image is not yet published.",
-    ),
-  );
-  assert.ok(
-    html.includes(
       "Awaiting initial release: verification commands will be available once the image is published.",
     ),
   );
@@ -164,8 +159,9 @@ test("ImagesCatalog renders awaiting initial release for unpublished streams and
   assert.ok(!html.includes("cosign verify"));
 });
 
-test("ImagesCatalog does not call published images unreleased when security data is missing", () => {
+test("ImageCards does not call published images unreleased when security data is missing", () => {
   const html = render(imagesModule.default, {
+    group: "other",
     initialCatalog: {
       products: [
         {
@@ -192,8 +188,6 @@ test("ImagesCatalog does not call published images unreleased when security data
     },
   });
   assert.ok(html.includes("Verification command unavailable"));
-  assert.ok(html.includes("GNOME</strong> Unavailable"));
-  assert.ok(html.includes("Linux</strong> Unavailable"));
   assert.ok(!html.includes("Awaiting initial release"));
 });
 
@@ -207,92 +201,32 @@ test("DriverVersionsCatalog renders the unavailable reason", () => {
   assert.ok(html.includes("SBOM cache unavailable"));
 });
 
-test("StreamVersionPills centralizes optional NVIDIA and package pills", () => {
-  const html = render(imagesModule.StreamVersionPills, {
-    versions: {
-      gnome: "50.0",
-      kernel: "6.18.13",
-      nvidia: "595.71.05",
-      flatpak: "6.0",
-      mesa: "25.3.6",
-      podman: "5.8.2",
-    },
-    showNvidia: true,
+test("ImageCards marks the numerically newest component version across images", () => {
+  const product = (id, kernel) => ({
+    id,
+    name: id,
+    streams: [{ tag: "stable", versions: { kernel, gnome: "50.1" } }],
   });
-
-  assert.ok(html.includes("GNOME"));
-  assert.ok(html.includes("Linux"));
-  assert.ok(html.includes("595.71.05"));
-  assert.ok(html.includes("Flatpak"));
-  assert.ok(html.includes("Mesa"));
-  assert.ok(html.includes("Podman"));
-
-  const withoutNvidia = render(imagesModule.StreamVersionPills, {
-    versions: { gnome: "50.0", kernel: "6.18.13" },
-    showNvidia: false,
-  });
-  assert.ok(!withoutNvidia.includes("NVIDIA"));
-});
-
-test("ImagesCatalog NVIDIA mode shows companion SBOM versions, not base-image versions", () => {
-  const product = {
-    id: "ublue-bluefin",
-    name: "Bluefin",
-    org: "ublue-os",
-    summary: "Bluefin Classic",
-    artwork: "bluefin",
-    packagePageUrl:
-      "https://github.com/orgs/ublue-os/packages/container/package/bluefin",
-    streams: [
-      {
-        label: "Stable",
-        tag: "stable",
-        command: "sudo bootc switch ghcr.io/ublue-os/bluefin:stable",
-        nvidiaCommand:
-          "sudo bootc switch ghcr.io/ublue-os/bluefin-nvidia-open:stable",
-        versions: { kernel: "6.18.1", nvidia: "BASE-DRIVER" },
-        nvidiaVersions: { kernel: "6.18.2", nvidia: "COMPANION-DRIVER" },
-      },
-    ],
-    metadata: null,
-    metadataSource: "unavailable",
-  };
-  let stateCall = 0;
-  const nvidiaImages = loadComponent(
-    path.join(COMPONENTS_DIR, "ImagesCatalog.tsx"),
-    {
-      react: {
-        ...React,
-        useState(initial) {
-          stateCall += 1;
-          return [
-            stateCall === 2 ? { "ublue-bluefin": true } : initial,
-            () => {},
-          ];
-        },
-      },
-    },
-  ).default;
-  const html = render(nvidiaImages, {
-    initialCatalog: { products: [product] },
-  });
-  assert.ok(html.includes("COMPANION-DRIVER"));
-  assert.ok(!html.includes("BASE-DRIVER"));
-  assert.ok(html.includes("ghcr.io/ublue-os/bluefin-nvidia-open:stable"));
-
-  stateCall = 0;
-  const withoutCompanion = render(nvidiaImages, {
+  const html = render(imagesModule.default, {
+    group: "other",
     initialCatalog: {
       products: [
-        {
-          ...product,
-          streams: [{ ...product.streams[0], nvidiaVersions: null }],
-        },
+        product("ublue-bluefin", "6.9.2"),
+        product("projectbluefin-utah", "6.10.1"),
       ],
     },
   });
-  assert.ok(withoutCompanion.includes("NVIDIA</strong> Unavailable"));
-  assert.ok(!withoutCompanion.includes("BASE-DRIVER"));
+  const newest = [
+    ...html.matchAll(
+      /<li[^>]*title="Newest across Bluefin images"[^>]*>(.*?)<\/li>/g,
+    ),
+  ].map(([, inner]) => inner.replace(/<[^>]+>/g, ""));
+  // 6.10 beats 6.9 (lexical compare would pick 6.9); a tie marks both cards.
+  assert.ok(newest.includes("Linux6.10.1 (newest)"));
+  assert.ok(!newest.some((pill) => pill.includes("6.9.2")));
+  assert.equal(newest.filter((pill) => pill.startsWith("GNOME")).length, 2);
+  // A component the image does not report renders as a gap, not a version.
+  assert.ok(html.includes(">—<"));
 });
 
 test("DriverVersionsCatalog guards against empty releases and selects newest valid row", () => {
