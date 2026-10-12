@@ -118,7 +118,9 @@ for stable switch instructions.
 ## Sidebar
 
 Add the doc id to the `Images` category in `sidebars.ts`. The doc id
-is the filename without extension.
+is the filename without extension. Unlisting a variant from navigation removes
+only its sidebar ID entry; its page file under `docs/` and root slug route
+remain accessible.
 
 ## Gotchas
 
