@@ -131,6 +131,11 @@ checkout` stamps every tracked file with the current time and the TTL never
   `get_factory_status`, `get_work_queue`). Searches must remain keyword-specific
   and never dump the full corpus; results cap at 25 entries to protect agent
   context windows.
+- Sidebar categories in `sidebars.ts` reference doc IDs, which match document
+  filenames without extensions under `docs/` rather than markdown slugs or
+  headings. When moving docs such as `artwork` and `music` out of existing
+  categories into dedicated categories like "Lore", keep `sidebars.ts`
+  formatting minimal and verify document IDs against the active docs manifest.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.

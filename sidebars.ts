@@ -8,7 +8,13 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Get Bluefin",
       collapsed: false,
-      items: ["index", "downloads", "installation", "driver-versions"],
+      items: [
+        "index",
+        "downloads",
+        "installation",
+        "t2-mac",
+        "driver-versions",
+      ],
     },
     {
       type: "category",
@@ -41,12 +47,27 @@ const sidebars: SidebarsConfig = {
         "agentic-contributing",
         "contributors",
         "downloads-testing",
-        "donations/index",
+        {
+          type: "category",
+          label: "Donations",
+          collapsed: true,
+          link: {
+            type: "doc",
+            id: "donations/index",
+          },
+          items: ["donations/projects"],
+        },
         "mission",
         "values",
         "code-of-conduct",
         "supply-chain",
       ],
+    },
+    {
+      type: "category",
+      label: "Lore",
+      collapsed: true,
+      items: ["dinosaurs", "artwork", "music", "press-kit"],
     },
   ],
 };
