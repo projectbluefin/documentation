@@ -125,6 +125,13 @@ workloads:
    - Query parameters: `repo` (one of `bluefin`, `dakota`, `utah`, `server`),
      `tag` (e.g. `stable`), `flavor` (e.g. `main`), `arch` (`x86_64`,
      `aarch64`), `countme` (integer bucket 1–4).
+   - `metalink.mjs` enforces the shape before any write: each of `repo`,
+     `tag`, `flavor`, `arch` must match `METALINK_FIELD_RE`
+     (`^[a-z0-9][a-z0-9._-]{0,63}$`), and `countme` must be an integer 1–4.
+     A present-but-malformed value is a 400 with no `INSERT`; an absent one
+     keeps its `unknown` / bucket-1 default. This bounds what one anonymous
+     request can store in the shared D1 database; it cannot authenticate
+     callers.
    - Responses are HTTP 200 with `cache-control: no-store`.
    - The endpoint strictly disallows persistent machine identifiers or tokens.
 4. **Active-system count (`PUT /v1/ping`, `GET /v1/daily.json`):** Each
