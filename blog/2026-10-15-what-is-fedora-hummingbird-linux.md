@@ -17,3 +17,5 @@ image: /img/blog/2026-10-15-what-is-fedora-hummingbird-linux/youtube-thumbnail.j
   referrerpolicy="strict-origin-when-cross-origin"
   allowfullscreen
 ></iframe>
+
+<!-- truncate -->
