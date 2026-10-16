@@ -105,20 +105,6 @@
         "source": "https://github.com/projectbluefin/utah/blob/main/README.md",
         "attribution": "Utah README · Project Bluefin artwork",
         "diagram": false
-      },
-      {
-        "src": "https://github.com/user-attachments/assets/56428338-54a0-4376-a53b-5f02f8b101a1",
-        "alt": "Three Utahraptor specimen silhouettes compared with a human, labeled BYU 15465, CEU 184v.260, and BYU 7510 14281",
-        "source": "https://github.com/projectbluefin/utah/blob/main/README.md",
-        "attribution": "Utah README · Original specimen size comparison",
-        "diagram": true
-      },
-      {
-        "src": "https://upload.wikimedia.org/wikipedia/commons/7/72/Utahraptor_size_estimate_chart.svg",
-        "alt": "Utahraptor silhouette size-estimate chart with a human figure for comparison",
-        "source": "https://commons.wikimedia.org/wiki/File:Utahraptor_size_estimate_chart.svg",
-        "attribution": "FanCollector and ArthurWeasley · CC BY-SA 3.0",
-        "diagram": true
       }
     ]
   },
