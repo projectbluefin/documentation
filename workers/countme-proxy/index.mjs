@@ -15,6 +15,7 @@ import {
   pendingCountsDocument,
 } from "./counts.mjs";
 import { createDailyResponse, createPingResponse } from "./ping.mjs";
+import { parseMetalinkParams } from "./metalink.mjs";
 
 const USER_AGENT = "projectbluefin-countme-worker/1.0";
 
@@ -52,13 +53,17 @@ async function recordTelemetryEvent(
 
 async function createMetalinkResponse(request, env) {
   const url = new URL(request.url);
-  const repo = url.searchParams.get("repo") || "unknown";
-  const tag = url.searchParams.get("tag") || "unknown";
-  const flavor = url.searchParams.get("flavor") || "unknown";
-  const arch = url.searchParams.get("arch") || "unknown";
-  const countme = url.searchParams.get("countme") || "unknown";
-  const gamemode = url.searchParams.get("gamemode") === "1" ? 1 : 0;
-  const bucket = parseInt(countme, 10) || 1;
+  const params = parseMetalinkParams(url.searchParams);
+  if (!params) {
+    return new Response("invalid metalink parameters", {
+      status: 400,
+      headers: baseHeaders({
+        "content-type": "text/plain;charset=UTF-8",
+        "cache-control": "no-store",
+      }),
+    });
+  }
+  const { repo, tag, flavor, arch, countme, bucket, gamemode } = params;
 
   const persisted = await recordTelemetryEvent(env, {
     repo,
