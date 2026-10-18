@@ -7,6 +7,193 @@ import remarkGfm from "remark-gfm";
 import remarkStringify from "remark-stringify";
 import identities from "../src/components/image-identities.json" with { type: "json" };
 
+// The imported README is rendered with `mdx.format: md`, where Docusaurus
+// passes raw HTML straight through (rehype-raw), and the seed is refreshed on
+// every scheduled build without review in this repository. Only this allowlist
+// reaches the page; keep it in sync with scripts/fetch-feeds.js, plus the
+// <picture>/<source> pair README artwork relies on.
+const ALLOWED_TAGS = new Set([
+  "a",
+  "abbr",
+  "b",
+  "blockquote",
+  "br",
+  "code",
+  "dd",
+  "del",
+  "details",
+  "div",
+  "dl",
+  "dt",
+  "em",
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "hr",
+  "i",
+  "img",
+  "ins",
+  "kbd",
+  "li",
+  "ol",
+  "p",
+  "picture",
+  "pre",
+  "q",
+  "s",
+  "samp",
+  "source",
+  "span",
+  "strong",
+  "sub",
+  "summary",
+  "sup",
+  "table",
+  "tbody",
+  "td",
+  "tfoot",
+  "th",
+  "thead",
+  "tr",
+  "tt",
+  "ul",
+  "var",
+]);
+const VOID_TAGS = new Set(["br", "hr", "img", "source"]);
+const ALLOWED_ATTRIBUTES = new Set([
+  "align",
+  "alt",
+  "class",
+  "colspan",
+  "height",
+  "href",
+  "id",
+  "media",
+  "open",
+  "rel",
+  "rowspan",
+  "scope",
+  "src",
+  "srcset",
+  "target",
+  "title",
+  "type",
+  "width",
+]);
+const URL_ATTRIBUTES = new Set(["href", "src", "srcset"]);
+const ALLOWED_SCHEMES = new Set(["http", "https", "mailto"]);
+// Elements whose body is raw text or active content; body and tags both go.
+const RAW_TEXT_ELEMENT =
+  /<(script|style|iframe|object|embed|noscript|template|textarea|title|xmp|svg|math)\b[^>]*>[\s\S]*?<\/\1\s*>/gi;
+const HTML_TOKEN =
+  /<!--[\s\S]*?-->|<(\/?)([a-zA-Z][a-zA-Z0-9-]*)((?:\s+[^\s"'<>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'=<>`]+))?)*)\s*\/?>/g;
+const ATTRIBUTE =
+  /([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/g;
+const NAMED_ENTITIES = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  colon: ":",
+  tab: "\t",
+  newline: "\n",
+  sol: "/",
+  nbsp: "\u00a0",
+};
+
+const escapeHtml = (value) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+// Text keeps entities the README already wrote (&nbsp;, &copy;) and loses
+// every bare `<` that could open a tag.
+const escapeText = (value) =>
+  value
+    .replace(/&(?!(?:#x[0-9a-f]+|#\d+|[a-z][a-z0-9]*);)/gi, "&amp;")
+    .replace(/</g, "&lt;");
+
+// Decodes the entity forms a scheme could hide behind. Returns null when an
+// entity is left that this decoder does not know, so the value is dropped
+// rather than guessed at.
+const decodeEntities = (value) => {
+  let unknown = false;
+  const codePoint = (number) =>
+    number > 0x10ffff ? "\ufffd" : String.fromCodePoint(number);
+  // Numeric references decode with or without `;`; named ones need it, as in
+  // attribute values a bare `&b=` is a query string, not an entity.
+  const decoded = value.replace(
+    /&(?:#x([0-9a-f]+);?|#(\d+);?|([a-z][a-z0-9]*);)/gi,
+    (match, hex, dec, name) => {
+      if (hex) return codePoint(parseInt(hex, 16));
+      if (dec) return codePoint(parseInt(dec, 10));
+      const named = NAMED_ENTITIES[name.toLowerCase()];
+      if (named === undefined) unknown = true;
+      return named ?? match;
+    },
+  );
+  return unknown ? null : decoded;
+};
+
+export function isSafeUrl(value) {
+  const decoded = decodeEntities(value);
+  if (decoded === null) return false;
+  const compact = decoded.replace(/[\u0000-\u0020\u007f]+/g, "");
+  const scheme = /^([a-z][a-z\d+.-]*):/i.exec(compact);
+  return !scheme || ALLOWED_SCHEMES.has(scheme[1].toLowerCase());
+}
+
+// srcset is "url descriptor, url descriptor"; checking every token keeps a
+// scheme from hiding in any candidate without parsing the comma grammar.
+const isSafeUrlList = (value) =>
+  value.split(/[\s,]+/).every((token) => !token || isSafeUrl(token));
+
+const serializeAttributes = (attributes) => {
+  let output = "";
+  for (const match of attributes.matchAll(ATTRIBUTE)) {
+    const name = match[1].toLowerCase();
+    if (!ALLOWED_ATTRIBUTES.has(name)) continue;
+    const value = match[2] ?? match[3] ?? match[4] ?? "";
+    if (URL_ATTRIBUTES.has(name)) {
+      const safe = name === "srcset" ? isSafeUrlList(value) : isSafeUrl(value);
+      if (!safe) continue;
+    }
+    output += ` ${name}="${escapeHtml(decodeEntities(value) ?? "")}"`;
+  }
+  return output;
+};
+
+// Rebuilds the fragment from allowlisted tags only. Markdown splits inline
+// HTML into unbalanced pieces (`<a href>` and `</a>` arrive as separate
+// nodes), so this works tag by tag instead of parsing a document, and every
+// `<` that is not part of an emitted tag is escaped so nothing else can be
+// read as markup downstream.
+export function sanitizeHtmlFragment(value) {
+  const stripped = value.replace(RAW_TEXT_ELEMENT, "");
+  let output = "";
+  let last = 0;
+  for (const match of stripped.matchAll(HTML_TOKEN)) {
+    output += escapeText(stripped.slice(last, match.index));
+    last = match.index + match[0].length;
+    if (match[0].startsWith("<!--")) continue;
+    const [, closing, rawName, attributes] = match;
+    const name = rawName.toLowerCase();
+    if (!ALLOWED_TAGS.has(name)) continue;
+    if (closing) {
+      if (!VOID_TAGS.has(name)) output += `</${name}>`;
+    } else {
+      output += `<${name}${serializeAttributes(attributes)}>`;
+    }
+  }
+  return output + escapeText(stripped.slice(last));
+}
+
 const readmes = Object.entries(identities).map(([product, identity]) => ({
   product,
   repo: identity.repo,
@@ -121,16 +308,27 @@ export async function prepareReadme(
   }
   walk(tree, (node) => {
     if (node.url) {
-      node.url = resolve(
-        node.url,
-        node.type === "image" || imageReferences.has(node.identifier),
-      );
+      node.url = isSafeUrl(node.url)
+        ? resolve(
+            node.url,
+            node.type === "image" || imageReferences.has(node.identifier),
+          )
+        : "#";
     }
     if (node.type === "html") {
-      node.value = node.value.replace(
-        /\s(href|src|srcset)=(['"])(.*?)\2/g,
-        (_match, name, quote, value) =>
-          ` ${name}=${quote}${resolve(value, name !== "href")}${quote}`,
+      node.value = sanitizeHtmlFragment(
+        node.value.replace(
+          /\s(href|src|srcset)=(['"])(.*?)\2/g,
+          (_match, name, quote, value) =>
+            ` ${name}=${quote}${resolve(value, name !== "href")}${quote}`,
+        ),
+      );
+    }
+  });
+  walk(tree, (node) => {
+    if (node.children) {
+      node.children = node.children.filter(
+        (child) => child.type !== "html" || child.value.trim(),
       );
     }
   });

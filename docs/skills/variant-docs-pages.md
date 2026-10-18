@@ -70,6 +70,14 @@ Docusaurus emits exactly one page title.
 
 `scripts/fetch-readmes.mjs` rewrites parsed links/images, not code examples.
 It reads its source list from `src/components/image-identities.json`.
+Because `format: md` passes raw HTML through to the page and the seeds are
+refreshed by every scheduled build with no review here, the importer keeps
+only the tag/attribute allowlist in `ALLOWED_TAGS`/`ALLOWED_ATTRIBUTES`
+(the `scripts/fetch-feeds.js` list plus `<picture>`/`<source>`), drops
+`style`, `on*` handlers, comments and `<script>`-class elements, and limits
+link/image destinations to `http`, `https`, `mailto` or relative paths. If an
+upstream README needs another tag, extend the allowlist with a test rather
+than bypassing it.
 The `prestart`, `prebuild`, and `prebuild:ci` npm hooks refresh README seeds in
 each build checkout, including CI shards; a failed fetch preserves the
 committed seed. Set `custom_edit_url` to the upstream README on pages whose
