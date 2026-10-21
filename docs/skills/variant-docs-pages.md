@@ -118,7 +118,10 @@ for stable switch instructions.
 ## Sidebar
 
 Add the doc id to the `Images` category in `sidebars.ts`. The doc id
-is the filename without extension. Unlisting a variant from navigation removes
+is the filename without extension. For variants broken out into their own
+top-level collapsible section (such as Bluefin Server), configure a dedicated
+top-level category object in `sidebars.ts` with `collapsed: true`, `link: { type: "doc", id: "<landing>" }`,
+and child guide pages nested under `items`. Unlisting a variant from navigation removes
 only its sidebar ID entry; its page file under `docs/` and root slug route
 remain accessible.
 
@@ -136,9 +139,18 @@ card entry from `IMAGES` in `ImageCards.tsx`.
 - **Every change ships via PR.** `main` enforces the merge queue; there is no
   direct-push path, including for pages under `docs/` or the `sidebars.ts`
   entry that adds them.
-- **Prettier whole-file hazard**: `npx prettier --write sidebars.ts`
+- Prettier whole-file hazard: `npx prettier --write sidebars.ts`
   reformats unrelated lines. Make the one-line sidebar edit by hand and leave
   the rest byte-identical; only `--write` the new page file.
+- **`mdx.format: md` for imported Markdown**: Upstream `.md` pages imported under
+  `docs/` containing CLI placeholders (`<ver>`), paths (`</usr>`), or URL brackets
+  (`<https://...>`) must specify `mdx:\n  format: md` in frontmatter. Without it,
+  Docusaurus compiles `.md` as MDX and JSX tag parsing fails the build.
+- **Intra-repository link resolution**: When importing documentation guides from a
+  sibling repository, intra-repo links split two ways:
+  1. Links targeting imported siblings resolve to local documentation routes (e.g., `/server/<name>`).
+  2. Links targeting non-imported assets, element files, or un-imported documentation
+     must resolve to upstream GitHub URLs pinned to the commit or branch.
 
 ## Common Rationalizations
 

@@ -39,6 +39,25 @@ test("imported links and images resolve upstream without rewriting code examples
     /https:\/\/github.com\/projectbluefin\/server\/blob\/main\/docs\/guide.md/,
   );
 });
+test("server indexed docs resolve to local documentation routes", async () => {
+  const serverSource = {
+    product: "server",
+    repo: "projectbluefin/server",
+    ref: "main",
+    readmePath: "README.md",
+  };
+  const input =
+    "[DDI Installer](docs/skills/ddi-installer.md#boot)\n\n" +
+    "[USB Installer](docs/skills/usb-installer.md)\n\n" +
+    "[Architecture Roadmap](docs/skills/architecture-roadmap.md)\n";
+  const result = await prepareReadme(input, serverSource);
+  assert.match(result, /\[DDI Installer\]\(\/server\/ddi-installer\/#boot\)/);
+  assert.match(result, /\[USB Installer\]\(\/server\/usb-installer\/\)/);
+  assert.match(
+    result,
+    /\[Architecture Roadmap\]\(https:\/\/github.com\/projectbluefin\/server\/blob\/main\/docs\/skills\/architecture-roadmap.md\)/,
+  );
+});
 
 test("a failed refresh preserves the offline seed rather than publishing an empty README", async () => {
   const directory = await mkdtemp(join(tmpdir(), "readme-import-"));
