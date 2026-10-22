@@ -243,7 +243,9 @@ export async function prepareReadme(
   const resolve = (value, image) => {
     if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(value)) return value;
     if (product === "server" && !image) {
-      const match = value.match(/^(?:docs\/skills\/)?([^/#?]+?\.md)(?:#(.+))?$/);
+      const match = value.match(
+        /^(?:docs\/skills\/)?([^/#?]+?\.md)(?:#(.+))?$/,
+      );
       if (match && serverIndexedDocs.has(match[1])) {
         const slug = match[1].slice(0, -3);
         return match[2] ? `/server/${slug}/#${match[2]}` : `/server/${slug}/`;
@@ -266,6 +268,11 @@ export async function prepareReadme(
         identity.logoLight,
         identity.logoDark,
         ...identity.images.map((image) => image.src),
+        ...(product === "server"
+          ? [
+              "https://upload.wikimedia.org/wikipedia/commons/d/d8/Dicraeosauridae_Scale.svg",
+            ]
+          : []),
       ].filter(Boolean),
     );
     const matchesArtwork = (url) => artwork.has(resolve(url, true));

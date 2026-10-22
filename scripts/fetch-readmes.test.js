@@ -63,6 +63,20 @@ test("server indexed docs resolve to local documentation routes", async () => {
     /\[Architecture Roadmap\]\(https:\/\/github.com\/projectbluefin\/server\/blob\/main\/docs\/skills\/architecture-roadmap.md\)/,
   );
 });
+test("server product README strips scale comparison silhouette image", async () => {
+  const serverSource = {
+    product: "server",
+    repo: "projectbluefin/server",
+    ref: "main",
+    readmePath: "README.md",
+  };
+  const input =
+    "> An image-based Linux server OS built like a container\n\n" +
+    "![armargasaurus](https://upload.wikimedia.org/wikipedia/commons/d/d8/Dicraeosauridae_Scale.svg)\n\n" +
+    "## Release status\n";
+  const result = await prepareReadme(input, serverSource);
+  assert.doesNotMatch(result, /Dicraeosauridae_Scale\.svg/);
+});
 
 test("a failed refresh preserves the offline seed rather than publishing an empty README", async () => {
   const directory = await mkdtemp(join(tmpdir(), "readme-import-"));
