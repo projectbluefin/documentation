@@ -159,7 +159,13 @@ card entry from `IMAGES` in `ImageCards.tsx`.
   1. Links targeting imported siblings resolve to local documentation routes (e.g., `/server/<name>`).
   2. Links targeting non-imported assets, element files, or un-imported documentation
      must resolve to upstream GitHub URLs pinned to the commit or branch.
-
+- **Sysadmin runbook tone over agent scaffolding**: Server and variant operator
+  guides must be written for working Linux sysadmins. Strip agent scaffolding
+  ("When to Use", meta checklists, build-element inventories, and verbose rationales).
+  Lead with the command or architecture state, keep command and rollback safety
+  explicit, and link build-time recipes to upstream repositories. When headings
+  are simplified, place explicit HTML anchors (`<a id="..."></a>`) so legacy links
+  do not 404.
 ## Common Rationalizations
 
 | Rationalization                                                   | Reality                                                         |
