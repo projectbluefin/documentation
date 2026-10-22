@@ -45,7 +45,13 @@ function loadComponent(tsxPath, overrides = {}) {
         return { __esModule: true, default: () => null };
       }
       if (id.startsWith("@site/")) {
-        return require(path.join(__dirname, "..", id.replace(/^@site\//, "")));
+        const target = path.join(__dirname, "..", id.replace(/^@site\//, ""));
+        if (target.endsWith(".json")) {
+          return fs.existsSync(target)
+            ? JSON.parse(fs.readFileSync(target, "utf8"))
+            : { unavailable: true };
+        }
+        return require(target);
       }
       if (id.startsWith("./") || id.startsWith("../")) {
         const resolvedPath = path.resolve(path.dirname(tsxPath), id);
@@ -553,10 +559,60 @@ test("DriverVersionsCatalog renders bluefin-server with systemd, sysexts, and sy
     "sysupdate deployment note rendered instead of bootc switch",
   );
 });
+const mockServerReleases = Array.from({ length: 7 }, (_, i) => ({
+  tag: `v26.10.${1282 - i * 10}`,
+  url: `https://github.com/projectbluefin/server/releases/tag/v26.10.${1282 - i * 10}`,
+  publishedAt: "2026-10-22T01:27:28Z",
+  stream: null,
+  source: { repository: "projectbluefin/server", kind: "image" },
+  assets: [
+    {
+      name: `bluefin-server-installer_26.10.${1282 - i * 10}.raw`,
+      url: `https://github.com/projectbluefin/server/releases/download/v26.10.${1282 - i * 10}/bluefin-server-installer_26.10.${1282 - i * 10}.raw`,
+      size: 1254711808,
+    },
+    {
+      name: `bluefin-server_26.10.${1282 - i * 10}.raw`,
+      url: `https://github.com/projectbluefin/server/releases/download/v26.10.${1282 - i * 10}/bluefin-server_26.10.${1282 - i * 10}.raw`,
+      size: 471425536,
+    },
+    {
+      name: `bluefin-server-netboot_26.10.${1282 - i * 10}.efi`,
+      url: `https://github.com/projectbluefin/server/releases/download/v26.10.${1282 - i * 10}/bluefin-server-netboot_26.10.${1282 - i * 10}.efi`,
+      size: 75351984,
+    },
+    {
+      name: "SHA256SUMS",
+      url: `https://github.com/projectbluefin/server/releases/download/v26.10.${1282 - i * 10}/SHA256SUMS`,
+      size: 3018,
+    },
+  ],
+  versions: {
+    kernel: "7.2.6",
+    nvidia: "595.104.02",
+    systemd: "261.2",
+    fsdk: "26.08.2",
+    zfs: "2.4.4",
+    k0s: "1.36.4",
+  },
+}));
+
+const mockImageReleasesData = {
+  products: {
+    server: {
+      releases: mockServerReleases,
+      downloads: [],
+      unavailable: false,
+    },
+  },
+};
+
 const ImageProductSection = loadComponent(
   path.join(COMPONENTS_DIR, "ImageProductSection.tsx"),
+  {
+    "@site/static/data/image-releases.json": mockImageReleasesData,
+  },
 );
-
 test("ProductDownloadsAndVersions and ProductReleaseAssets render server download card and 7-release timeline", () => {
   const { ProductDownloadsAndVersions, ProductReleaseAssets } =
     ImageProductSection;
