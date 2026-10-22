@@ -27,6 +27,7 @@ const WORKER_SOURCES = [
   "workers/countme-proxy/render.mjs",
   "workers/countme-proxy/counts.mjs",
   "workers/countme-proxy/ping.mjs",
+  "workers/countme-proxy/metalink.mjs",
 ];
 
 /**
@@ -877,6 +878,86 @@ test("a D1 result without success cannot acknowledge a metalink ping", async () 
 
   assert.equal(response.status, 503);
   assert.doesNotMatch(await response.text(), /accepted/u);
+});
+
+test("a malformed metalink parameter is a 400 that writes nothing", async () => {
+  const db = stubDb([]);
+  const oversized = "a".repeat(65);
+  const rejected = [
+    `/metalink?repo=${oversized}&countme=2`,
+    `/metalink?repo=dakota&tag=${oversized}`,
+    `/metalink?repo=dakota&flavor=${oversized}`,
+    `/metalink?repo=dakota&arch=${oversized}`,
+    "/metalink?repo=dakota%20stable",
+    "/metalink?repo=dakota&tag=%3Cscript%3E",
+    "/metalink?repo=&countme=2",
+    "/metalink?repo=-dakota",
+    "/metalink?repo=dakota&countme=0",
+    "/metalink?repo=dakota&countme=5",
+    "/metalink?repo=dakota&countme=abc",
+    "/metalink?repo=dakota&countme=2.5",
+    "/metalink?repo=dakota&countme=-1",
+  ];
+  for (const pathname of rejected) {
+    const response = await get(pathname, db.env);
+    assert.equal(response.status, 400, pathname);
+    assert.equal(response.headers.get("cache-control"), "no-store", pathname);
+    assert.doesNotMatch(await response.text(), /accepted/u, pathname);
+  }
+  assert.deepEqual(db.statements, [], "no rejected request may reach D1");
+});
+
+test("a well-formed metalink ping persists exactly what the client sent", async () => {
+  const db = stubDb([]);
+  const response = await get(
+    "/metalink?repo=bluefin-lts-hwe-nvidia&tag=stable&flavor=main&arch=aarch64&countme=4",
+    db.env,
+  );
+  assert.equal(response.status, 200);
+  assert.deepEqual(db.statements[0].args.slice(0, 6), [
+    "bluefin-lts-hwe-nvidia",
+    "stable",
+    "main",
+    "aarch64",
+    4,
+    0,
+  ]);
+});
+
+test("absent metalink parameters keep their historical defaults", async () => {
+  const db = stubDb([]);
+  const response = await get("/metalink", db.env);
+  assert.equal(response.status, 200);
+  assert.match(
+    await response.text(),
+    /repo=unknown tag=unknown flavor=unknown gamemode=0 arch=unknown countme=unknown/u,
+  );
+  assert.deepEqual(db.statements[0].args.slice(0, 6), [
+    "unknown",
+    "unknown",
+    "unknown",
+    "unknown",
+    1,
+    0,
+  ]);
+});
+
+test("the metalink gate bounds every stored field", async () => {
+  const { parseMetalinkParams, METALINK_FIELD_RE } =
+    await import("../workers/countme-proxy/metalink.mjs");
+  assert.ok(METALINK_FIELD_RE.test("a".repeat(64)));
+  assert.ok(!METALINK_FIELD_RE.test("a".repeat(65)));
+  assert.ok(METALINK_FIELD_RE.test("x86_64"));
+  assert.equal(
+    parseMetalinkParams(new URLSearchParams("gamemode=1")).gamemode,
+    1,
+  );
+  assert.equal(
+    parseMetalinkParams(new URLSearchParams("gamemode=yes")).gamemode,
+    0,
+  );
+  assert.equal(parseMetalinkParams(new URLSearchParams("countme=3")).bucket, 3);
+  assert.equal(parseMetalinkParams(new URLSearchParams("countme=03")), null);
 });
 
 test("HEAD /metalink never records a countme event", async () => {
