@@ -4,9 +4,83 @@ import styles from "./ImageIdentity.module.css";
 
 export type ImageProduct = keyof typeof identities;
 
-export default function ImageIdentity({ product }: { product: ImageProduct }) {
+export default function ImageIdentity({
+  product,
+  children,
+}: {
+  product: ImageProduct;
+  children?: React.ReactNode;
+}) {
   const identity = identities[product];
   const readme = `https://github.com/${identity.repo}/blob/${identity.ref}/README.md`;
+
+  if (children) {
+    const primaryImage = identity.images[0];
+    return (
+      <header className={`${styles.identity} ${styles.identityHero}`}>
+        <h1 className={styles.srOnly}>{identity.name}</h1>
+        <div className={styles.heroTop}>
+          {identity.logoLight && (
+            <a
+              href="https://github.com/projectbluefin/artwork"
+              className={styles.wordmark}
+            >
+              <img
+                className={styles.logoLight}
+                src={identity.logoLight}
+                alt={identity.name}
+                width="400"
+              />
+              <img
+                className={styles.logoDark}
+                src={identity.logoDark}
+                alt={identity.name}
+                width="400"
+              />
+            </a>
+          )}
+          <p className={styles.species}>
+            <a href={identity.wikipedia}>
+              <i>{identity.species}</i>
+            </a>
+          </p>
+        </div>
+        <div className={styles.heroContent}>
+          {primaryImage && (
+            <figure className={styles.heroCharacter}>
+              <a href={primaryImage.source}>
+                <img
+                  src={primaryImage.src}
+                  alt={primaryImage.alt}
+                  loading="eager"
+                  decoding="async"
+                />
+              </a>
+              <figcaption>
+                <a href={primaryImage.source}>{primaryImage.attribution}</a>
+              </figcaption>
+            </figure>
+          )}
+          <div className={styles.heroProse}>{children}</div>
+        </div>
+        <p className={styles.sources}>
+          <a href={readme}>Upstream README</a>
+          {" · "}
+          <a href="https://github.com/projectbluefin/artwork">Artwork source</a>
+          {" · "}
+          <a href="https://github.com/projectbluefin/artwork/blob/main/LICENSE">
+            Artwork license
+          </a>
+          {identity.testsuiteRun && (
+            <>
+              {" · "}
+              <a href={identity.testsuiteRun}>QA verification run</a>
+            </>
+          )}
+        </p>
+      </header>
+    );
+  }
 
   return (
     <header className={styles.identity}>

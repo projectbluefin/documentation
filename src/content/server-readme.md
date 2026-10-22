@@ -3,7 +3,7 @@ mdx:
   format: md
 ---
 
-**An image-based Linux server OS built like a container, composed from freedesktop-sdk.**
+> An image-based Linux server OS built like a container, composed from freedesktop-sdk.
 
 Bluefin Server targets the same workload space as Flatcar Container Linux, Fedora CoreOS, and Talos. Built with [BuildStream 2](https://buildstream.build/), its userspace, kernel, and boot chain compose from [freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/) (FSDK 26.08, systemd v261) components. No other distribution binaries ship in the base image; third-party userspace extensions (such as Flatcar System Extension Bakery images) require `systemd-sysext merge --force` per [systemd-sysext-extensions.md](/server/systemd-sysext-extensions/).
 
@@ -21,13 +21,34 @@ Bluefin Server is currently in **Alpha**:
 
 ## Architecture
 
-* **Diskless boot** — Netboot UKI pulls `bluefin-server_<ver>.raw` into RAM with `rd.systemd.pull` (`verify=signature`), mounts a dm-verity erofs `/usr`, and runs from tmpfs. Nodes update by rebooting into a newer image, flagging `/run/reboot-required` when an updated image is offered.
+* **Diskless boot** — Netboot UKI pulls `bluefin-server_<ver>.raw` into RAM with `rd.systemd.pull` (`verify=signature`), mounts a dm-verity erofs `/usr`, and runs from tmpfs. Nodes update by rebooting into a newer image, flagging `/run/reboot-required` when an updated image is offered. This is the recommended configuration for Kubernetes worker nodes.
 * **Optional disk install with A/B rollback** — A running diskless node installs itself via [ddi-installer.md](/server/ddi-installer/) (`systemd-sysinstall` copies `/usr` into slot A). First disk boot creates slot B and an xfs root. `systemd-sysupdate` fills the inactive slot and reboots nightly (Kubernetes nodes defer reboots to kured); UKI boot counting automatically rolls back failed boots. Updates can be held via `/run/reboot-lock` or `/etc/reboot-lock`.
+  * This is the recommended mode for Kubernetes Control Planes, and Home Servers.
 * **Secure Boot by default** — Signed boot chain with `lockdown=integrity`. [Booty](https://github.com/jeefy/booty) serves UEFI HTTP boot assets and per-node Ignition configs.
 * **Declarative provisioning** — Pass an `ignition.config` credential (or `bluefin-node.ign` next to the UKI); Ignition runs in the initrd on every boot. Configs must be idempotent.
 * **Opt-in sysexts** — k0s, kubeadm, homelab automation, OpenZFS, and NVIDIA drivers/CDI ship as separate `systemd-sysext` images outside the base `/usr`.
 
 > **Remote diagnostics:** OpenSSH is installed for diagnostics but disabled by default via presets. Start manually with `systemctl start sshd` when access is required. See [`docs/skills/factory-integration.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/factory-integration.md).
+
+## Installation Profiles
+
+Choose your profile during installation. Start small and build up or go full lazy mode ootb.
+
+### Core and Kubernetes Profiles
+
+| Boot Menu Option               | Best For                                            | Included Software                                                                       | First Boot Login                                                                                           |
+| ------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Bluefin Server** *(Default)* | Minimal servers and automated deployments           | Base OS only (read-only system root, systemd, SSH). No container engines or Kubernetes. | Prompts on the local console (tty1) to set the root password.                                              |
+| **Homelab: Control Plane**     | Primary node for a multi-machine Kubernetes cluster | Base OS + kubeadm, containerd, Argo Workflows, and a KubeStellar dashboard              | Prompts on tty1 for a root password. Prints the cluster join passphrase on the screen.                     |
+| **Homelab: Node**              | Worker nodes joining an existing Homelab cluster    | Base OS + kubeadm, containerd, and auto-join service.                                   | Prompts for the cluster join passphrase during install; prompts on tty1 for a root password on first boot. |
+
+### Home Server Profile
+
+This is lazy mode, which includes `brew` for that lazy Ubuntu Server vibe. This mode is great for the home to run everything, or if you just need a box/VM that needs an OS to run one thing. Having brew baked in makes this perfect for VMs/machines to hold your agents/tmux, etc.
+
+| Boot Menu Option        | Best For                                                | Included Software                                                                                    | First Boot Login                                                                                                   |
+| ----------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Bluefin Home Server** | Standalone personal server running containers and tools | Base OS + Podman (default) + Homebrew inside an isolated nspawn system container. Root stays locked. | Prompts on the local console to create a regular user account and password (or accepts an SSH key via credential). |
 
 ## Downloads
 
@@ -60,20 +81,20 @@ just dogfood-install # diskless boot, install to disk, verify rollback (QEMU)
 
 Start here to explore architecture and operations guides in [`docs/skills/`](https://github.com/projectbluefin/server/blob/main/docs/skills/index.md):
 
-| Guide                                                                          | Scope                                                               |
-| ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| [`ddi-installer.md`](/server/ddi-installer/)                                   | Boot, installation, and A/B sysupdate lifecycle                     |
-| [`usb-installer.md`](/server/usb-installer/)                                   | Offline USB installer, interactive prompts, and unattended installs |
-| [`booty-integration.md`](/server/booty-integration/)                           | UEFI HTTP boot, iPXE chainloading, and network boot provisioning    |
-| [`diskless-troubleshooting.md`](/server/diskless-troubleshooting/)             | RAM sizing, initrd failure modes, and Ignition debugging            |
-| [`systemd-sysext-extensions.md`](/server/systemd-sysext-extensions/)           | System extensions, bakery compatibility, and version locking        |
-| [`kubeadm-sysext.md`](/server/kubeadm-sysext/)                                 | Kubeadm worker and single-node control-plane extensions             |
-| [`k0s-sysext-ops.md`](/server/k0s-sysext-ops/)                                 | K0s cluster operations, tokens, and troubleshooting                 |
-| [`homelab-profile.md`](/server/homelab-profile/)                               | Homelab Ignition templates, mDNS cluster join, and add-ons          |
-| [`nvidia-sysext.md`](/server/nvidia-sysext/)                                   | NVIDIA open kernel modules and Container Toolkit CDI extensions     |
-| [`systemd-sysupdate-verification.md`](/server/systemd-sysupdate-verification/) | Release signatures, sysupdate policies, and SBOM attestations       |
-| [`secure-boot-keys.md`](/server/secure-boot-keys/)                             | Key enrollment, signing workflows, and shim integration             |
-| [`enabling-extensions.md`](/server/enabling-extensions/)                       | Enabling extensions (ZFS, NVIDIA, Kubernetes, Podman, Docker)       |
+| Guide                                                                                                               | Scope                                                               |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| [`ddi-installer.md`](/server/ddi-installer/)                                                                        | Boot, installation, and A/B sysupdate lifecycle                     |
+| [`usb-installer.md`](/server/usb-installer/)                                                                        | Offline USB installer, interactive prompts, and unattended installs |
+| [`booty-integration.md`](/server/booty-integration/)                                                                | UEFI HTTP boot, iPXE chainloading, and network boot provisioning    |
+| [`diskless-troubleshooting.md`](/server/diskless-troubleshooting/)                                                  | RAM sizing, initrd failure modes, and Ignition debugging            |
+| [`systemd-sysext-extensions.md`](/server/systemd-sysext-extensions/)                                                | System extensions, bakery compatibility, and version locking        |
+| [`kubeadm-sysext.md`](/server/kubeadm-sysext/)                                                                      | Kubeadm worker and single-node control-plane extensions             |
+| [`k0s-sysext-ops.md`](/server/k0s-sysext-ops/)                                                                      | K0s cluster operations, tokens, and troubleshooting                 |
+| [`homelab-profile.md`](/server/homelab-profile/)                                                                    | Homelab Ignition templates, mDNS cluster join, and add-ons          |
+| [`nvidia-sysext.md`](/server/nvidia-sysext/)                                                                        | NVIDIA open kernel modules and Container Toolkit CDI extensions     |
+| [`systemd-sysupdate-verification.md`](/server/systemd-sysupdate-verification/)                                      | Release signatures, sysupdate policies, and SBOM attestations       |
+| [`secure-boot-keys.md`](/server/secure-boot-keys/)                                                                  | Key enrollment, signing workflows, and shim integration             |
+| [`gap-analysis-distros.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/gap-analysis-distros.md) | Comparison to Flatcar, Fedora CoreOS, Ubuntu, and Talos             |
 
 Complete manifest and developer commands are listed in [`AGENTS.md`](https://github.com/projectbluefin/server/blob/main/AGENTS.md) and [`CONTRIBUTING.md`](https://github.com/projectbluefin/server/blob/main/CONTRIBUTING.md).
 

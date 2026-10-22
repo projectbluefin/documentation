@@ -1,5 +1,6 @@
 ---
 title: Bluefin Server
+hide_title: true
 description: An image-based Linux server OS built like a container, composed from freedesktop-sdk.
 slug: /server
 custom_edit_url: https://github.com/projectbluefin/server/edit/main/README.md
@@ -13,9 +14,9 @@ import {
 } from "@site/src/components/ImageProductSection";
 import { PerImageUsage } from "@site/src/components/analytics/CountmeAnalyticsCharts";
 
-<ImageIdentity product="server" />
-
-<ServerReadme />
+<ImageIdentity product="server">
+  <ServerReadme />
+</ImageIdentity>
 
 ## Downloads & Image Versions
 

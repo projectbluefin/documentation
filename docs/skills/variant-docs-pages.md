@@ -63,11 +63,8 @@ motivation prose — see _Never write in a maintainer's voice_ in `AGENTS.md`.
 no second route and needs no sidebar or global Markdown configuration changes.
 Its `mdx.format: md` frontmatter preserves ordinary Markdown and raw HTML;
 the wrapper retains native headings, TOC, search, and the upstream edit link.
-Keep `title` in frontmatter for navigation and the single top-level `h1`.
-Do not set `hide_title: true`; `scripts/fetch-readmes.mjs` strips any leading
-`# Title` heading from the imported README when `product` is specified so
-Docusaurus emits exactly one page title.
-
+Keep `title` in frontmatter for navigation and metadata. When an image logo already contains the product wordmark, set `hide_title: true` so the visual page header avoids duplicate title text while `<ImageIdentity>` preserves an accessible screen-reader `<h1>`.
+`scripts/fetch-readmes.mjs` strips leading `# Title` headings and scale comparison silhouettes from imported product READMEs so the landing page retains a clean single-character identity and flow.
 `scripts/fetch-readmes.mjs` rewrites parsed links/images, not code examples.
 It reads its source list from `src/components/image-identities.json`.
 Because `format: md` passes raw HTML through to the page and the seeds are
@@ -166,6 +163,7 @@ card entry from `IMAGES` in `ImageCards.tsx`.
   explicit, and link build-time recipes to upstream repositories. When headings
   are simplified, place explicit HTML anchors (`<a id="..."></a>`) so legacy links
   do not 404.
+
 ## Common Rationalizations
 
 | Rationalization                                                   | Reality                                                         |

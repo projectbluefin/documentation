@@ -2,6 +2,18 @@
   margin-bottom: 2rem;
 }
 
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .wordmark {
   display: inline-block;
   max-width: 100%;
@@ -120,4 +132,102 @@
 
 .sources {
   margin-bottom: 0;
+}
+
+/* ── Hero top of page layout with wrapping text ───────────────────────── */
+
+.identityHero {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.heroTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.heroTop .wordmark {
+  flex-shrink: 0;
+}
+
+.heroTop .species {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* Float character artwork right so sibling prose flows around it */
+.heroContent::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.heroCharacter {
+  float: right;
+  width: 320px;
+  max-width: 42%;
+  margin: 0 0 1.5rem 2rem;
+  text-align: center;
+}
+
+.heroCharacter img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 380px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+}
+
+[data-theme="dark"] .heroCharacter img {
+  filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.45));
+}
+.heroCharacter figcaption {
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.4rem;
+}
+
+.heroProse {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--ifm-font-color-base);
+}
+
+.heroProse blockquote {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--ifm-color-primary-darker);
+  border-left: 4px solid var(--ifm-color-primary);
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 0 var(--ifm-global-radius) var(--ifm-global-radius) 0;
+}
+
+[data-theme="dark"] .heroProse blockquote {
+  color: var(--ifm-color-primary-lightest);
+  background: var(--ifm-color-emphasis-200);
+}
+
+.heroProse p {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .heroTop {
+    gap: 0.5rem 1rem;
+  }
+
+  .heroCharacter {
+    float: none;
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto 1.5rem;
+  }
 }
