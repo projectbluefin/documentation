@@ -263,25 +263,22 @@ test("an unexpected error still writes an unavailable payload and exits 0", () =
   assert.match(p.stateReason, /^Test run data could not be generated: /);
 });
 
-test(
-  "every repo failing is reported as unavailable, not as an empty success",
-  {
-    todo: "fetch-test-runs.js writes unavailable:false with zero suites when every workflow list fails (e.g. a revoked token)",
-  },
-  () => {
-    const tree = makeTree();
-    const routes = {};
-    for (const repo of ["bluefin", "dakota", "testsuite"]) {
-      routes[`${API}/repos/projectbluefin/${repo}/actions/workflows`] = {
-        status: 401,
-        body: { message: "Bad credentials" },
-      };
-    }
-    const res = tree.run({ routes });
-    assert.equal(res.status, 0, res.stderr);
-    const p = tree.payload();
-    assert.deepEqual(p.suites, []);
-    assert.equal(p.unavailable, true);
-    assert.ok(p.stateReason);
-  },
-);
+test("every repo failing is reported as unavailable, not as an empty success", () => {
+  const tree = makeTree();
+  const routes = {};
+  for (const repo of ["bluefin", "dakota", "testsuite"]) {
+    routes[`${API}/repos/projectbluefin/${repo}/actions/workflows`] = {
+      status: 401,
+      body: { message: "Bad credentials" },
+    };
+  }
+  const res = tree.run({ routes });
+  assert.equal(res.status, 0, res.stderr);
+  const p = tree.payload();
+  assert.deepEqual(p.suites, []);
+  assert.equal(p.unavailable, true);
+  assert.match(
+    p.stateReason,
+    /^Test run data could not be generated: workflow lists unavailable for all 3 repos$/,
+  );
+});

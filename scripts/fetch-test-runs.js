@@ -157,6 +157,12 @@ async function fetchSuites(token) {
     }),
   );
 
+  // With no repo reachable (e.g. a revoked token) there is nothing to report;
+  // main() turns this into an unavailable payload instead of zero suites.
+  if (workflowLists.every((list) => list === null)) {
+    throw new Error(`workflow lists unavailable for all ${REPOS.length} repos`);
+  }
+
   // Flat (repo, workflow) list in REPOS order, then workflow order, so the
   // suites keep the serial insertion order that buildPayload's stable sort
   // relies on for ties.
