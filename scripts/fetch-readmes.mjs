@@ -238,7 +238,7 @@ export async function prepareReadme(
     "nvidia-sysext.md",
     "systemd-sysupdate-verification.md",
     "secure-boot-keys.md",
-    "gap-analysis-distros.md",
+    "enabling-extensions.md",
   ]);
   const resolve = (value, image) => {
     if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(value)) return value;

@@ -73,7 +73,7 @@ Start here to explore architecture and operations guides in [`docs/skills/`](htt
 | [`nvidia-sysext.md`](/server/nvidia-sysext/)                                   | NVIDIA open kernel modules and Container Toolkit CDI extensions     |
 | [`systemd-sysupdate-verification.md`](/server/systemd-sysupdate-verification/) | Release signatures, sysupdate policies, and SBOM attestations       |
 | [`secure-boot-keys.md`](/server/secure-boot-keys/)                             | Key enrollment, signing workflows, and shim integration             |
-| [`gap-analysis-distros.md`](/server/gap-analysis-distros/)                     | Comparison to Flatcar, Fedora CoreOS, Ubuntu, and Talos             |
+| [`enabling-extensions.md`](/server/enabling-extensions/)                       | Enabling extensions (ZFS, NVIDIA, Kubernetes, Podman, Docker)       |
 
 Complete manifest and developer commands are listed in [`AGENTS.md`](https://github.com/projectbluefin/server/blob/main/AGENTS.md) and [`CONTRIBUTING.md`](https://github.com/projectbluefin/server/blob/main/CONTRIBUTING.md).
 
