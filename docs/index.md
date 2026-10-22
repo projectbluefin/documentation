@@ -84,8 +84,9 @@ The workflows in Bluefin are purposely upstream focused -- we believe in a consi
 
 - **[Downloads](/downloads)** — grab an official Bluefin ISO or torrent
 - **[Installation Runbook](/installation)** — hardware planning and setup steps
-- **[User Guide](/administration)** — day-to-day administration, updates, and apps
+- **[Desktop Guide](/administration)** — day-to-day administration, updates, and apps
 - **[Developer Guide](/bluefin-dx)** — containers, devcontainers, and AI tooling
+- **[Server Guide](/server)** — image-based, DDI-first Linux server operating system
 
 The [announcement blog post](https://www.ypsidanger.com/announcing-project-bluefin/) also has some extra background information.
 
