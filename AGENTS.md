@@ -253,6 +253,10 @@ These apply to any chart, sparkline, or status panel:
    reason. A panel that returns `null` disappears, and a dashboard that quietly
    renders less is indistinguishable from a healthy one with less to report.
 
+7. **Operator guides are plain sysadmin runbooks.** Server and infrastructure docs
+   must be written in direct, concise sysadmin terms. Do not include agent scaffolding,
+   meta checklists, or internal build-system inventories in operator guides. Keep
+   commands, safety interlocks, and rollback behavior explicit.
 `scripts/panel-unavailability.test.js` enforces rule 6 mechanically.
 
 ## PR rules

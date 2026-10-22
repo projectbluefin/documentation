@@ -1,187 +1,130 @@
 ---
 mdx:
   format: md
-title: "Booty Integration"
+title: "Booty Network Boot"
 slug: /server/booty-integration
-custom_edit_url: https://github.com/projectbluefin/server/edit/main/docs/skills/booty-integration.md
-description: "How Booty serves Bluefin Server releases to nodes. Load when working on HTTP boot, iPXE chainloading, per-node Ignition, or kubeadm worker provisioning."
+description: "Serve Bluefin Server releases and per-node configuration with Booty."
 ---
 
-# Booty Integration
+<a id="booty-integration"></a>
 
-[Booty](https://github.com/jeefy/booty) is the network boot server for Bluefin
-Server at scale. It syncs a release and answers boot requests with the right
-artifacts per node.
+# Booty Network Boot
+
+[Booty](https://github.com/jeefy/booty) syncs a Bluefin Server release and
+serves its boot files and per-node configuration. Use its
+[README](https://github.com/jeefy/booty) for deployment flags and config layout.
 
 ## What Booty serves
 
-From a release `v<ver>` (GitHub Releases or the ORAS OCI artifact at
-`ghcr.io/projectbluefin/bluefin-server:<ver>,latest`) Booty syncs the netboot
-UKI `bluefin-server-netboot_<ver>.efi`, the OS DDI `bluefin-server_<ver>.raw`,
-`SHA256SUMS` and `SHA256SUMS.gpg`, and any listed sysext assets
-(`zfs_<ver>.raw.zst`, `kubestellar_<ver>.raw.zst`, `kubeadm_<ver>.raw.zst`,
-`nvidia-open-<branch>_<ver>.raw.zst`, `k0s-<k0s-ver>.raw.zst`,
-`nvidia-container-toolkit-<ctk-ver>.raw.zst`), verifies them against
-`SHA256SUMS` (and, with `--bluefinKeyring`, against the GPG signature), and
-serves them over plain HTTP. The netboot ESP image, the disk UKI and the USB
-installer are not synced; they are for booting without Booty.
+Select a release `v<ver>` from GitHub Releases or the OCI artifact
+`ghcr.io/projectbluefin/bluefin-server:<ver>` (`--bluefinOCI`; an `http://`
+prefix allows a plain-HTTP registry). Booty serves these over HTTP:
+
+- `bluefin-server-netboot_<ver>.efi` and `bluefin-server_<ver>.raw`.
+- `SHA256SUMS`, `SHA256SUMS.gpg` and listed extension assets.
+- Per-MAC `bluefin-node.ign` configuration.
+
+Booty checks checksums; supply `--bluefinKeyring` to verify their GPG signature.
+The node also verifies the release signature before using the DDI. Keep all
+artifacts from the same release. Booty does not sync the netboot ESP, disk UKI
+or offline USB installer.
 
 ## Boot paths
 
-| Firmware       | Path                                                                                                                                        |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| UEFI HTTP Boot | Firmware fetches `http://<booty>/bluefin/<mac>/bluefin-server-netboot.efi`; Secure Boot on.                                                 |
-| iPXE chainload | UEFI firmware without HTTP Boot PXE-boots iPXE, which chainloads the netboot UKI with an explicit `rd.systemd.pull` URL; Secure Boot off.   |
-| Legacy BIOS    | BIOS iPXE boots the UKI's kernel and initrd sections directly, diskless only; no install, no sysupdate, no boot counting (those need UEFI). |
+| Firmware | Path and limits |
+| --- | --- |
+| UEFI HTTP Boot | Firmware loads `http://<booty>/bluefin/<mac>/bluefin-server-netboot.efi`. Secure Boot stays on; enroll the Bluefin DB key beforehand. |
+| UEFI PXE / iPXE | Chainloads the netboot UKI with an explicit `rd.systemd.pull` URL. Secure Boot must be off. |
+| Legacy BIOS / iPXE | Loads the UKI's kernel and initrd directly. Diskless only: no disk install, sysupdate or boot counting. |
 
 ## Per-node configuration
 
-Booty renders a `bluefin-node.ign` (Ignition spec 3.6.0) per MAC address and
-serves it next to the UKI. Fields include hostname, SSH keys (which also
-enable `sshd.service`, disabled by preset in the image), state disk,
-extensions (any of `zfs`, `kubestellar`, `k0s`, `nvidia-container-toolkit`,
-and at most one NVIDIA driver flavour `nvidia-open-<branch>`, which combines
-with `zfs`), and a k0s token. The image-locked extensions land in
-`/etc/extensions/<name>_<ver>.raw` and the toolkit in
-`/etc/extensions/nvidia-container-toolkit.raw`, so they merge at boot. Booty's
-NVIDIA rules are in the Booty README's
-[NVIDIA GPU hosts](https://github.com/jeefy/booty#nvidia-gpu-hosts).
+Booty renders Ignition 3.6.0 config by MAC: hostname, SSH keys (also enabling
+`sshd.service`, otherwise disabled), state disk, extensions and a k0s token.
+Extensions include `zfs`, `kubestellar`, `k0s`, `nvidia-container-toolkit` and
+at most one `nvidia-open-<branch>` driver, which can coexist with ZFS. See
+[Booty's NVIDIA rules](https://github.com/jeefy/booty#nvidia-gpu-hosts).
+Image-locked extensions land in `/etc/extensions/<name>_<ver>.raw`; the toolkit
+uses `/etc/extensions/nvidia-container-toolkit.raw`.
 
-A node with no `ignition.config` / `ignition.config.url` credential HEADs
-`bluefin-node.ign` next to its boot origin. Nothing there means nothing to
-apply. If it is there, `bluefin-ignition-credentials` in the initrd applies it
-only if it is signed:
+Without an `ignition.config` or `ignition.config.url` credential, the initrd
+looks for `bluefin-node.ign` beside the boot UKI. An absent config is skipped.
+A present config follows these rules:
 
-- It fetches `bluefin-node.ign.gpg` from the same directory and verifies it
-  with `gpgv` against the Ignition config keyring
-  `/usr/lib/bluefin/ignition-pubring.pgp`, which lives only in the initrd,
-  inside the signed UKI. That keyring is the only trust root for node configs:
-  the release keyring (`import-pubring.pgp`, which authenticates
-  `SHA256SUMS`) is never consulted, so a release signature does not verify as
-  a node config, and whoever signs node configs cannot sign releases. There is
-  no `/etc` override. The node then stages the verified bytes inline at
-  `/run/ignition/user.ign`, so Ignition applies exactly what was signed. The
-  signature is the gate, not the transport: plain `http://` works, as it does
-  for the `/usr` pull. A keyring that cannot be read fails the boot.
-- Only an HTTP 404 on the `.gpg` counts as "unsigned". An unsigned config is
-  applied only with the system credential `bluefin.ignition.allow-unsigned`
-  (any non-empty value), and is logged as `UNAUTHENTICATED`. Any other failure
-  fetching the `.gpg` (5xx, timeout, dropped connection), or a signature that
-  does not verify, fails the boot into emergency mode with or without the
-  credential (`bluefin-ignition-credentials.service` has
-  `OnFailure=emergency.target`); the unit's journal carries `gpgv`'s reason.
-- A signed config must be self-contained. Ignition fetches
-  `ignition.config.merge` / `replace` targets and remote
-  `storage.files[].contents.source` URLs without checking them against any
-  signature, so each such source needs a `verification.hash`.
+- Its detached signature, `bluefin-node.ign.gpg`, must verify against
+  `/usr/lib/bluefin/ignition-pubring.pgp` inside the signed UKI. There is no
+  `/etc` override. The release keyring cannot authenticate node configs, and
+  config signers cannot sign releases. Verified bytes are staged inline for
+  Ignition; HTTP transport does not weaken this signature check.
+- Only a signature **HTTP 404** permits the unsigned path, and only with a
+  nonempty `bluefin.ignition.allow-unsigned` system credential. It is logged
+  `UNAUTHENTICATED`. Bad signatures, unreadable keyrings and other signature
+  fetch errors fail the boot, even with the opt-out.
+- Remote `ignition.config.merge` / `replace` and
+  `storage.files[].contents.source` content needs `verification.hash`;
+  signing the top-level config does not authenticate remote content.
 
 ### The Ignition config key
 
-| Build                        | `ignition-pubring.pgp` in the initrd                                   | Secret key                                                                          |
-| ---------------------------- | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Release                      | `files/release-keys/ignition-pubring.pgp` (committed; CI copies it in) | held by whoever signs node configs for the project's images; never in CI or a build |
-| Pull request, nightly, local | a dev key from `just gen-dev-keys`                                     | `files/boot-keys/ignition-signing.asc` (gitignored)                                 |
+Your signing public key must already be in the image's Ignition keyring.
+Use the project's config signer, or build an image with your own keyring;
+you cannot deliver a new trust root through HTTP config. Release images use
+the committed config keyring; development images use development keys. Keep
+config-signing private keys out of CI and builds.
 
-`scripts/check-ignition-keys.sh` runs on every CI key set: the keyring must
-be there and share no key with `import-pubring.pgp`; on releases it must be
-the committed one, with no Ignition secret key in the build. A release build
-without `files/release-keys/ignition-pubring.pgp` fails.
-
-A site that signs its own node configs (Booty included) needs its public key
-in the image's keyring: there is no other way to deliver a trust root to a
-UEFI HTTP Boot node with Secure Boot. Either sign with the project's config
-key, or build the image with your key set (`files/boot-keys/` with your own
-`ignition-pubring.pgp`, the same way as the Secure Boot keys).
-
-**Signing.** Sign exactly the bytes served as `bluefin-node.ign`, after any
-templating, as a binary detached signature, and serve it as
-`bluefin-node.ign.gpg` in the same directory:
+Sign the final rendered bytes, then serve the signature alongside the config.
+From the server source checkout:
 
 ```bash
-scripts/sign-node-config.sh ignition-signing.asc bluefin-node.ign   # writes bluefin-node.ign.gpg
-# equivalently, with the key in a keyring: gpg --local-user <fpr> --detach-sign bluefin-node.ign
+scripts/sign-node-config.sh ignition-signing.asc bluefin-node.ign
+# Or with a key in your GPG keyring:
+gpg --local-user <fpr> --detach-sign bluefin-node.ign
 ```
 
-Re-sign whenever the config changes; a stale `.gpg` over new bytes is a bad
-signature and stops the node. Mark a node provisioned only once it has booted
-past the initrd, not when it fetched the UKI: a refused config fails that boot.
+Re-sign every changed config. A stale signature stops the boot. Mark a node
+provisioned only after it passes the initrd, not after it downloads the UKI.
 
-**Rotation.** `gpgv` accepts a signature from any key in the keyring, so
-rotate by overlap: add the new public key to `ignition-pubring.pgp` (export
-both keys into one keyring), ship an image, move the signer to the new key,
-and drop the old key from the keyring in a later image. Removing a key
-revokes it for every node that boots an image without it. Each change needs a
-new image version, as for the other keys
-([secure-boot-keys.md](/server/secure-boot-keys)).
+Rotate keys by overlap: ship an image trusting old and new public keys, switch
+the signer, then remove the old key in a later image. Each keyring change needs
+a new image; removal revokes the key only for nodes booting that new image.
 
 ### Transitional: unsigned configs on netboot
 
-Booty does not sign `bluefin-node.ign` yet; it answers 404 for the `.gpg`. A
-UEFI HTTP Boot node with Secure Boot has no other way to receive the opt-out
-credential: the signed UKI's own command line wins, there is no ESP for
-`/loader/credentials`, and real firmware sets no SMBIOS type 11 strings. So
-while the build option `ignition_allow_unsigned` (`project.conf`, default
-`True`) is on, the netboot UKI carries
-`systemd.set_credential=bluefin.ignition.allow-unsigned:1` on its command line
-(`netboot-ignition-cmdline` in `elements/oci/bluefin-server-boot.bst`); the
-disk and installer UKIs never do. Booty's iPXE chainload and BIOS paths boot
-with the UKI's own `.cmdline`, rewriting only the `rd.systemd.pull` URL, so
-they carry it too.
+**Booty does not yet sign configs.** Default netboot builds carry
+`bluefin.ignition.allow-unsigned:1`, so Booty's missing `.gpg` takes the unsigned
+path. Disk and installer UKIs do not carry this opt-out. iPXE and BIOS use the
+netboot UKI's command line and inherit it too.
 
-Booty-provisioned nodes keep applying their per-node config, and a bad
-signature or a `.gpg` failure other than 404 still fails closed. This is not
-yet protection against an on-path attacker, who can answer 404 for the `.gpg`
-to force the unsigned path.
-
-**Cut-over** ([#327](https://github.com/projectbluefin/server/issues/327)):
-set `default: False` on `ignition_allow_unsigned` once all of these hold:
-
-1. Booty signs every `bluefin-node.ign` it serves, byte for byte, with a key
-   in the release image's `ignition-pubring.pgp`, and serves the `.gpg` next
-   to it.
-2. A Booty release that does so is out, and deployments that serve configs
-   to project images run it (an older Booty's nodes stop at emergency mode).
-3. The `full-build` boot test's signed-config steps pass, and the plain
-   "UEFI HTTP boot with bluefin-node.ign" step serves a signed config instead
-   of an unsigned one.
-
-Then drop this section and the default's unit test. CI already builds the
-next update-test image set with the option off
-(`BST_FLAGS="-o ignition_allow_unsigned False"`) and proves its netboot UKI
-refuses an unsigned config; a local build can do the same.
+This permits an on-path attacker to substitute a config and return 404 for its
+signature. Bad signatures and non-404 signature errors still fail closed.
+Do not treat this transitional setup as authenticated provisioning. Disabling
+`ignition_allow_unsigned` requires a Booty release/deployment that signs every
+rendered config with a key trusted by the image; older unsigned deployments
+then fail to boot. See the [upstream cutover requirements](https://github.com/projectbluefin/server/blob/main/docs/skills/booty-integration.md#transitional-unsigned-configs-on-netboot).
 
 ## Install to disk
 
-Setting `doInstall` in the node's Booty config boots it into
-`booty-install.service`, which runs `systemd-sysinstall` against the local
-disk. The DDI's `bluefin/repart.d` copies directly from the `rootdisk.raw` loop
-partitions, so installation succeeds even when extensions (such as ZFS) are
-merged at boot. Without Booty, write `bluefin-server-netboot_<ver>.esp.raw` to a
-USB stick and place an `import.pull.cred` credential in `/loader/credentials/`
-specifying the URL to pull.
+**Installation can erase the local target disk.** Set `doInstall` in the node's
+Booty config only when that is intended. It starts `booty-install.service`,
+which runs `systemd-sysinstall`. The source is the in-RAM DDI's loop partitions,
+so merged extensions do not interfere.
+
+Without Booty, use the netboot ESP and an `import.pull.cred` on USB as described
+in [boot and install](/server/ddi-installer#pxe--http-boot-service).
 
 ## kubeadm workers
 
-A Bluefin host joins a kubeadm cluster when Booty is run with
-`--profile=kubeadm-worker` against an external cluster: its `bluefin-node.ign`
-then carries the release's `kubeadm` sysext (version-locked, see
-[kubeadm-sysext.md](/server/kubeadm-sysext)), enables `containerd.service` and
-`kubelet.service`, and runs `kubeadm join` on every diskless boot. `kubeadm`
-is not one of the host's selectable `extensions`; Booty adds it for the
-profile. How Booty renders and serves this lives in the Booty README; the
-sysext's contents and runtime contract live in
-[kubeadm-sysext.md](/server/kubeadm-sysext).
+Run Booty with `--profile=kubeadm-worker` against an external cluster. It adds
+the release's version-locked `kubeadm` extension, enables `containerd.service`
+and `kubelet.service`, and runs `kubeadm join` on every diskless boot. `kubeadm`
+is supplied by the profile, not the selectable `extensions` list. See the
+[kubeadm runbook](/server/kubeadm-sysext) and Booty's README for configuration.
 
-## Read more
-
-- [Booty README](https://github.com/jeefy/booty) — flags, config file layout,
-  and the operator-side boot and provisioning story.
-- [ddi-installer.md](/server/ddi-installer) — boot flow, DDI layout, and sysinstall
-  contract.
-- [kubeadm-sysext.md](/server/kubeadm-sysext) — worker sysext build and runtime
-  contract.
+<a id="read-more"></a>
 
 ## See also
 
-- [index.md](https://github.com/projectbluefin/server/blob/06dc2aad44644b28f13128afcc22fe1a24df165b/docs/skills/index.md) — lazy-load routing manifest.
-- [CONTEXT.md](https://github.com/projectbluefin/server/blob/06dc2aad44644b28f13128afcc22fe1a24df165b/CONTEXT.md) — canonical project domain glossary.
+- [Booty README](https://github.com/jeefy/booty) — deployment and node configuration.
+- [Boot, install and update](/server/ddi-installer).
+- [Diskless troubleshooting](/server/diskless-troubleshooting).
+- [Upstream technical reference](https://github.com/projectbluefin/server/blob/main/docs/skills/booty-integration.md) — key/build checks and unsigned-config cutover.

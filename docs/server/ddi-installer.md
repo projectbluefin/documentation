@@ -1,190 +1,105 @@
 ---
 mdx:
   format: md
-title: "Boot, Install, and Update Architecture"
+title: "Boot, Install, and Update"
 slug: /server/ddi-installer
-custom_edit_url: https://github.com/projectbluefin/server/edit/main/docs/skills/ddi-installer.md
-description: "Use when building or debugging the Bluefin Server boot chain, the diskless network pull, the systemd-sysinstall disk install, or the A/B systemd-sysupdate flow."
+description: "Boot Bluefin Server diskless, install it to disk, and manage updates and rollback."
 ---
 
-# Boot, Install, and Update Architecture
+<a id="boot-install-and-update-architecture"></a>
 
-## When to Use
+# Boot, Install, and Update
 
-- Building or debugging the signed boot chain (UKIs, systemd-boot, Secure Boot key enrollment).
-- Changing the diskless boot flow (`rd.systemd.pull`, dm-verity, initrd contents).
-- Writing or refining `systemd-repart` recipes (`files/os/repart.d/`) or `systemd-sysupdate` transfers (`files/os/sysupdate.d/`).
-- Working on the Ignition opt-in path (`elements/ignition/`, `files/initrd-ignition/`).
+Bluefin Server boots a signed unified kernel image (UKI) and a read-only,
+dm-verity-checked `/usr`. Diskless nodes keep the OS in RAM; installed nodes
+have A/B OS slots and a persistent XFS root.
 
-## When NOT to Use
+<a id="one-build-one-version-one-release-set"></a>
 
-- k0s or OpenZFS sysext work (see `k0s-sysext.md`, `systemd-sysext-extensions.md`).
-- Release signing and sysupdate verification keys (see `systemd-sysupdate-verification.md`).
+## Release files
 
-## One build, one version, one release set
+Keep the UKI, OS image and signed checksums from the **same release** together.
 
-`oci/bluefin-server-image.bst` produces every release artifact for one
-`image-version` (`include/image.yml`, set per build by `just set-version`,
-`YY.MM.<run>` on main, `0.<run>` on PRs, at most 17 characters so it fits a
-GPT partition label with room to spare):
-
-| Artifact                                                                                                                                                                                       | Role                                                                                                                                                                                                                                    |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bluefin-server_<ver>.raw`                                                                                                                                                                     | OS DDI: `/usr` erofs partition, its dm-verity hash partition, and an ESP carrying the disk UKI plus the install-time `repart.d`. Diskless nodes pull it into RAM; booted diskless it is also the installer payload.                     |
-| `bluefin-server_<ver>_<uuid>.usr.raw` / `...usr-verity.raw`                                                                                                                                    | `systemd-sysupdate` sources for the usr and verity slots; the `<uuid>` in the name is the partition UUID derived from the usrhash.                                                                                                      |
-| `bluefin-server-<ver>.efi`                                                                                                                                                                     | Disk UKI (installed nodes); also the sysupdate source for `$BOOT`.                                                                                                                                                                      |
-| `bluefin-server-netboot_<ver>.efi`                                                                                                                                                             | Netboot UKI (diskless nodes); the UEFI HTTP boot / PXE target.                                                                                                                                                                          |
-| `bluefin-server-netboot_<ver>.esp.raw`                                                                                                                                                         | Netboot ESP image: signed systemd-boot, the netboot UKI, and Secure Boot key enrollment payloads. Write it to a USB stick to boot diskless without HTTP boot.                                                                           |
-| `bluefin-server-installer_<ver>.raw`                                                                                                                                                           | Offline USB installer; write to a stick to install without a network. See [usb-installer.md](/server/usb-installer).                                                                                                                    |
-| `zfs_<ver>.raw.zst` / `kubeadm_<ver>.raw.zst` / `homelab_<ver>.raw.zst` / `argo-workflows_<ver>.raw.zst` / `mcp_<ver>.raw.zst` / `kubestellar_<ver>.raw.zst` / `nvidia-open-595_<ver>.raw.zst` | Opt-in sysext assets locked to this image version; installed nodes fetch them through the sysupdate features of the same names (the last three before `nvidia` are the homelab add-ons, [homelab-profile.md](/server/homelab-profile)). |
-| `k0s-<k0s-ver>.raw.zst`                                                                                                                                                                        | Opt-in k0s sysext asset, on its own version axis.                                                                                                                                                                                       |
-| `nvidia-container-toolkit-<ctk-ver>.raw.zst`                                                                                                                                                   | Opt-in NVIDIA Container Toolkit (CDI) sysext asset, on its own version axis like k0s.                                                                                                                                                   |
-| `efi-keys/`                                                                                                                                                                                    | PK/KEK/db enrollment payloads.                                                                                                                                                                                                          |
-| `SHA256SUMS` / `SHA256SUMS.gpg`                                                                                                                                                                | One manifest over every file above, signed in-element with `files/boot-keys/sysupdate-signing.asc`; the image trusts the matching `import-pubring.pgp` (see `systemd-sysupdate-verification.md`).                                       |
-
-A release publishes this directory as-is (GitHub Release `v<ver>` plus an ORAS
-OCI artifact); see the `release` job in [ci-tooling.md](https://github.com/projectbluefin/server/blob/06dc2aad44644b28f13128afcc22fe1a24df165b/docs/skills/ci-tooling.md).
-`just publish-oci REF [DIR] [PLAIN_HTTP]` pushes the same artifact locally, as
-a rehearsal; CI publishes through `scripts/publish-release.sh`, which also
-verifies the pushed manifest against the local files.
-
-The /usr image itself is built by `oci/bluefin-server-usr.bst` with an offline
-`systemd-repart`: an erofs partition (`bluefin_usr_<ver>`) plus its dm-verity
-hash partition (`bluefin_usr_verity_<ver>`), and the root hash is recorded in
-`bluefin-server_<ver>.usrhash`. `/etc` holds no image content: its defaults
-live in `/usr/share/factory/etc` and are copied in by `systemd-tmpfiles`. A
-diskless node keeps `/etc` on tmpfs, so it starts empty on every boot; a disk
-install keeps it on the root partition (`files/os/repart.d/50-root.conf`),
-where it persists across A/B updates.
+| File | Use |
+| --- | --- |
+| `bluefin-server_<ver>.raw` | OS disk image (DDI), downloaded into RAM for diskless boot; also the diskless install source. |
+| `bluefin-server-netboot_<ver>.efi` | Network boot UKI. |
+| `bluefin-server-netboot_<ver>.esp.raw` | USB netboot image, including systemd-boot and Secure Boot enrollment keys. |
+| `bluefin-server-installer_<ver>.raw` | [Offline USB installer](/server/usb-installer). |
+| `bluefin-server-<ver>.efi` and `*.usr.raw` / `*.usr-verity.raw` | Installed-disk UKI and A/B update payloads. |
+| `SHA256SUMS`, `SHA256SUMS.gpg` | Release checksums and their GPG signature. |
+| Sysext assets | Optional features; see [system extensions](/server/systemd-sysext-extensions). |
 
 ## The boot chain
 
-All UKIs are built by `oci/bluefin-server-boot.bst` from the FSDK kernel
-(`bluefin-server/kernel-modules.bst`, modules signed with our module key) and a
-systemd-native initrd (no dracut; `bluefin-server/initrd/initrd-stack.bst`).
-They all pin `usrhash=` of the same /usr image on their command lines and are
-signed with DB, so Secure Boot locks those command lines. `lockdown=integrity`
-is always on. `os-sd-boot-signed.bst` signs systemd-boot with the same DB key
-so installed disks and the netboot ESP get a loader firmware accepts.
-
-The signing keys (dev vs CI, and the pair that signs and verifies
-`SHA256SUMS`): [secure-boot-keys.md](/server/secure-boot-keys) and
-[systemd-sysupdate-verification.md](/server/systemd-sysupdate-verification).
+Secure Boot verifies systemd-boot and the UKI. The signed UKI fixes the kernel
+command line, including `usrhash=`; dm-verity checks `/usr` against that hash.
+`lockdown=integrity` is always enabled. See [Secure Boot keys](/server/secure-boot-keys)
+and [release verification](/server/systemd-sysupdate-verification).
 
 ### Shim path (`-o shim True`, off by default)
 
-With the `shim` project option the netboot and installer ESPs boot shim
-(built from source with the DB certificate as its vendor certificate; build,
-SBAT and shim-review in "Shim" of [secure-boot-keys.md](/server/secure-boot-keys)):
-
-```text
-firmware -> EFI/BOOT/BOOTX64.EFI (shim, DB-signed; Microsoft-signed once reviewed)
-  -> \EFI\systemd\systemd-bootx64.efi (DB-signed systemd-boot, shim's DEFAULT_LOADER)
-  -> UKI, verified through shim against the vendor certificate or db
-```
-
-`EFI/BOOT/mmx64.efi` (MokManager) sits next to shim; the fallback loader
-does not, so booting a stick never writes firmware boot entries. loader.conf
-keeps `secure-boot-enroll if-safe`: firmware in Setup Mode does not check
-shim, systemd-boot enrolls the Bluefin keys, and the DB-signed shim boots
-with them afterwards. Default builds lay out the ESPs exactly as before.
-
-Not wired yet, so the option is groundwork rather than an enrollment-free
-path:
-
-- **Installed disks.** `systemd-sysinstall` runs `bootctl install`, which
-  writes systemd-boot to `EFI/BOOT/BOOTX64.EFI` and registers a firmware
-  boot entry for `\EFI\systemd\systemd-bootx64.efi`, so an installed disk
-  boots systemd-boot directly, as without the option. Shim there needs
-  `EFI/bluefin-server/` (shim, MokManager, `BOOTX64.CSV`) with the boot
-  entry on shim; `bootctl update` already leaves a non-systemd-boot
-  `BOOTX64.EFI` alone.
-- **Microsoft-only firmware.** Until shim is Microsoft-signed it boots only
-  where the Bluefin db is enrolled, and the USB installer's Secure Boot
-  check still refuses firmware that lacks the Bluefin db.
-- **UEFI HTTP boot** loads the netboot UKI directly, without shim. shim
-  fetches `DEFAULT_LOADER` relative to its own URL when HTTP-booted; serving
-  a shim chain that way is Booty-side work.
+Optional shim builds are **not an enrollment-free boot path**. Shim is not yet
+Microsoft-signed; firmware must still trust the Bluefin db. Installed disks
+boot systemd-boot directly, and UEFI HTTP Boot loads the UKI directly, bypassing
+shim. Build details are in the [upstream boot reference](https://github.com/projectbluefin/server/blob/main/docs/skills/ddi-installer.md#the-boot-chain).
 
 ### Diskless (netboot UKI)
 
-```text
-firmware -> signed systemd-boot -> bluefin-server-netboot_<ver>.efi
-  -> initrd: network up (DHCP), systemd-importd pulls
-     bluefin-server_<ver>.raw into RAM (rd.systemd.pull ... blockdev:rootdisk)
-  -> systemd-veritysetup opens /usr from the loop partitions, checked against usrhash=
-  -> switch root: tmpfs /, read-only erofs /usr
-```
+The initrd brings up DHCP, downloads `bluefin-server_<ver>.raw` into RAM,
+verifies its signed checksums, opens its `/usr` through dm-verity, then boots
+with a tmpfs root. `/etc` is recreated from image defaults on every boot;
+provision persistent state separately.
 
-The pull source is the UEFI HTTP boot origin (`bootorigin:`) or the
-`import.pull` system credential (SMBIOS type 11, QEMU fw_cfg, or ESP
-`/loader/credentials`). The pull runs with `verify=signature`: the initrd
-ships gnupg and the image keyring, and importd fetches `SHA256SUMS` and
-`SHA256SUMS.gpg` from the image's directory and checks the signature before
-using the manifest. The manifest hash check pins the DDI, the signed UKI pins
-`usrhash=`, and dm-verity checks every `/usr` block against it; a tampered DDI
-or a re-hashed unsigned manifest is refused. A failed boot never drops to an
-emergency shell: the initrd prints a failure summary on every console and
-reboots (`files/initrd/usr/lib/systemd/system/emergency.service.d/10-reboot.conf`),
-which is what lets boot counting work unattended. Before the pull, a check
-refuses an image that cannot fit in RAM. What the node prints, minimum RAM,
-failure modes and logs: [diskless-troubleshooting.md](/server/diskless-troubleshooting).
+The download URL comes from the UEFI HTTP boot origin (`bootorigin:`) or an
+`import.pull` system credential supplied through SMBIOS type 11, QEMU fw_cfg,
+or the ESP's `/loader/credentials/`. The image directory must also serve
+`SHA256SUMS` and `SHA256SUMS.gpg`. A modified image or unsigned replacement
+manifest is refused.
+
+The initrd checks available RAM before downloading. On failure it prints a
+summary to all consoles and reboots, not to an emergency shell. See
+[diskless troubleshooting](/server/diskless-troubleshooting) for RAM sizing,
+network errors and logs.
 
 ### UEFI HTTP boot
 
-With UEFI HTTP boot the firmware fetches `bluefin-server-netboot_<ver>.efi`
-directly from the boot server; no systemd-boot runs. systemd-stub records the
-boot URL in the `StubDeviceURL` EFI variable, and the initrd derives the URL
-of `bluefin-server_<ver>.raw` (and of `SHA256SUMS` / `SHA256SUMS.gpg`) from
-the same directory. `bluefin-ignition-credentials` also uses it: with no
-`ignition.config` / `ignition.config.url` credential it looks for
-`bluefin-node.ign` next to the UKI and applies it only as "Per-node
-configuration" in [booty-integration.md](/server/booty-integration) allows.
-Because HTTP boot skips systemd-boot's key enrollment, the firmware must
-already trust the image DB key; `scripts/dogfood-diskless.sh` with
-`DOGFOOD_BOOT=http` enrolls once from the netboot ESP first.
+Firmware loads the netboot UKI directly, without systemd-boot. It must
+**already trust the Bluefin DB key**: this path cannot enroll keys. The initrd
+uses the UKI's directory for the DDI, signed checksums and optional
+`bluefin-node.ign`. [Booty configuration rules](/server/booty-integration#per-node-configuration)
+control whether that node config is accepted.
 
 ### Installed disk (disk UKI)
 
-```text
-firmware -> systemd-boot -> bluefin-server-<ver>.efi
-  -> /usr slot found by partition label (bluefin_usr_<ver>) and the
-     verity-derived UUIDs baked into the install-time repart.d
-  -> persistent xfs root found by systemd gpt-auto discovery
-```
+systemd-boot loads the disk UKI, which selects the matching `/usr` slot by
+partition label and verity-derived UUIDs. GPT auto-discovery finds the persistent
+XFS root. `/etc` persists across A/B updates, unlike a diskless node's `/etc`.
 
-Boot entries are counted (`bluefin-server-<ver>+3-0.efi`): after three failed
-boots of a new image systemd-boot falls back to the previous UKI. That is the
-automatic rollback path.
+Updated UKIs get three boot attempts (`bluefin-server-<ver>+3-0.efi`). After
+three failures, systemd-boot selects the previous UKI on the next boot.
 
 ## Installing to disk
 
-Both install paths run stock `systemd-sysinstall` with the disk layout from
-`files/os/repart.d/` (ESP, usr slot A + verity copied from the running image,
-empty slot B, persistent xfs root), exported as `bluefin/repart.d` with slot A's
-UUIDs pinned to the usrhash derivation by `bluefin-server-boot.bst`.
-`systemd-sysinstall` writes the ESP and slot A and links the disk UKI; the
-first boot of the installed disk runs the initrd's `systemd-repart` (reading
-`/sysusr/usr/lib/repart.d`) to create slot B and the persistent root. The
-installed disk is identical whichever path installed it. No shell installer.
-
-Erasing a disk that is not empty needs the kernel to forget that disk's
-partition devices first (systemd-repart v261, #359; why in
-[usb-installer.md](/server/usb-installer)). The USB installer does that itself. On
-a diskless node, give `systemd-sysinstall` an empty disk, or run
-`partx --delete /dev/sdX` on the target first (nothing on the disk changes).
+Both paths use `systemd-sysinstall`: an ESP, copied `/usr` and verity slot A,
+an empty slot B, and a persistent XFS root. The first installed boot creates
+slot B and the root partition. See the [upstream layout reference](https://github.com/projectbluefin/server/blob/main/docs/skills/ddi-installer.md#installing-to-disk)
+for repart definitions.
 
 ### From the USB installer (offline)
 
-See [usb-installer.md](/server/usb-installer) — the offline installer image, its
-boot flow, unattended installs, and install-time provisioning.
+Follow the [USB installer runbook](/server/usb-installer). It includes disk
+selection, erasure confirmation, Secure Boot enrollment and provisioning.
 
 ### From a diskless node
 
-A running diskless node is also an installer. The OS DDI's ESP partition is
-mounted at `/run/bluefin/boot` (`run-bluefin-boot.mount`), and its
-`bluefin/repart.d` copies `usr` and `usr-verity` block-for-block from the
-in-RAM DDI partitions (`/dev/disk/by-loop-ref/rootdisk.raw-part1` and `part2`):
+**Check the target device carefully. Installation can erase its contents.**
+Use an empty disk. For a nonempty target, first run `partx --delete /dev/sdX`
+to remove its partition devices from the kernel; this does not change disk
+contents. systemd-repart v261 otherwise fails with `Device or resource busy`
+after wiping the disk. The USB installer handles this automatically.
+
+Run as root, replacing `/dev/sdX` with the target:
 
 ```bash
 systemctl start run-bluefin-boot.mount
@@ -193,292 +108,142 @@ systemd-sysinstall --kernel="${kernel}" \
     --definitions=/run/bluefin/boot/bluefin/repart.d /dev/sdX
 ```
 
-On older image builds whose `repart.d` used `CopyBlocks=auto`, active system
-extensions (`systemd-sysext`, e.g. ZFS or k0s) turn `/usr` into an overlayfs,
-causing `systemd-repart` to fail with "Failed to resolve automatic CopyBlocks=
-path for partition type usr". Unmerging extensions first (`systemd-sysext
-unmerge`) restores `/usr` to the underlying dm-verity block device and allows
-sysinstall to succeed.
+On older images, `Failed to resolve automatic CopyBlocks= path for partition
+type usr` means a merged system extension hides the source block device. Run
+`systemd-sysext unmerge` and retry.
 
 ## Updates
 
-Installed nodes update with `systemd-sysupdate` against the transfers in
-`files/os/sysupdate.d/`:
-
-- `10-usr.transfer` and `11-usr-verity.transfer` fill the inactive usr /
-  usr-verity slot (matched by `bluefin_usr_@v` partition labels).
-- `20-uki.transfer` installs the new disk UKI into `/EFI/Linux` with boot
-  counting (`TriesLeft=3`, at most 2 UKIs kept).
-- `30-zfs.transfer`, `31-kubestellar.transfer`, `32-kubeadm.transfer`,
-  `33-nvidia-open-595.transfer`, `35-homelab.transfer`,
-  `36-argo-workflows.transfer` and `37-mcp.transfer` are optional **features**
-  (enabled with `updatectl enable zfs` or a drop-in
-  `/etc/sysupdate.d/zfs.feature.d/enable.conf` with `[Feature] Enabled=true`).
-  When enabled, the matching sysext is downloaded with every OS update into
-  `/var/lib/extensions` (two versions kept, `ProtectVersion=%A`); systemd-sysext
-  merges only the one matching the booted image, so a boot-counted rollback
-  keeps ZFS (or the NVIDIA driver).
-
-`updatectl features` lists the optional features on installed and diskless
-nodes; every QEMU boot test asserts it (`PROBE updatectl-features=ok`). Two
-systemd 261 limits keep it working (#375):
-
-- A `.feature` file carries only `Description=` (and `Enabled=`).
-  `Documentation=` or `AppStream=` makes `systemd-sysupdate --json` emit a
-  field updatectl's strict parser rejects, so every `updatectl features`
-  fails with "Cannot assign requested address" (fixed in systemd 262).
-- A diskless node mounts no `$BOOT`, so `20-uki.transfer` cannot resolve and
-  sysupdated would have no host target ("Invalid target: host").
-  `systemd-sysupdated.service.d/10-diskless.conf` masks that transfer in
-  `/run/sysupdate.d/` on diskless boots; enabled features are fetched there
-  by `bluefin-sysext-fetch` (systemd-sysext-extensions.md).
-
-The k0s and NVIDIA Container Toolkit sysexts are separate sysupdate components
-on their own version axes (`sysupdate.k0s.d/`,
-`sysupdate.nvidia-container-toolkit.d/`); see `systemd-sysupdate-verification.md`.
-
-Sources are the release assets on GitHub Releases, verified against the
-GPG-signed `SHA256SUMS` with `Verify=yes` (see
-`systemd-sysupdate-verification.md`).
-
-The `/usr/libexec/bluefin-*` update and first-boot helpers named below are
-symlinks to one static Go binary, `/usr/bin/bluefin-host`, which runs the
-helper its name says (also as `bluefin-host <name>`; see
-`ddi-installer-build.md`).
+Installed nodes use `systemd-sysupdate`: it fills the inactive `/usr` and
+verity slots and adds the new UKI, retaining two UKIs. Downloads require the
+GPG-signed `SHA256SUMS`. List optional extensions with `updatectl features`;
+for example, `updatectl enable zfs` includes ZFS in subsequent OS updates.
+Image-locked extensions retain two versions, so rollback keeps the matching
+extension. k0s and NVIDIA Container Toolkit update separately; see
+[update verification](/server/systemd-sysupdate-verification).
 
 ### Automatic updates on installed nodes
 
-`files/os/systemd/system-preset/80-bluefin-updates.preset` enables FSDK's
-`systemd-sysupdate.timer` (15 min after boot, then every 2 h, randomized) and
-`systemd-sysupdate-reboot.timer` (04:10, randomized; two more runs where the
-fleet reboot lock below is configured), which FSDK's
-`90-sysupdate.preset` would otherwise disable. The timer runs the same
-`systemd-sysupdate update` as a manual update, so enabled features follow the
-OS in lock-step. The reboot unit runs `systemd-sysupdate reboot`, which reboots
-only when a newer version than the booted one is installed.
+Updates run 15 minutes after boot and then every two hours, with randomized
+delay. The nightly reboot timer runs at 04:10 with randomized delay and reboots
+only for a staged newer version. Run `systemd-sysupdate update` for a manual
+update. Console and SSH banners show the running version, last check, staged
+version and last error.
 
-- **Boot health gate.** The preset enables
-  `systemd-boot-check-no-failures.service` (`RequiredBy=boot-complete.target`,
-  after `multi-user.target`), and `systemd-bless-boot` marks a boot-counted UKI
-  good only after `boot-complete.target`. A good boot is one that reaches
-  `multi-user.target` with no failed unit. Only sysupdate-installed UKIs are
-  counted, so diskless boots never pull in `boot-complete.target`.
-  `systemd-sysupdate.service.d/30-update-status.conf` orders every update
-  check after `boot-complete.target`, so an update source that cannot be
-  reached never fails a unit before a counted boot is judged.
-- **Rollback.** systemd-boot only moves on at the _next_ boot, so the preset
-  also enables `bluefin-boot-deadline.timer`. It runs on boot-counted boots
-  only (the `LoaderBootCountPath` EFI variable exists; never on diskless,
-  installer, blessed or uncounted boots) and fires 15 minutes after boot. If
-  `systemd-bless-boot status` is still `indeterminate` (or `bad`) and
-  `boot-complete.target` is not active, `/usr/libexec/bluefin-boot-deadline`
-  logs the failed units and reboots, so systemd-boot uses up the next try and,
-  after the third, boots the previous UKI. The last try boots as `dirty` and
-  reboots only when another UKI can still be booted, so a node with nothing to
-  fall back to does not loop. The service is not ordered after
-  `multi-user.target`, so a boot that hangs gets the same treatment. Change the
-  deadline with a drop-in (`[Timer]`, `OnBootSec=`, then `OnBootSec=30min`).
-  - _On Kubernetes nodes_ (kubelet or k0s starting, running or stopping) it
-    does not reboot: a node that has been up for 15 minutes may carry
-    workloads, so it touches `/run/reboot-required` and kured cordons, drains
-    and reboots it within its cluster lock, as for an update. Each try then
-    costs a drain, and without kured the node stays on the unblessed image
-    until someone reboots it. When the Kubernetes unit itself is stopped or
-    failed the node is `NotReady`, has nothing to drain and cannot run kured,
-    so it reboots directly.
-  - _Operator hold_: `/run/reboot-lock` or `/etc/reboot-lock` stops the
-    reboot and the kured flag, like the nightly reboot below. With a fleet
-    reboot lock configured the reboot also waits for a slot (below).
-  - After a rollback, `systemd-sysupdate pending` still reports the failed
-    version, which would bring the node back to it every night (or through
-    kured every two hours). `/usr/libexec/bluefin-update-pending` wraps it and
-    says no while that version's UKI has no tries left
-    (`bluefin-server-<ver>+0-<done>.efi`); it gates the kured flag and the
-    nightly reboot. The next newer release takes the failed version's slot and
-    clears the block. A boot that fails in the initrd reboots on its own
-    (`emergency.service.d/10-reboot.conf`).
-- **Reboot interlock.** `systemd-sysupdate-reboot.service.d/20-interlock.conf`
-  skips the nightly reboot when:
-  - `/run/reboot-lock` (until the next boot) or `/etc/reboot-lock` (until
-    removed) exists, the operator hold from
-    [#182](https://github.com/projectbluefin/server/pull/182) by Bob Killen.
-    Kured has its own lock and does not read these files;
-  - the newest installed version already failed its boot tries
-    (`bluefin-update-pending`, above);
-  - `kubelet.service`, `k0scontroller.service` or `k0sworker.service` is
-    running, the Kubernetes interlock also proposed in #182. Kubernetes nodes
-    reboot through [kured](https://kured.dev/) (cordon, drain, one node at a
-    time): `systemd-sysupdate.service.d/20-kured.conf` touches
-    `/run/reboot-required` after each run once `bluefin-update-pending` reports
-    an update. Without kured, a Kubernetes node keeps the staged update until
-    someone reboots it.
-- **Fleet reboot lock.** Hosts that serve together without Kubernetes can
-  take turns: every local reboot, the nightly one and the boot deadline's,
-  first takes a reboot slot from a
-  [FleetLock](https://coreos.github.io/zincati/development/fleetlock/protocol/)
-  server, the protocol Zincati uses on Fedora CoreOS (for example
-  [poseidon/fleetlock](https://github.com/poseidon/fleetlock) or
-  [coreos/airlock](https://github.com/coreos/airlock)). Configure it in
-  `/etc/bluefin/reboot-lock.conf` (not shipped; write it with Ignition or by
-  hand):
+**Boot health and rollback:** a counted boot is blessed only after reaching
+`multi-user.target` with no failed units (`boot-complete.target`). Update
+checks wait until that judgment, so an unreachable update server does not
+make a healthy boot fail.
 
-  ```ini
-  URL=https://<fleetlock-host>/
-  GROUP=web
+If a counted boot is still unblessed after 15 minutes,
+`bluefin-boot-deadline.timer` logs failed units and requests a reboot, even
+when boot hangs before `multi-user.target`. Three failed attempts select the
+previous UKI. A last attempt reboots only if another UKI is available, avoiding
+a loop with no fallback. To change the deadline, use a timer drop-in:
+
+```ini
+[Timer]
+OnBootSec=
+OnBootSec=30min
+```
+
+After rollback, the failed version may still appear in `systemd-sysupdate pending`.
+`bluefin-update-pending` blocks nightly and kured reboots into a UKI with no
+tries left. A newer release replaces it and clears the block.
+
+**Reboot holds and Kubernetes:**
+
+- `/run/reboot-lock` holds automatic reboot until the next boot;
+  `/etc/reboot-lock` holds it until removed. Both also prevent the deadline
+  from setting the kured flag. Kured does not read these files itself.
+- Running kubelet or k0s suppresses the nightly reboot. Updates set
+  `/run/reboot-required`; kured must cordon, drain and reboot the node.
+  Without kured, reboot it yourself.
+- During deadline recovery, starting/running/stopping Kubernetes also uses
+  kured. If its unit is stopped or failed, the node cannot drain or run kured
+  and reboots directly.
+
+**Fleet reboot lock:** non-Kubernetes hosts can take turns through a
+[FleetLock server](https://coreos.github.io/zincati/development/fleetlock/protocol/).
+Create `/etc/bluefin/reboot-lock.conf`:
+
+```ini
+URL=https://<fleetlock-host>/
+GROUP=web
+```
+
+The system credentials `bluefin.reboot-lock.url` and
+`bluefin.reboot-lock.group` override the file; the group defaults to `default`.
+Without a URL, no fleet lock is used.
+
+- Nightly reboot requires HTTP 200 from the lock server. Refusal or a network
+  error skips that run. Extra attempts run at 04:40 and 05:10, each randomized
+  by up to 30 minutes, when the file or a URL credential received by PID 1
+  exists. A URL only in `/etc/credstore` gets the single nightly attempt.
+- The boot deadline retries a refused slot every five minutes. If the server
+  is unreachable, it reboots without a slot because the failed image may have
+  broken networking. A node keeps its slot through boot retries and rollback.
+- The slot is released after a healthy (`good` or `clean`) boot, with retries
+  from one minute up to one hour. An unblessed node retains its slot and holds
+  back the group. Find its client ID in the reboot-lock journal and release
+  a stuck slot if necessary:
+
+  ```bash
+  curl -H 'fleet-lock-protocol: true' \
+    -d '{"client_params":{"id":"<id>","group":"<group>"}}' \
+    https://<fleetlock-host>/v1/steady-state
   ```
 
-  or with the system credentials `bluefin.reboot-lock.url` and
-  `bluefin.reboot-lock.group`, which override the file. `GROUP` defaults to
-  `default`. Without a URL nothing changes, so single hosts and Kubernetes
-  nodes (kured) are unaffected. `/usr/libexec/bluefin-reboot-lock` is the
-  client (no daemon); its client id is the machine ID hashed
-  with an application key (`systemd-id128 machine-id
---app-specific=924987751bb64ad68c398e4be4e32e2f`), and every message logs it.
-  - _Acquire_: `bluefin-reboot-lock acquire` is the last `ExecCondition=` of
-    `20-interlock.conf`, so a slot is requested only when the reboot would
-    happen; anything but HTTP 200 (all slots taken, server unreachable) skips
-    that run. `bluefin-fleet-reboot.timer` starts the reboot unit again at
-    04:40 and 05:10, each with up to 30 minutes of random delay, so a group
-    takes turns within one night; only nodes that have the file, or the URL
-    as a system credential PID 1 received (SMBIOS, a `.cred` on the ESP), get
-    these runs: a URL placed only in `/etc/credstore` still works for the
-    lock but gets the single upstream run. `bluefin-boot-deadline` takes a slot
-    before it reboots a counted boot and, when the server refuses one, runs
-    again every 5 minutes (exit 75, `RestartForceExitStatus=`). When the server
-    cannot be reached at all (the client exits 3, not 1) it reboots without a
-    slot, since the update it rolls back may be what broke the network. A node
-    that rebooted for an update still holds its slot, so its tries and the
-    fallback are not delayed.
-  - _Release_: `bluefin-reboot-lock-release.service` gives the slot back after
-    `boot-complete.target`, only when `systemd-bless-boot status` is `good` or
-    `clean` (not counted, e.g. the previous UKI after a rollback), and retries
-    with backoff (1 minute up to 1 hour) until the server confirms. It is
-    enabled in /usr, so nodes that updated into it run it too. A node whose
-    boot is not blessed keeps its slot and holds back its group; release it
-    from anywhere with `curl -H 'fleet-lock-protocol: true' -d
-'{"client_params":{"id":"<id>","group":"<group>"}}'
-https://<fleetlock-host>/v1/steady-state`.
+**Opt out:** `systemctl disable --now systemd-sysupdate-reboot.timer` stages
+updates without nightly reboot. Disable `systemd-sysupdate.timer` too to stop
+automatic updates. Opt-outs survive updates. Presets apply only on first boot;
+to enable this policy on an older installation, run once:
 
-- **Opting out.** `systemctl disable --now systemd-sysupdate-reboot.timer`
-  stages updates without rebooting; also disable `systemd-sysupdate.timer` to
-  stop updating. Presets apply on first boot only, so nodes installed before
-  this preset need `systemctl preset systemd-sysupdate.timer
-systemd-sysupdate-reboot.timer systemd-boot-check-no-failures.service
-bluefin-boot-deadline.timer` once. `bluefin-update-status.service` is the
-  exception: `bluefin-update-status-migrate.service` (enabled in /usr, run
-  once per installed node) enables and starts it on the first boot into an
-  image that ships it if it is not enabled yet. It never touches the update
-  timers, so an opt-out survives updates.
-- **Update health** (version, last check, staged update, last error) is on
-  the console and SSH login banners; see "Update health on the node" in
-  [systemd-sysupdate-verification.md](/server/systemd-sysupdate-verification).
+```bash
+systemctl preset systemd-sysupdate.timer systemd-sysupdate-reboot.timer \
+  systemd-boot-check-no-failures.service bluefin-boot-deadline.timer
+```
 
 ### Diskless and installer boots
 
-Diskless nodes and the USB installer have no slots. Their `10-diskless.conf`
-drop-ins condition `systemd-sysupdate.service`,
-`systemd-sysupdate-reboot.service` and both timers off when
-`/run/machines/rootdisk.raw` exists or the command line has `root=tmpfs`. A
-diskless node updates by rebooting into whatever its boot server serves.
+These boots have no A/B slots; OS update/reboot units and timers are disabled.
+A diskless node updates by rebooting into the release served by its boot server.
 
-`bluefin-diskless-update-check.timer` (5 min after boot, then hourly; only
-when `/run/machines/rootdisk.raw` exists) tells the node when that would be a
-newer image. `/usr/libexec/bluefin-boot-origin`, which Ignition also uses,
-finds the boot directory from the `StubDeviceURL` EFI variable, the explicit
-http(s) `rd.systemd.pull=` source, or the `import.pull` credential.
-`bluefin-diskless-update-check` then fetches `SHA256SUMS` and `SHA256SUMS.gpg`
-from that directory, verifies them with `gpgv` against the image keyring, and
-compares the `bluefin-server_<ver>.raw` entry with the running `IMAGE_VERSION`
-(`systemd-analyze compare-versions`). When the release is newer and the next
-boot would pull it, it touches `/run/reboot-required` and logs `Bluefin Server
-<ver> is available from <url>`. That holds when the origin resolves the
-version at boot: a netboot UKI served under a fixed name (Booty's
-`bluefin-server-netboot.efi`, via `StubDeviceURL`) that the server swaps for
-the new release. An origin that names a versioned file,
-`bluefin-server_<ver>.raw` (an explicit `rd.systemd.pull=` URL or the
-`import.pull` credential) or `bluefin-server-netboot_<ver>.efi`, is pinned:
-the node would pull the same version again, and kured would drain and reboot
-it on every check. A pinned node only logs `... but this node is pinned to
-<file>; not flagging`; repoint its boot origin to update it.
-Network and signature errors are logged and leave the flag alone; the unit
-never fails and never reboots. Kured reboots a diskless Kubernetes node on the
-flag. Other nodes wait for an operator or fleet tooling to act on it
-(`test -e /run/reboot-required`,
-`journalctl -u bluefin-diskless-update-check`). The boot server (Booty)
-decides what the next boot pulls.
+`bluefin-diskless-update-check.timer` checks signed checksums five minutes after
+boot and then hourly. A newer release sets `/run/reboot-required` only if the
+next boot can actually select it, such as Booty's fixed-name
+`bluefin-server-netboot.efi`. A versioned UKI or explicit versioned DDI URL is
+**pinned**: repoint the boot origin first. Network/signature errors are logged;
+the check never reboots or fails the unit. Kured handles Kubernetes reboots;
+other nodes need an operator or fleet tooling:
+
+```bash
+test -e /run/reboot-required
+journalctl -u bluefin-diskless-update-check
+```
 
 ## Ignition (opt-in)
 
-Ignition (v2.27.0, built from source in `elements/ignition/`) runs in the
-initrd, adapted from the upstream dracut units into
-`files/initrd-ignition/`. Because the kernel command line is locked inside the
-signed UKI, the `ignition.config.url=` karg cannot be used; configs arrive as
-**system credentials**:
+Supply `ignition.config` (inline JSON or Butane YAML) or `ignition.config.url`
+as a **system credential**, not a kernel argument. With neither credential,
+network boots may use `bluefin-node.ign` beside the UKI, subject to
+[config signature rules](/server/booty-integration#per-node-configuration).
+No config means Ignition does not run.
 
-- `ignition.config` — an inline Ignition JSON (or Butane YAML) config.
-- `ignition.config.url` — a URL; wrapped into a `config.replace` stub and
-  fetched once the network is online.
-
-`bluefin-ignition-credentials` stages whichever is set into
-`/run/ignition/user.ign`; the downstream Ignition units are conditioned on
-that file, so a node with no config runs none of it. A network-booted node
-needs no credential: a `bluefin-node.ign` next to its UKI is staged only as
-"Per-node configuration" in [booty-integration.md](/server/booty-integration)
-allows. Ignition runs on **every** boot (there is no first-boot marker on
-a tmpfs root), so configs must be idempotent. See
-`tests/fixtures/ignition/var-on-disk.ign` for a dogfood-tested example
-(persistent /var on a second disk plus an SSH key). The supported stages and
-config sections, the idempotency rules, and the warning for ignored
-`ignition.*` kernel arguments are in
-the Ignition section of [diskless-troubleshooting.md](/server/diskless-troubleshooting).
+Ignition runs on every boot; keep persistent disk operations idempotent.
+See [supported settings and safety rules](/server/diskless-troubleshooting#ignition).
 
 ## PXE / HTTP boot service
 
-The intended network boot server is [Booty](https://github.com/jeefy/booty)
-(Bluefin support on its `main` since
-[#39](https://github.com/jeefy/booty/pull/39)). It syncs `v<ver>` releases
-from GitHub Releases or from the OCI artifact (`--bluefinOCI`, plain-HTTP
-registries via an `http://` prefix), checks the signature with
-`--bluefinKeyring`, answers ProxyDHCP with an `HTTPClient` offer pointing at
-`http://<booty>/bluefin/<mac>/bluefin-server-netboot.efi`, and serves the UKI,
-the OS DDI, `SHA256SUMS(.gpg)`, and a per-host `bluefin-node.ign` (hostname,
-SSH keys, state disk, extensions, k0s token). Its `doInstall` flag boots the
-node into `booty-install.service`, which runs `systemd-sysinstall` against the
-local disk. Without Booty, writing `bluefin-server-netboot_<ver>.esp.raw` to a
-USB stick boots a node diskless the same way, provided an `import.pull.cred`
-credential is placed in `/loader/credentials/import.pull.cred` on the stick
-specifying the URL to pull `bluefin-server_<ver>.raw` and its signed SHA256SUMS.
-
-## Common Rationalizations
-
-| Rationalization                                            | Reality                                                                                                                                                                                                                                                |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| "A bash script installer is simpler."                      | Installation stays `systemd-sysinstall`-native; the diskless boot already carries everything it needs. No shell installers.                                                                                                                            |
-| "Hardcode `root=/dev/vda2` for QEMU."                      | Bare metal has different device names. Boot and root selection uses discoverable partition labels and verity-derived UUIDs.                                                                                                                            |
-| "Kernel image is at `/boot/vmlinuz`."                      | FSDK installs kernels into `/usr/lib/modules/<kver>/vmlinuz`; `bluefin-server-boot.bst` picks it up from there for ukify.                                                                                                                              |
-| "The initrd needs dracut."                                 | The initrd is a hand-assembled systemd userspace (`initrd-stack.bst`) packed as newc cpio + zstd. No dracut anywhere in the tree.                                                                                                                      |
-| "The diskless pull is unverified."                         | The initrd pulls with `verify=signature` against the keyring it ships; the signed UKI also pins `usrhash=`, and dm-verity checks every `/usr` block read.                                                                                              |
-| "Ignition needs a karg."                                   | The cmdline is sealed in the signed UKI. Ignition configs arrive as `ignition.config` / `ignition.config.url` system credentials, or as `bluefin-node.ign` next to the UKI on a UEFI HTTP boot; `ignition.*` kargs are ignored with a console warning. |
-| "Diskless nodes need sysupdate."                           | Diskless nodes update by rebooting into a newer image; sysupdate is disabled when booted diskless, and `bluefin-diskless-update-check` only flags that a newer image is being served.                                                                  |
-| "The update timer should reboot Kubernetes nodes too."     | Kubernetes nodes reboot through kured (drain first); the reboot unit's `ExecCondition=` stands down while kubelet or k0s runs.                                                                                                                         |
-| "Boot counting alone rolls back a bad update."             | Only on the next boot. `bluefin-boot-deadline.timer` supplies that reboot when a counted boot misses `boot-complete.target`, and `bluefin-update-pending` keeps the node from rebooting into the failed version again.                                 |
-| "Flag every diskless node when a newer release is served." | Only when the next boot would pull it; a pinned origin (`bluefin-server_<ver>.raw`) would pull the same version and loop kured.                                                                                                                        |
-
-## Verification
-
-- [ ] `just validate` resolves the BuildStream graph without errors.
-- [ ] `just dogfood-check` passes (diskless boot, Secure Boot, no failed units).
-- [ ] `just dogfood-install NEXT=<dir>` passes (install, disk boot with both update timers enabled, A/B update through `systemd-sysupdate.service` with the kured flag and interlock, blessed after `boot-complete.target`).
-- [ ] `just dogfood-check` reports `PROBE update-check=success` for the diskless update check.
-- [ ] `DOGFOOD_BROKEN=unit scripts/dogfood-install.sh <dir> <next> <broken>` passes (a unit failing on `<broken>`: three deadline reboots, fallback to `<next>`, then no kured flag and no nightly reboot).
-- [ ] UKIs pin `usrhash=` and are signed with DB; `sbverify` passes in `bluefin-server-boot.bst`.
-- [ ] No hardcoded device paths in any boot configuration.
-- [ ] No element named `bluefin-server-ddi` or `bluefin-server-installer` exists; the OS DDI comes from `oci/bluefin-server-image.bst`.
+[Booty](/server/booty-integration) serves releases, per-node configs and optional
+disk installs. Without Booty, write `bluefin-server-netboot_<ver>.esp.raw` to
+USB and supply `/loader/credentials/import.pull.cred` with the DDI pull URL
+and signed-checksum verification. See [credential delivery](https://github.com/projectbluefin/server/blob/main/docs/skills/tpm2-credential-sealing.md)
+for the required credential encoding and trust constraints.
 
 ## See also
 
-- [ddi-installer-build.md](https://github.com/projectbluefin/server/blob/06dc2aad44644b28f13128afcc22fe1a24df165b/docs/skills/ddi-installer-build.md) — local build, export, and dogfood workflow.
-- [diskless-troubleshooting.md](/server/diskless-troubleshooting) — failure summary, minimum RAM, logs, supported Ignition subset.
-- [systemd-sysupdate-verification.md](/server/systemd-sysupdate-verification) — release signing and transfer verification.
-- [CONTEXT.md](https://github.com/projectbluefin/server/blob/06dc2aad44644b28f13128afcc22fe1a24df165b/CONTEXT.md) — canonical project domain glossary (OS DDI, Netboot UKI, Disk UKI, Slot).
-- `systemd-sysinstall(8)`, `systemd-repart(8)`, `systemd-sysupdate(8)`, `bootctl(1)`, `ukify(1)`
+- [Upstream technical reference](https://github.com/projectbluefin/server/blob/main/docs/skills/ddi-installer.md) — build artifacts, repart/transfer definitions and helper internals.
+- [Build and test workflow](https://github.com/projectbluefin/server/blob/main/docs/skills/ddi-installer-build.md).
+- [Diskless troubleshooting](/server/diskless-troubleshooting).
+- [Release verification](/server/systemd-sysupdate-verification).
