@@ -238,7 +238,8 @@ export function ProductDownloadsAndVersions({
   product: ImageProductKey;
   hideHeading?: boolean;
 }): React.JSX.Element {
-  const data = releasesFile.products[product] as ProductReleaseData | undefined;
+  const data = releasesFile?.products?.[product] as
+    ProductReleaseData | undefined;
   const downloads = data?.downloads ?? [];
   // ISO rows carry no component versions; compare image releases only.
   const imageReleases = (data?.releases ?? []).filter((r) => r.versions);
@@ -454,7 +455,8 @@ export function ProductReleaseAssets({
   product: ImageProductKey;
   hideHeading?: boolean;
 }): React.JSX.Element {
-  const data = releasesFile.products[product] as ProductReleaseData | undefined;
+  const data = releasesFile?.products?.[product] as
+    ProductReleaseData | undefined;
   const releases = data?.releases ?? [];
   // Look up attestation in SBOM cache if available
   const sbomStreamKey =
