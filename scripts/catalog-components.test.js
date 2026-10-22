@@ -47,6 +47,16 @@ function loadComponent(tsxPath, overrides = {}) {
       if (id.startsWith("@site/")) {
         return require(path.join(__dirname, "..", id.replace(/^@site\//, "")));
       }
+      if (id.startsWith("./") || id.startsWith("../")) {
+        const resolvedPath = path.resolve(path.dirname(tsxPath), id);
+        if (fs.existsSync(resolvedPath + ".tsx")) {
+          return loadComponent(resolvedPath + ".tsx", overrides);
+        }
+        if (fs.existsSync(resolvedPath + ".ts")) {
+          return loadComponent(resolvedPath + ".ts", overrides);
+        }
+        return require(resolvedPath);
+      }
       return require(id);
     },
     mod,
@@ -541,5 +551,57 @@ test("DriverVersionsCatalog renders bluefin-server with systemd, sysexts, and sy
   assert.ok(
     html.includes("systemd-sysupdate"),
     "sysupdate deployment note rendered instead of bootc switch",
+  );
+});
+const ImageProductSection = loadComponent(
+  path.join(COMPONENTS_DIR, "ImageProductSection.tsx"),
+);
+
+test("ProductDownloadsAndVersions and ProductReleaseAssets render server download card and 7-release timeline", () => {
+  const { ProductDownloadsAndVersions, ProductReleaseAssets } =
+    ImageProductSection;
+
+  const downloadsHtml = render(ProductDownloadsAndVersions, {
+    product: "server",
+  });
+
+  assert.ok(
+    downloadsHtml.includes("BLUEFIN SERVER"),
+    "server download card title rendered",
+  );
+  assert.ok(
+    downloadsHtml.includes("Download Installer"),
+    "installer action button rendered",
+  );
+  assert.ok(
+    downloadsHtml.includes("Download DDI"),
+    "ddi action button rendered",
+  );
+  assert.ok(
+    downloadsHtml.includes("Download UKI"),
+    "netboot UKI action button rendered",
+  );
+
+  const assetsHtml = render(ProductReleaseAssets, {
+    product: "server",
+  });
+
+  // Verify left-rail timeline markers
+  assert.ok(
+    assetsHtml.includes("Now"),
+    "archive rail Now label rendered for timeline",
+  );
+  assert.ok(
+    assetsHtml.includes("Past"),
+    "archive rail Past label rendered for timeline",
+  );
+
+  // Count rendered release cards for server (should be exactly 7)
+  const serverTagMatches = assetsHtml.match(/v26\.10\.\d+/g) || [];
+  const uniqueTags = [...new Set(serverTagMatches)];
+  assert.equal(
+    uniqueTags.length,
+    7,
+    "timeline displays exactly the last 7 releases",
   );
 });

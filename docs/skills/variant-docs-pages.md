@@ -106,13 +106,15 @@ a unified 5-part composition:
    identity headers and leading `# Title` by `scripts/fetch-readmes.mjs`.
 3. `## Downloads & Image Versions`: `<ProductDownloadsAndVersions />` displays
    major component cards with bump badges, plus available ISO cards (Stable
-   and/or Testing depending on image type, or a DDI notice for server).
+   and/or Testing depending on image type) or versioned installer/DDI/netboot cards
+   for Bluefin Server.
    Installer publication channel differs from embedded payload channel (e.g.
    Dakota stable payload served from the testing CDN).
 4. `## Usage`: `<PerImageUsage />` embeds first-party daily active systems with
    per-family filtering and explicit unavailable fallbacks.
 5. `## Release Assets & Attestations`: `<ProductReleaseAssets />` renders
-   downloadable release artifacts, bootc/DDI switches, and provenance verification.
+   downloadable release artifacts, bootc/DDI switches, and provenance verification,
+   with a left-rail timeline of the latest releases for Server.
 
 Keep headings as Markdown `##` in the `.mdx` file so Docusaurus's build-time AST
 populates the right-hand Table of Contents.
@@ -166,6 +168,7 @@ card entry from `IMAGES` in `ImageCards.tsx`.
   explicit, and link build-time recipes to upstream repositories. When headings
   are simplified, place explicit HTML anchors (`<a id="..."></a>`) so legacy links
   do not 404.
+
 ## Common Rationalizations
 
 | Rationalization                                                   | Reality                                                         |

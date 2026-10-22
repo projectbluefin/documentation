@@ -7,6 +7,7 @@ export interface DownloadEntry {
   isoFilename: string;
   torrentUrl?: string;
   checksumUrl: string;
+  buttonLabel?: string;
 }
 
 export interface EntryGroup {
@@ -15,7 +16,7 @@ export interface EntryGroup {
 }
 
 export interface DownloadCardProps {
-  variant: "bluefin" | "dakotaraptor";
+  variant: "bluefin" | "dakotaraptor" | "server";
   title: string;
   description: React.ReactNode;
   entries: DownloadEntry[];
@@ -28,6 +29,7 @@ export interface DownloadCardProps {
 const VARIANT_CLASS: Record<DownloadCardProps["variant"], string> = {
   bluefin: styles.cardBluefin,
   dakotaraptor: styles.cardDakota,
+  server: styles.cardServer,
 };
 
 const LOGO_MAP: Record<string, { src: string; alt: string }> = {
@@ -83,7 +85,7 @@ function EntryRow({
           download={entry.isoFilename}
           className={styles.downloadButton}
         >
-          📥 Download ISO
+          {entry.buttonLabel ? `📥 ${entry.buttonLabel}` : "📥 Download ISO"}
         </a>
         {entry.torrentUrl ? (
           <a href={entry.torrentUrl} className={styles.secondaryLink}>

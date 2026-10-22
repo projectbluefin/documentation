@@ -316,11 +316,126 @@ export function ProductDownloadsAndVersions({
           )}
         </div>
       ) : product === "server" ? (
-        <div className="alert alert--info">
-          <strong>Bluefin Server</strong> deploys and installs via raw
-          Discoverable Disk Images (DDI) and UEFI UKI binaries rather than an
-          Anaconda ISO installer. Download installer and netboot artifacts
-          below.
+        <div className={styles.downloadGrid}>
+          {(() => {
+            const installerAsset = latestRelease?.assets?.find(
+              (a) =>
+                a.name.startsWith("bluefin-server-installer_") &&
+                a.name.endsWith(".raw"),
+            );
+            const ddiAsset = latestRelease?.assets?.find(
+              (a) =>
+                a.name.startsWith("bluefin-server_") &&
+                a.name.endsWith(".raw") &&
+                !a.name.includes(".usr"),
+            );
+            const netbootUkiAsset = latestRelease?.assets?.find(
+              (a) =>
+                a.name.startsWith("bluefin-server-netboot_") &&
+                a.name.endsWith(".efi"),
+            );
+            const netbootEspAsset = latestRelease?.assets?.find(
+              (a) =>
+                a.name.startsWith("bluefin-server-netboot_") &&
+                a.name.endsWith(".esp.raw"),
+            );
+            const diskUkiAsset = latestRelease?.assets?.find(
+              (a) =>
+                a.name.startsWith("bluefin-server-") &&
+                a.name.endsWith(".efi") &&
+                !a.name.includes("-netboot_"),
+            );
+            const checksumAsset = latestRelease?.assets?.find(
+              (a) => a.name === "SHA256SUMS",
+            );
+            const checksumUrl =
+              checksumAsset?.url ??
+              (latestRelease
+                ? `https://github.com/projectbluefin/server/releases/download/${latestRelease.tag}/SHA256SUMS`
+                : "#");
+
+            const primaryEntries: DownloadEntry[] = [
+              ...(installerAsset
+                ? [
+                    {
+                      label: "USB Installer (x86_64 raw)",
+                      isoUrl: installerAsset.url,
+                      isoFilename: installerAsset.name,
+                      checksumUrl,
+                      buttonLabel: "Download Installer",
+                    },
+                  ]
+                : []),
+              ...(ddiAsset
+                ? [
+                    {
+                      label: "OS DDI Image (raw diskless)",
+                      isoUrl: ddiAsset.url,
+                      isoFilename: ddiAsset.name,
+                      checksumUrl,
+                      buttonLabel: "Download DDI",
+                    },
+                  ]
+                : []),
+            ];
+
+            const netbootEntries: DownloadEntry[] = [
+              ...(netbootUkiAsset
+                ? [
+                    {
+                      label: "Netboot UKI (UEFI HTTP/PXE)",
+                      isoUrl: netbootUkiAsset.url,
+                      isoFilename: netbootUkiAsset.name,
+                      checksumUrl,
+                      buttonLabel: "Download UKI",
+                    },
+                  ]
+                : []),
+              ...(netbootEspAsset
+                ? [
+                    {
+                      label: "Netboot ESP (systemd-boot raw)",
+                      isoUrl: netbootEspAsset.url,
+                      isoFilename: netbootEspAsset.name,
+                      checksumUrl,
+                      buttonLabel: "Download ESP",
+                    },
+                  ]
+                : []),
+              ...(diskUkiAsset
+                ? [
+                    {
+                      label: "Disk UKI (installed node update)",
+                      isoUrl: diskUkiAsset.url,
+                      isoFilename: diskUkiAsset.name,
+                      checksumUrl,
+                      buttonLabel: "Download UKI",
+                    },
+                  ]
+                : []),
+            ];
+
+            return (
+              <DownloadCard
+                variant="server"
+                title={`BLUEFIN SERVER ${latestRelease?.tag ?? "Release"}`}
+                recommended
+                description="Immutable, UKI-native server OS composed from freedesktop-sdk. Deploys via offline raw USB installer or UEFI netboot UKI."
+                gpuLogos={false}
+                entries={primaryEntries}
+                sections={
+                  netbootEntries.length > 0
+                    ? [
+                        {
+                          label: "Netboot & UEFI Artifacts",
+                          entries: netbootEntries,
+                        },
+                      ]
+                    : undefined
+                }
+              />
+            );
+          })()}
         </div>
       ) : (
         <p className={styles.mutedText}>
@@ -365,126 +480,156 @@ export function ProductReleaseAssets({
           No published GitHub releases found for this product.
         </p>
       ) : (
-        <div className={styles.releasesTimeline}>
-          {releases.map((release) => {
-            const isIso = release.source.kind === "iso";
-            const isBootc = !isIso && Boolean(identities[product].image);
-            const isDdi = product === "server";
+        <div
+          className={
+            product === "server" ? styles.timelinePage : styles.releasesTimeline
+          }
+        >
+          {product === "server" && (
+            <aside className={styles.archiveRail} aria-hidden="true">
+              <span className={styles.archiveNow}>Now</span>
+              <span className={styles.archivePast}>Past</span>
+            </aside>
+          )}
+          {(product === "server" ? releases.slice(0, 7) : releases).map(
+            (release, index) => {
+              const isIso = release.source.kind === "iso";
+              const isBootc = !isIso && Boolean(identities[product].image);
+              const isDdi = product === "server";
 
-            // Find matching SBOM entry if present
-            const sbomEntry = sbomStream?.releases
-              ? Object.values(sbomStream.releases).find((r) =>
-                  release.tag.includes(r.tag?.replace("stable-", "") ?? ""),
-                )
-              : null;
+              // Find matching SBOM entry if present
+              const sbomEntry = sbomStream?.releases
+                ? Object.values(sbomStream.releases).find((r) =>
+                    release.tag.includes(r.tag?.replace("stable-", "") ?? ""),
+                  )
+                : null;
 
-            return (
-              <article key={release.tag} className={styles.releaseCard}>
-                <header className={styles.releaseHeader}>
-                  <div className={styles.releaseTitleGroup}>
-                    <Link
-                      to={release.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.releaseTagLink}
-                    >
-                      <strong className={styles.releaseTag}>
-                        {release.tag}
-                      </strong>
-                    </Link>
-                    <span className={styles.releaseKindBadge}>
-                      {isDdi
-                        ? "DDI + UKI"
-                        : isIso
-                          ? "ISO installer"
-                          : "bootc OCI"}
-                    </span>
-                    {release.stream && (
-                      <span className={styles.streamBadge}>
-                        :{release.stream}
+              return (
+                <React.Fragment key={release.tag}>
+                  {product === "server" && index > 0 && (
+                    <div className={styles.releaseDivider} />
+                  )}
+                  <article className={styles.releaseCard}>
+                    <header className={styles.releaseHeader}>
+                      <div className={styles.releaseTitleGroup}>
+                        <Link
+                          to={release.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={styles.releaseTagLink}
+                        >
+                          <strong className={styles.releaseTag}>
+                            {release.tag}
+                          </strong>
+                        </Link>
+                        <span className={styles.releaseKindBadge}>
+                          {isDdi
+                            ? "DDI + UKI"
+                            : isIso
+                              ? "ISO installer"
+                              : "bootc OCI"}
+                        </span>
+                        {release.stream && (
+                          <span className={styles.streamBadge}>
+                            :{release.stream}
+                          </span>
+                        )}
+                      </div>
+                      <span className={styles.releaseDate}>
+                        {formatDate(release.publishedAt)}
                       </span>
+                    </header>
+
+                    {/* Major component version boxes for server releases */}
+                    {isDdi && release.versions && (
+                      <ComponentVersionBoxes
+                        versions={release.versions}
+                        previousVersions={
+                          (product === "server"
+                            ? releases.slice(0, 7)
+                            : releases)[index + 1]?.versions
+                        }
+                        title={`Major components (${release.tag})`}
+                      />
                     )}
-                  </div>
-                  <span className={styles.releaseDate}>
-                    {formatDate(release.publishedAt)}
-                  </span>
-                </header>
 
-                {/* Supply Chain / Attestation Verification */}
-                {!isIso && (
-                  <div className={styles.supplyChainBox}>
-                    <strong>Supply chain &amp; attestation:</strong>
-                    {isDdi ? (
-                      <span>
-                        GPG-signed SHA256SUMS manifest &amp; in-toto SLSA / SPDX
-                        SBOM published with release.
-                      </span>
-                    ) : sbomEntry?.attestation?.verified ? (
-                      <span className={styles.verifiedText}>
-                        ✓ Provenance attestation verified (
-                        {sbomEntry.attestation.predicateType || "SLSA v1"}).
-                      </span>
-                    ) : sbomEntry?.attestation?.present ? (
-                      <span>
-                        Provenance attestation present in GHCR referrer.
-                      </span>
-                    ) : (
-                      <span>
-                        No attestation for this tag in the SBOM cache.
-                      </span>
+                    {/* Supply Chain / Attestation Verification */}
+                    {!isIso && (
+                      <div className={styles.supplyChainBox}>
+                        <strong>Supply chain &amp; attestation:</strong>
+                        {isDdi ? (
+                          <span>
+                            GPG-signed SHA256SUMS manifest &amp; in-toto SLSA /
+                            SPDX SBOM published with release.
+                          </span>
+                        ) : sbomEntry?.attestation?.verified ? (
+                          <span className={styles.verifiedText}>
+                            ✓ Provenance attestation verified (
+                            {sbomEntry.attestation.predicateType || "SLSA v1"}).
+                          </span>
+                        ) : sbomEntry?.attestation?.present ? (
+                          <span>
+                            Provenance attestation present in GHCR referrer.
+                          </span>
+                        ) : (
+                          <span>
+                            No attestation for this tag in the SBOM cache.
+                          </span>
+                        )}
+                      </div>
                     )}
-                  </div>
-                )}
 
-                {/* Switch or deployment instructions */}
-                {isBootc && (
-                  <div className={styles.commandBlock}>
-                    <span className={styles.commandLabel}>
-                      Bootc container switch:
-                    </span>
-                    <CodeBlock language="bash">
-                      {`sudo bootc switch --enforce-container-sigpolicy ${identities[product].image}:${release.stream ?? "stable"}`}
-                    </CodeBlock>
-                  </div>
-                )}
+                    {/* Switch or deployment instructions */}
+                    {isBootc && (
+                      <div className={styles.commandBlock}>
+                        <span className={styles.commandLabel}>
+                          Bootc container switch:
+                        </span>
+                        <CodeBlock language="bash">
+                          {`sudo bootc switch --enforce-container-sigpolicy ${identities[product].image}:${release.stream ?? "stable"}`}
+                        </CodeBlock>
+                      </div>
+                    )}
 
-                {/* Downloadable assets table */}
-                {release.assets.length > 0 && (
-                  <div className={styles.assetsWrapper}>
-                    <table className={styles.assetsTable}>
-                      <thead>
-                        <tr>
-                          <th>Asset file</th>
-                          <th>Size</th>
-                          <th>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {release.assets.map((asset) => (
-                          <tr key={asset.name}>
-                            <td>
-                              <code>{asset.name}</code>
-                            </td>
-                            <td>{formatBytes(asset.size)}</td>
-                            <td>
-                              <a
-                                href={asset.url}
-                                className={styles.assetDownloadLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                Download
-                              </a>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </article>
-            );
-          })}
+                    {/* Downloadable assets table */}
+                    {release.assets.length > 0 && (
+                      <div className={styles.assetsWrapper}>
+                        <table className={styles.assetsTable}>
+                          <thead>
+                            <tr>
+                              <th>Asset file</th>
+                              <th>Size</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {release.assets.map((asset) => (
+                              <tr key={asset.name}>
+                                <td>
+                                  <code>{asset.name}</code>
+                                </td>
+                                <td>{formatBytes(asset.size)}</td>
+                                <td>
+                                  <a
+                                    href={asset.url}
+                                    className={styles.assetDownloadLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    Download
+                                  </a>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </article>
+                </React.Fragment>
+              );
+            },
+          )}
         </div>
       )}
     </section>

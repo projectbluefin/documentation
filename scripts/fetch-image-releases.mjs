@@ -133,9 +133,9 @@ function recentReleases(releases, source) {
     const buckets = (families.length ? families : ["unknown"]).map(
       (family) => `${family}:${stream}`,
     );
-    const keep = buckets.some(
-      (bucket) => (counts.get(bucket) ?? 0) < PER_STREAM,
-    );
+    const limit =
+      source.repository === PRODUCT_SOURCES.server.repository ? 7 : PER_STREAM;
+    const keep = buckets.some((bucket) => (counts.get(bucket) ?? 0) < limit);
     for (const bucket of buckets)
       counts.set(bucket, (counts.get(bucket) ?? 0) + 1);
     return keep;
@@ -533,6 +533,14 @@ if (
   assert.equal(row.assets[0].size, 0);
   assert.equal(row.assets[0].name, "SHA256SUMS.gpg");
   assert.equal(row.versions, null);
+  const serverReleases = Array.from({ length: 10 }, (_, i) => ({
+    tag_name: `v26.10.${1200 + i}`,
+    draft: false,
+  }));
+  assert.equal(
+    recentReleases(serverReleases, PRODUCT_SOURCES.server).length,
+    7,
+  );
   console.log("fetch-image-releases: metadata self-check passed");
 } else if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   try {
