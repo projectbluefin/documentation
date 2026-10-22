@@ -86,9 +86,9 @@ function normaliseDottedTag(tag) {
 }
 
 /**
- * Build the stream-prefixed cache key used in FeedItems.tsx.
- * extractReleaseTag() in FeedItems produces: stable-YYYYMMDD, gts-YYYYMMDD,
- * etc.
+ * Build the stream-prefixed cache key read by FirehoseFeed.tsx.
+ * sbomKeyForRelease() in src/utils/firehoseHelpers.ts looks up
+ * stable-YYYYMMDD, stable-daily-YYYYMMDD, etc.
  */
 function buildCacheKey(streamPrefix, dateStr) {
   return `${streamPrefix}-${dateStr}`;

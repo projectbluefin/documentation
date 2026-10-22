@@ -1,7 +1,7 @@
 /**
  * TypeScript interfaces for the SBOM attestation cache.
  * Written to static/data/sbom-attestations.json by scripts/fetch-github-sbom.js
- * and consumed by ImageCards.tsx and FeedItems.tsx.
+ * and consumed by ImageProductSection.tsx and FirehoseFeed.tsx.
  */
 
 export interface AttestationResult {
@@ -97,8 +97,8 @@ export interface SbomStream {
   keyless: boolean;
   /**
    * Map of cache key → release attestation result.
-   * Cache keys match the format produced by extractReleaseTag() in utils/sbomRelease.ts:
-   *   stable-YYYYMMDD, gts-YYYYMMDD, etc.
+   * Cache keys match the format produced by sbomKeyForRelease() in
+   * utils/firehoseHelpers.ts: stable-YYYYMMDD, stable-daily-YYYYMMDD, etc.
    */
   releases: Record<string, SbomRelease>;
 }

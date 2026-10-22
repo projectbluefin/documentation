@@ -87,7 +87,7 @@ test("normaliseDottedTag leaves unrelated streams alone", () => {
   assert.equal(normaliseDottedTag("gts-20260331"), "gts-20260331");
 });
 
-test("buildCacheKey matches the key FeedItems.tsx derives", () => {
+test("buildCacheKey matches the key sbomKeyForRelease derives", () => {
   assert.equal(buildCacheKey("stable", "20260331"), "stable-20260331");
 });
 
