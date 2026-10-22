@@ -5,9 +5,9 @@ mdx:
 
 **An image-based Linux server OS built like a container, composed from freedesktop-sdk.**
 
-Bluefin Server targets the same use-case space as Flatcar Container Linux, Fedora CoreOS, and Talos, and is built with [BuildStream 2](https://buildstream.build/). Its entire userspace, kernel, and boot chain compose from [freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/) (FSDK 26.08, systemd v261) components. No other distro's binaries ship in the image.
+Bluefin Server targets the same workload space as Flatcar Container Linux, Fedora CoreOS, and Talos. Built with [BuildStream 2](https://buildstream.build/), its userspace, kernel, and boot chain compose from [freedesktop-sdk](https://freedesktop-sdk.freedesktop.org/) (FSDK 26.08, systemd v261) components. No other distribution binaries ship in the base image; third-party userspace extensions (such as Flatcar System Extension Bakery images) require `systemd-sysext merge --force` per [systemd-sysext-extensions.md](/server/systemd-sysext-extensions/).
 
-It is [DDI first](https://0pointer.net/blog/fitting-everything-together.html) and diskless-first: one build produces a verity-sealed `/usr` image, signed UKIs, an OS DDI that a node pulls into RAM over HTTP, and an offline USB installer. Rebooting is how a diskless node updates. Installing to disk is optional.
+It is [DDI first](https://0pointer.net/blog/fitting-everything-together.html) and diskless-first: one build generates a verity-sealed `/usr`, signed UKIs, an OS DDI pulled into RAM over HTTP, and an offline USB installer. Rebooting updates diskless nodes; disk installation is optional.
 
 > The only thing worse than a nightmare is a factory of nightmares that makes other nightmares
 
@@ -15,71 +15,79 @@ It is [DDI first](https://0pointer.net/blog/fitting-everything-together.html) an
 
 Bluefin Server is currently in **Alpha**:
 
-* **Trust model**: every boot is Secure Boot verified end to end (signed systemd-boot, signed UKIs, dm-verity `/usr` pinned by `usrhash=` on the locked kernel command line). The release set carries a GPG-signed `SHA256SUMS` manifest that both `systemd-sysupdate` and the diskless pull verify.
+* **Trust model**: Every boot enforces Secure Boot (signed systemd-boot, signed UKIs, dm-verity `/usr` pinned by `usrhash=` on the command line). Releases include a GPG-signed `SHA256SUMS` manifest verified by `systemd-sysupdate` and initrd pull.
 * **Suitability**: Alpha builds are intended for evaluation, testing, and factory validation. Not yet recommended for production workloads.
-* **Readiness roadmap**: Track completed criteria and remaining gates toward 1.0 in [`docs/MVP_1_0_READINESS.md`](https://github.com/projectbluefin/server/blob/main/docs/MVP_1_0_READINESS.md).
+* **Roadmap**: Completed criteria and remaining gates toward 1.0 are tracked in [`docs/MVP_1_0_READINESS.md`](https://github.com/projectbluefin/server/blob/main/docs/MVP_1_0_READINESS.md).
 
-## What it is
+## Architecture
 
-* **Diskless-first boot** — the netboot UKI pulls `bluefin-server_<ver>.raw` into RAM with `rd.systemd.pull`, verified against the signed `SHA256SUMS` (`verify=signature`), mounts a dm-verity erofs `/usr`, and runs from tmpfs. A diskless node updates by rebooting into a newer image, and flags `/run/reboot-required` when its boot server offers one that its next boot would pull (not when the node is pinned to a versioned image).
-* **Optional disk install with A/B rollback** — a running diskless node *is* the installer: see [ddi-installer.md](https://github.com/projectbluefin/server/blob/main/docs/skills/ddi-installer.md) (`systemd-sysinstall` copies `/usr` into slot A). The first disk boot creates slot B and a persistent xfs root. `systemd-sysupdate` fills the inactive slot on a timer and reboots into it nightly (Kubernetes nodes leave the reboot to kured), and UKI boot counting rolls back an update that does not boot cleanly: a boot-counted boot that has not reached `boot-complete.target` (any failed unit counts) within 15 minutes reboots, or on Kubernetes nodes is flagged for kured, until systemd-boot falls back to the previous image, which then stays put until a newer release. `/run/reboot-lock` or `/etc/reboot-lock` holds these reboots.
-* **Secure Boot on** — signed systemd-boot, signed UKIs, signed kernel modules, `lockdown=integrity`. UEFI HTTP boot is supported; [Booty](https://github.com/jeefy/booty) serves the UKI, the OS DDI, the signed manifest, and a per-node `bluefin-node.ign`.
-* **Opt-in per-node state via Ignition** — pass an `ignition.config` / `ignition.config.url` system credential (or, on UEFI HTTP boot, a `bluefin-node.ign` next to the UKI) and Ignition runs in the initrd on every boot; configs must be idempotent.
-* **Opt-in sysexts** — k0s (Kubernetes), kubeadm, the homelab component set and its add-ons (Argo Workflows, a Kubernetes MCP server, KubeStellar), OpenZFS, the NVIDIA driver (open kernel modules) and the NVIDIA Container Toolkit ship as separate `systemd-sysext` images, never in the base `/usr`. The image-locked ones (ZFS, kubeadm, homelab and add-ons, NVIDIA driver) follow OS updates through optional sysupdate features.
+* **Diskless boot** — Netboot UKI pulls `bluefin-server_<ver>.raw` into RAM with `rd.systemd.pull` (`verify=signature`), mounts a dm-verity erofs `/usr`, and runs from tmpfs. Nodes update by rebooting into a newer image, flagging `/run/reboot-required` when an updated image is offered.
+* **Optional disk install with A/B rollback** — A running diskless node installs itself via [ddi-installer.md](/server/ddi-installer/) (`systemd-sysinstall` copies `/usr` into slot A). First disk boot creates slot B and an xfs root. `systemd-sysupdate` fills the inactive slot and reboots nightly (Kubernetes nodes defer reboots to kured); UKI boot counting automatically rolls back failed boots. Updates can be held via `/run/reboot-lock` or `/etc/reboot-lock`.
+* **Secure Boot by default** — Signed boot chain with `lockdown=integrity`. [Booty](https://github.com/jeefy/booty) serves UEFI HTTP boot assets and per-node Ignition configs.
+* **Declarative provisioning** — Pass an `ignition.config` credential (or `bluefin-node.ign` next to the UKI); Ignition runs in the initrd on every boot. Configs must be idempotent.
+* **Opt-in sysexts** — k0s, kubeadm, homelab automation, OpenZFS, and NVIDIA drivers/CDI ship as separate `systemd-sysext` images outside the base `/usr`.
 
-> **Remote diagnostics:** OpenSSH is installed for on-demand diagnostics, but is disabled by default via systemd presets. It can be started manually with `systemctl start sshd` when remote access is needed. See [`docs/skills/factory-integration.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/factory-integration.md).
+> **Remote diagnostics:** OpenSSH is installed for diagnostics but disabled by default via presets. Start manually with `systemctl start sshd` when access is required. See [`docs/skills/factory-integration.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/factory-integration.md).
 
-## Download a release
+## Downloads
 
-Each push to `main` publishes an immutable [GitHub Release](https://github.com/projectbluefin/server/releases) tagged `v<YY.MM.run>` and the same file set as an OCI artifact at `ghcr.io/projectbluefin/bluefin-server` (tags `<ver>` and `latest`). Which file you want:
+Each push to `main` publishes an immutable [GitHub Release](https://github.com/projectbluefin/server/releases) (`v<YY.MM.run>`) and an OCI artifact at `ghcr.io/projectbluefin/bluefin-server:<ver>`.
 
-| File                                   | Use it for                                                                                               |
-| -------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| `bluefin-server-netboot_<ver>.esp.raw` | Written to a USB stick, boots a node diskless (pulls the OS into RAM over HTTP).                         |
-| `bluefin-server-installer_<ver>.raw`   | Written to a USB stick, boots into `systemd-sysinstall` for an offline install to disk.                  |
-| everything else                        | [Booty](https://github.com/jeefy/booty) syncs the whole release and serves it for network boot at scale. |
+| File                                   | Use case                                                                            |
+| -------------------------------------- | ----------------------------------------------------------------------------------- |
+| `bluefin-server-netboot_<ver>.esp.raw` | Flash to USB for diskless HTTP boot (pulls OS into RAM).                            |
+| `bluefin-server-installer_<ver>.raw`   | Flash to USB for offline `systemd-sysinstall` to disk.                              |
+| `bluefin-server_<ver>.raw`             | OS DDI served by [Booty](https://github.com/jeefy/booty) for network boot at scale. |
 
-Verify the download against the GPG-signed `SHA256SUMS` before use; the release public keyring is [`files/os/sysupdate-keys/import-pubring.gpg`](https://github.com/projectbluefin/server/blob/main/files/os/sysupdate-keys/import-pubring.gpg), and the verification and attestation steps are in [`docs/skills/systemd-sysupdate-verification.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/systemd-sysupdate-verification.md).
+Verify downloads against the GPG-signed `SHA256SUMS` using [`files/os/sysupdate-keys/import-pubring.gpg`](https://github.com/projectbluefin/server/blob/main/files/os/sysupdate-keys/import-pubring.gpg); see [`docs/skills/systemd-sysupdate-verification.md`](/server/systemd-sysupdate-verification/).
 
-### Install from the USB stick
+### USB installation
 
-Secure Boot is required. Write `bluefin-server-installer_<ver>.raw` to a USB stick, put the machine's firmware into Secure Boot **Setup Mode**, boot the stick, and choose **Enroll the Bluefin Server keys and restart** when the installer offers it; after the restart it installs with Secure Boot on. If Secure Boot is off or the firmware trusts other keys, the installer stops before touching any disk and shows what to change in the firmware; installing anyway needs an explicit **Continue without Secure Boot**. The firmware steps, what the warning means and unattended installs are in [`docs/skills/usb-installer.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/usb-installer.md) ("Secure Boot").
-The installer then lists the disks with their size and model: type the number of the disk to install to and confirm with `yes`. It says when the install is done and restarts; remove the stick when the screen goes blank. The first start asks on the screen for a root password, then you log in as root at the console; the login banner shows the node's hostname and IP address ([`docs/skills/usb-installer.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/usb-installer.md), "Using the installer").
+Write `bluefin-server-installer_<ver>.raw` to a USB drive, configure UEFI Secure Boot Setup Mode, and boot the stick. Enroll Bluefin keys when prompted, select the target disk, and confirm. After reboot, set the console root password. Unattended installs, firmware warnings, and recovery details are in [`docs/skills/usb-installer.md`](/server/usb-installer/).
 
 ## Quick start
 
-You need only `podman` and [`just`](https://github.com/casey/just). BuildStream runs inside the FSDK `bst2` container, so BuildStream is not installed locally.
+Local builds require `podman` and [`just`](https://github.com/casey/just). BuildStream runs containerized inside the FSDK `bst2` image:
 
 ```sh
-just validate        # resolve the element graph
-just export-image    # build the release set into dist/diskless/
+just validate        # resolve element dependency graph
+just export-image    # build release set into dist/diskless/
 just dogfood-check   # headless QEMU diskless boot with Secure Boot
-just dogfood-install # diskless boot, install to disk, boot it (QEMU)
+just dogfood-install # diskless boot, install to disk, verify rollback (QEMU)
 ```
 
-For network boot at scale, [Booty](https://github.com/jeefy/booty) syncs a
-release (from GitHub or the OCI artifact) and HTTP-boots nodes with per-host
-Ignition and optional `doInstall` to disk.
+## Documentation index
 
-See [`AGENTS.md`](https://github.com/projectbluefin/server/blob/main/AGENTS.md) for the full build command matrix, hard rules, and agent skill routing.
+Start here to explore architecture and operations guides in [`docs/skills/`](https://github.com/projectbluefin/server/blob/main/docs/skills/index.md):
 
-## Contributing
+| Guide                                                                          | Scope                                                               |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| [`ddi-installer.md`](/server/ddi-installer/)                                   | Boot, installation, and A/B sysupdate lifecycle                     |
+| [`usb-installer.md`](/server/usb-installer/)                                   | Offline USB installer, interactive prompts, and unattended installs |
+| [`booty-integration.md`](/server/booty-integration/)                           | UEFI HTTP boot, iPXE chainloading, and network boot provisioning    |
+| [`diskless-troubleshooting.md`](/server/diskless-troubleshooting/)             | RAM sizing, initrd failure modes, and Ignition debugging            |
+| [`systemd-sysext-extensions.md`](/server/systemd-sysext-extensions/)           | System extensions, bakery compatibility, and version locking        |
+| [`kubeadm-sysext.md`](/server/kubeadm-sysext/)                                 | Kubeadm worker and single-node control-plane extensions             |
+| [`k0s-sysext-ops.md`](/server/k0s-sysext-ops/)                                 | K0s cluster operations, tokens, and troubleshooting                 |
+| [`homelab-profile.md`](/server/homelab-profile/)                               | Homelab Ignition templates, mDNS cluster join, and add-ons          |
+| [`nvidia-sysext.md`](/server/nvidia-sysext/)                                   | NVIDIA open kernel modules and Container Toolkit CDI extensions     |
+| [`systemd-sysupdate-verification.md`](/server/systemd-sysupdate-verification/) | Release signatures, sysupdate policies, and SBOM attestations       |
+| [`secure-boot-keys.md`](/server/secure-boot-keys/)                             | Key enrollment, signing workflows, and shim integration             |
+| [`gap-analysis-distros.md`](/server/gap-analysis-distros/)                     | Comparison to Flatcar, Fedora CoreOS, Ubuntu, and Talos             |
 
-See [`CONTRIBUTING.md`](https://github.com/projectbluefin/server/blob/main/CONTRIBUTING.md) for the contributor checklist, Conventional Commit rules, and [`docs/skills/index.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/index.md) for task-specific guidance.
+Complete manifest and developer commands are listed in [`AGENTS.md`](https://github.com/projectbluefin/server/blob/main/AGENTS.md) and [`CONTRIBUTING.md`](https://github.com/projectbluefin/server/blob/main/CONTRIBUTING.md).
 
 ## Security and release trust
 
-* **Signed boot chain**: Secure Boot keys enroll from the ESP on first boot (`secure-boot-enroll if-safe` in VMs; on bare metal in firmware Setup Mode, from the USB installer's prompt or the systemd-boot menu); the USB installer refuses to install without Secure Boot on with these keys unless told explicitly. Local builds use throwaway Secure Boot keys from `just gen-dev-keys`, with the published INSECURE dev module signing key from `files/dev-keys/` (never in a release; see [`docs/skills/secure-boot-keys.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/secure-boot-keys.md)).
-* **Signed manifests**: the build signs one combined `SHA256SUMS` over the whole image set (OS images, UKIs, sysexts) inside `oci/bluefin-server-image.bst`; a release publishes `dist/diskless/` as-is to GitHub Releases and as an OCI artifact.
-* **Sysupdate verification**: installed nodes verify updates against the signed manifest (`Verify=yes`), and the diskless pull checks the same signature in the initrd; see [`docs/skills/systemd-sysupdate-verification.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/systemd-sysupdate-verification.md) for details.
-* **Provenance and SBOM**: releases carry SLSA provenance and SPDX SBOM attestations; see [`docs/skills/systemd-sysupdate-verification.md`](https://github.com/projectbluefin/server/blob/main/docs/skills/systemd-sysupdate-verification.md) for verification.
-* **Vulnerability disclosure**: See [`SECURITY.md`](https://github.com/projectbluefin/server/blob/main/SECURITY.md) for policy details and how to report security issues.
+* **Signed boot chain**: ESP key enrollment runs on first boot. The installer halts if Secure Boot is disabled unless explicitly overridden; see [`docs/skills/secure-boot-keys.md`](/server/secure-boot-keys/).
+* **Signed manifests & updates**: Builds emit signed `SHA256SUMS` manifests. Updates and initrd pulls verify signatures automatically (`Verify=yes`).
+* **Attestations**: Releases publish SLSA provenance and SPDX SBOM attestations. Report vulnerabilities per [`SECURITY.md`](https://github.com/projectbluefin/server/blob/main/SECURITY.md).
 
 ## Further reading
 
 * [Track progress and file issues](https://github.com/projectbluefin/server/issues)
 * [Systemd Discoverable Disk Images Specification](https://uapi-group.org/specifications/specs/discoverable_disk_image/)
-* Bare-metal Flatcar deployments: [Knuckle](https://github.com/projectbluefin/knuckle) and the [Bluespeed](https://github.com/projectbluefin/bluespeed) homelab factory.
+* Bare-metal deployments: [Knuckle](https://github.com/projectbluefin/knuckle) and the [Bluespeed](https://github.com/projectbluefin/bluespeed) homelab factory.
 
 ## License
 

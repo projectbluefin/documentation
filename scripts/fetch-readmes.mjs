@@ -39,8 +39,29 @@ export async function prepareReadme(
   walk(tree, (node) => {
     if (node.type === "definition") definitions.set(node.identifier, node.url);
   });
+  const serverIndexedDocs = new Set([
+    "ddi-installer.md",
+    "usb-installer.md",
+    "booty-integration.md",
+    "diskless-troubleshooting.md",
+    "systemd-sysext-extensions.md",
+    "kubeadm-sysext.md",
+    "k0s-sysext-ops.md",
+    "homelab-profile.md",
+    "nvidia-sysext.md",
+    "systemd-sysupdate-verification.md",
+    "secure-boot-keys.md",
+    "gap-analysis-distros.md",
+  ]);
   const resolve = (value, image) => {
     if (/^(?:[a-z][a-z\d+.-]*:|\/\/|#)/i.test(value)) return value;
+    if (product === "server" && !image) {
+      const match = value.match(/^(?:docs\/skills\/)?([^/#?]+?\.md)(?:#(.+))?$/);
+      if (match && serverIndexedDocs.has(match[1])) {
+        const slug = match[1].slice(0, -3);
+        return match[2] ? `/server/${slug}/#${match[2]}` : `/server/${slug}/`;
+      }
+    }
     const base = image
       ? `https://raw.githubusercontent.com/${repo}/${ref}/`
       : `https://github.com/${repo}/blob/${ref}/`;
