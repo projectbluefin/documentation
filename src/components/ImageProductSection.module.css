@@ -146,3 +146,104 @@
   color: var(--ifm-color-emphasis-600);
   font-style: italic;
 }
+
+.timelinePage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  padding-left: 2.35rem;
+  margin-top: 1.25rem;
+}
+
+.archiveRail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1.9rem;
+  pointer-events: none;
+}
+
+.archiveRail::before {
+  content: "";
+  position: absolute;
+  left: 0.8rem;
+  top: 1.05rem;
+  bottom: 1.05rem;
+  width: 6px;
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    #10b981 0%,
+    #059669 25%,
+    var(--ifm-color-primary) 50%,
+    color-mix(in srgb, #22d3ee 70%, var(--ifm-color-primary)) 75%,
+    color-mix(in srgb, #22d3ee 30%, transparent) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px 2px color-mix(in srgb, #10b981 40%, transparent);
+}
+
+.archiveNow,
+.archivePast {
+  position: absolute;
+  left: 0;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.archiveNow {
+  top: 0;
+}
+
+.archivePast {
+  bottom: 0;
+}
+
+.releaseDivider {
+  height: 2px;
+  margin: 0.4rem 0;
+  border-radius: 999px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, #10b981 40%, transparent) 10%,
+    color-mix(in srgb, #4a9eff 80%, transparent) 40%,
+    color-mix(in srgb, #4a9eff 95%, transparent) 50%,
+    color-mix(in srgb, #4a9eff 80%, transparent) 60%,
+    color-mix(in srgb, #10b981 40%, transparent) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px 1px color-mix(in srgb, #10b981 25%, transparent);
+}
+
+[data-theme="dark"] .releaseDivider {
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, #34d399 35%, transparent) 10%,
+    color-mix(in srgb, #7ec8ff 70%, transparent) 40%,
+    color-mix(in srgb, #7ec8ff 90%, transparent) 50%,
+    color-mix(in srgb, #7ec8ff 70%, transparent) 60%,
+    color-mix(in srgb, #34d399 35%, transparent) 90%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px 1px color-mix(in srgb, #34d399 30%, transparent);
+}
+
+@media (max-width: 600px) {
+  .timelinePage {
+    padding-left: 1.75rem;
+  }
+  .archiveRail {
+    width: 1.4rem;
+  }
+  .archiveRail::before {
+    left: 0.55rem;
+    width: 5px;
+  }
+}
