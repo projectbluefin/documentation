@@ -27,7 +27,19 @@ const sidebars: SidebarsConfig = {
     },
     {
       type: "category",
-      label: "Bluefin Server",
+      label: "Desktop Guide",
+      collapsed: false,
+      items: ["administration", "command-line", "troubleshooting"],
+    },
+    {
+      type: "category",
+      label: "Developer Guide",
+      collapsed: false,
+      items: ["bluefin-dx", "ai"],
+    },
+    {
+      type: "category",
+      label: "Server Guide",
       collapsed: true,
       link: {
         type: "doc",
@@ -47,18 +59,6 @@ const sidebars: SidebarsConfig = {
         "server/secure-boot-keys",
         "server/gap-analysis-distros",
       ],
-    },
-    {
-      type: "category",
-      label: "User Guide",
-      collapsed: false,
-      items: ["administration", "command-line", "troubleshooting"],
-    },
-    {
-      type: "category",
-      label: "Developer Guide",
-      collapsed: false,
-      items: ["bluefin-dx", "ai"],
     },
     {
       type: "category",
