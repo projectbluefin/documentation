@@ -175,6 +175,7 @@ systemd-sysext merge --force
 
 - [Upstream technical reference](https://github.com/projectbluefin/server/blob/main/docs/skills/systemd-sysext-extensions.md)
   for build recipes, module-loader internals, and delivery implementation.
+- [Enabling extensions](/server/enabling-extensions) (ZFS, NVIDIA, k0s, kubeadm, Podman, Docker).
 - [k0s](/server/k0s-sysext-ops), [kubeadm](/server/kubeadm-sysext), and
 - [NVIDIA](/server/nvidia-sysext) operator guides.
 - `systemd-sysext(8)`, `systemd-confext(8)`.
