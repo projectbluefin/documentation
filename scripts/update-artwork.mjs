@@ -33,7 +33,7 @@ import {
   existsSync,
   unlinkSync,
 } from "fs";
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 import { join, dirname, extname, basename } from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 import os from "os";
@@ -149,12 +149,32 @@ export async function downloadRaw(
 }
 
 /**
+ * Output names come from directory and file names in the upstream repository
+ * tree, so only accept the slug alphabet before they become filesystem paths
+ * or process arguments.
+ */
+const SAFE_OUTPUT_NAME = /^[A-Za-z0-9][A-Za-z0-9._-]*$/;
+
+export function assertSafeOutputName(outputName) {
+  if (typeof outputName !== "string" || !SAFE_OUTPUT_NAME.test(outputName)) {
+    throw new Error(
+      `Refusing unsafe artwork output name ${JSON.stringify(outputName)}`,
+    );
+  }
+  return outputName;
+}
+
+/**
  * Given a local file (png/jpg/svg/jxl), produce:
  *   - thumbnailPath  480px-wide WebP  → static/img/artwork/thumbnails/<name>.webp
  *   - fullresPath   1920px-wide WebP  → static/img/artwork/fullres/<name>.webp
  *
  * For JXL files, djxl is used to decode to PNG first, then ffmpeg handles
  * the rest.  ffmpeg supports PNG, JPEG, and SVG (via librsvg) natively.
+ *
+ * External tools are invoked with argument vectors (no shell), so names and
+ * paths are never re-parsed as shell syntax. `run(file, args, options)`
+ * mirrors execFileSync.
  *
  * Returns { thumbnailPath, fullresPath }.
  */
@@ -163,18 +183,19 @@ export function convertToWebP(
   outputName,
   ext,
   {
-    run = execSync,
+    run = execFileSync,
     thumbnailsDir = THUMBNAILS_DIR,
     fullresDir = FULLRES_DIR,
   } = {},
 ) {
+  assertSafeOutputName(outputName);
   let pngFile = srcFile;
   let createdPng = false;
 
   // Decode JXL → PNG so ffmpeg can ingest it
   if (ext === ".jxl") {
     pngFile = srcFile.replace(/\.jxl$/, ".png");
-    run(`djxl "${srcFile}" "${pngFile}"`, { stdio: "pipe" });
+    run("djxl", [srcFile, pngFile], { stdio: "pipe" });
     createdPng = true;
   }
 
@@ -186,13 +207,33 @@ export function convertToWebP(
 
   // Thumbnail: scale to 480px wide, preserve aspect ratio, quality 85
   run(
-    `ffmpeg -y -i "${pngFile}" -vf "scale=480:-1" -quality 85 "${thumbnailPath}"`,
+    "ffmpeg",
+    [
+      "-y",
+      "-i",
+      pngFile,
+      "-vf",
+      "scale=480:-1",
+      "-quality",
+      "85",
+      thumbnailPath,
+    ],
     { stdio: "pipe" },
   );
 
   // Full-resolution: scale to max 1920px wide (don't upscale smaller images)
   run(
-    `ffmpeg -y -i "${pngFile}" -vf "scale='min(1920,iw)':-1" -quality 90 "${fullresPath}"`,
+    "ffmpeg",
+    [
+      "-y",
+      "-i",
+      pngFile,
+      "-vf",
+      "scale='min(1920,iw)':-1",
+      "-quality",
+      "90",
+      fullresPath,
+    ],
     { stdio: "pipe" },
   );
 
@@ -659,7 +700,7 @@ export async function syncBazzite(
 
 export async function main({
   dryRun = DRY_RUN,
-  run = execSync,
+  run = execFileSync,
   fetchRepoTreeImpl = fetchRepoTree,
   readManifestImpl = readManifest,
   writeManifestImpl = writeManifest,
@@ -673,7 +714,9 @@ export async function main({
   if (!dryRun) {
     for (const tool of ["djxl", "ffmpeg"]) {
       try {
-        run(`command -v ${tool}`, { stdio: "pipe" });
+        run(tool, [tool === "djxl" ? "--version" : "-version"], {
+          stdio: "pipe",
+        });
       } catch {
         throw new Error(
           `Required tool '${tool}' not found in PATH. ` +

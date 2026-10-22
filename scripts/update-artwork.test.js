@@ -159,20 +159,68 @@ test("convertToWebP exposes image commands through an injected runner", async (t
   const commands = [];
 
   const result = convertToWebP("/tmp/source.jxl", "sample", ".jxl", {
-    run: (command) => commands.push(command),
+    run: (file, args) => commands.push([file, ...args]),
     thumbnailsDir: join(directory, "thumbnails"),
     fullresDir: join(directory, "fullres"),
   });
 
   assert.equal(commands.length, 3);
-  assert.match(commands[0], /^djxl /);
-  assert.match(commands[1], /scale=480:-1/);
-  assert.match(commands[2], /min\(1920,iw\)/);
+  assert.deepEqual(commands[0], ["djxl", "/tmp/source.jxl", "/tmp/source.png"]);
+  assert.equal(commands[1][0], "ffmpeg");
+  assert.ok(commands[1].includes("scale=480:-1"));
+  assert.ok(commands[2].includes("scale='min(1920,iw)':-1"));
   assert.equal(
     result.thumbnailPath,
     join(directory, "thumbnails", "sample.webp"),
   );
   assert.equal(result.fullresPath, join(directory, "fullres", "sample.webp"));
+});
+
+test("convertToWebP passes names with shell metacharacters as literal argv", async (t) => {
+  const { convertToWebP } = await import("./update-artwork.mjs");
+  const directory = mkdtempSync(join(tmpdir(), "update-artwork-test-"));
+  t.after(() => rmSync(directory, { recursive: true, force: true }));
+  const commands = [];
+  const hostile = '/tmp/x"; touch pwned; ".png';
+
+  convertToWebP(hostile, "sample", ".png", {
+    run: (file, args) => commands.push([file, ...args]),
+    thumbnailsDir: join(directory, "thumbnails"),
+    fullresDir: join(directory, "fullres"),
+  });
+
+  assert.equal(commands.length, 2);
+  for (const command of commands) {
+    assert.equal(command[0], "ffmpeg");
+    assert.ok(command.includes(hostile));
+    assert.ok(command.every((arg) => typeof arg === "string"));
+  }
+});
+
+test("convertToWebP refuses output names outside the slug alphabet", async () => {
+  const { assertSafeOutputName, convertToWebP } =
+    await import("./update-artwork.mjs");
+
+  for (const name of [
+    'x"; id; "',
+    "a$(id)",
+    "a`id`",
+    "a b",
+    "../up",
+    "",
+    ".hidden",
+  ]) {
+    assert.throws(
+      () => convertToWebP("/tmp/source.png", name, ".png", { run: () => {} }),
+      /Refusing unsafe artwork output name/,
+      name,
+    );
+  }
+  assert.equal(assertSafeOutputName("bluefin-12"), "bluefin-12");
+  assert.equal(
+    assertSafeOutputName("bazzite-space_theme.v2"),
+    "bazzite-space_theme.v2",
+  );
 });
 
 test("sync routines plan each collection without network or conversion", async () => {
