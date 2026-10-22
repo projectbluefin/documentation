@@ -25,7 +25,7 @@ Bluefin Classic will still be under Universal Blue. The only thing that will be 
 
 So what does "pull directly from Fedora" actually mean? Today Classic is built on top of a Universal Blue base image, which sits on top of Fedora Silverblue. With the new setup Classic builds straight on Fedora's own Silverblue image instead. One less layer in the middle, and updates come right from Fedora. Same Bluefin on top, same apps, same `ujust`, same everything you're used to.
 
-We're also testing more than ever. Classic now passes the Project Bluefin testsuite's common checks, so every image gets booted and poked at, not just built. And the weekly updates keep rolling like always: `stable` still lands every Tuesday (this week's brought kernel 7.2). Oh, and Classic got its own look too: a shiny new Bluefin Classic wordmark from the awesome Delphic Melody.
+We're also testing more than ever. Classic now passes the Project Bluefin testsuite's common checks, so every image gets booted and poked at, not just built. And the weekly updates keep rolling like always: `stable` still lands every Tuesday (recent ones brought kernel 7.2). Oh, and Classic got its own look too: a shiny new Bluefin Classic wordmark from the awesome Delphic Melody.
 
 LTS, the honest part. It had a rough summer, which is why `:lts` hasn't updated since July. Builds are green again on x86 and ARM, the boot hang is fixed, and Project Bluefin LTS ships daily. Getting `:lts` updated is next. But it will be getting a bit of a bigger change. It's moving its home to Project Bluefin, but you don't need to do anything today. Also: we're working on DX for LTS so nobody gets left behind, and we'll post before anyone moves.
 
