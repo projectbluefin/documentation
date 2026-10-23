@@ -201,8 +201,16 @@ a skill.
 Internal design reasoning belongs in `adr/` at the repository root, which does
 not publish.
 
+When maintaining the Sync Folder guide, keep device pairing and folder sharing
+as separate steps: accepting a device does not automatically share a folder.
+Preserve the Bluefin menu entry points supplied by maintainers, and link to
+Syncthing's upstream guide for general configuration rather than expanding the
+desktop guide into a full application manual.
+
 ## Sources
 
+- [Syncthing getting started guide](https://docs.syncthing.net/intro/getting-started.html):
+  device pairing and folder sharing are separate configuration steps.
 - `/addyosmani/agent-skills` via Context7: canonical skill anatomy and section
   requirements.
 - `scripts/fetch-github-sbom.js` and `scripts/fetch-github-sbom.test.js`: GHCR
