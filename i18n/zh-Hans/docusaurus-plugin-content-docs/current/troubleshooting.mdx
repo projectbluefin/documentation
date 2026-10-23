@@ -153,21 +153,6 @@ Bluefin 的三位联合创建者在 Canonical 工作于 Ubuntu。Bluefin 恢复�
 
 <img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
 
-### 开箱即用的设置：`ujust probe`
-
-Bluefin 内置自动化来设置并启动一次 AI 故障排除会话：
-
-```bash
-ujust probe
-```
-
-运行 `ujust probe` 会自动：
-
-1. 验证 Goose 已安装（或通过 Homebrew 提示安装）。
-2. 若尚未安装，则安装 `ublue-os/tap/linux-mcp-server`。
-3. 通过 `goose-mcp-setup` 自动写入启用了 `linux-tools` 的 Goose 配置。
-4. 检查配置的 LLM 提供商并启动会话。
-
 ### 手动安装与配置
 
 如果你倾向于手动安装，或在 macOS 上设置此功能：
@@ -265,8 +250,6 @@ OLLAMA_HOST: http://localhost:17434
 启动一次交互式会话：
 
 ```bash
-ujust probe
-# 或直接：
 goose session
 ```
 

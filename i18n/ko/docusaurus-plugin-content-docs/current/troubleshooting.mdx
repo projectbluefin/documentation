@@ -154,21 +154,6 @@ Bluefin의 공동 창립자 3명은 Canonical에서 Ubuntu 작업을 했습니�
 
 <img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
 
-### 바로 쓰는 설정: `ujust probe` {#out-of-the-box-setup-ujust-probe}
-
-Bluefin에는 AI 문제 해결 세션을 설정하고 실행하는 자동화가 내장되어 있습니다:
-
-```bash
-ujust probe
-```
-
-`ujust probe`를 실행하면 자동으로:
-
-1. Goose가 설치되어 있는지 확인합니다(없으면 Homebrew로 설치할지 묻습니다).
-2. `ublue-os/tap/linux-mcp-server`가 없으면 설치합니다.
-3. `goose-mcp-setup`으로 `linux-tools`가 활성화된 Goose 구성을 자동으로 작성합니다.
-4. 구성된 LLM 제공자를 확인하고 세션을 시작합니다.
-
 ### 수동 설치 및 구성 {#manual-installation--configuration}
 
 수동으로 설치하거나 macOS에서 설정하려면:
@@ -267,8 +252,6 @@ OLLAMA_HOST: http://localhost:17434
 대화형 세션을 시작하세요:
 
 ```bash
-ujust probe
-# or directly:
 goose session
 ```
 

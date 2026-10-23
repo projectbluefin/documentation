@@ -123,9 +123,9 @@ checkout` stamps every tracked file with the current time and the TTL never
 - Bluefin Classic images are published from `ublue-os/bluefin` to `ghcr.io/ublue-os/bluefin` and `ghcr.io/ublue-os/bluefin-nvidia-open`. Verification commands and catalog packages must point to `ublue-os`, not `projectbluefin`.
 - OCI container images with detached cosign signatures use `.sig` tag extensions (`sha256-<digest>.sig`) rather than referrers. When validating image signing in CI or scraper pipelines, inspect the actual manifest mediaType: a Sigstore bundle referrer carrying an in-toto SLSA predicate proves build provenance, not container key-signing.
 - Troubleshooting and system diagnostics use `ublue-os/tap/linux-mcp-server`
-  and Goose, automated on Bluefin via `ujust probe`. Keep diagnostics zero-auth
-  and local-first; external SaaS accounts and internal cluster/lab endpoints
-  must never appear in public troubleshooting documentation.
+  and Goose. Keep diagnostics zero-auth and local-first; external SaaS accounts
+  and internal cluster/lab endpoints must never appear in public
+  troubleshooting documentation.
 - Contributor agents query the org knowledge base and live Hive state via the
   public MCP endpoint at `https://mcp.projectbluefin.io/mcp` (`search_knowledge`,
   `get_factory_status`, `get_work_queue`). Searches must remain keyword-specific
