@@ -1,7 +1,7 @@
 ---
 name: cloudflare-workers
 version: "1.0"
-last_updated: "2026-09-27"
+last_updated: "2026-10-22"
 id: cloudflare-workers
 one_line_purpose: Build and ship a Cloudflare Worker on a projectbluefin.io subdomain.
 entry_point: docs/skills/cloudflare-workers.md
@@ -32,7 +32,10 @@ rather than inventing a layout.
 
 Deploy workflows pin every action by SHA and deploy with
 `npx wrangler@latest deploy --config wrangler.<name>.toml`, using
-`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Check both secrets in the
+first step and fail with the missing names (see `Check Cloudflare credentials`
+in `deploy-countme-worker.yml`): an empty token otherwise surfaces only deep in
+wrangler's output, which hid a broken deploy for weeks (projectbluefin/common#1091).
 
 Route a subdomain the way the existing Workers do — this is a DNS-shaped
 problem, so solve it in the route table, not with a redirect Worker:
