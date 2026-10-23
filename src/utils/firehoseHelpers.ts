@@ -76,6 +76,8 @@ export function sbomKeyForRelease(
     };
   if (stream === "stable")
     return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
+  if (stream === "dakota")
+    return { streamId: "dakota-stable", cacheKey: `stable-${date}` };
   return null;
 }
 

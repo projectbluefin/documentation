@@ -48,17 +48,16 @@ correct forever and be wrong within a month.
 
 ### Every card reads a live source
 
-| Card      | Source                                                    |
-| --------- | --------------------------------------------------------- |
-| `bluefin` | `static/feeds/bluefin-releases.json` + SBOM enrichment    |
-| `dakota`  | `static/data/sbom-attestations-frontend.json` (SBOM only) |
+| Card      | Source                                                                                |
+| --------- | ------------------------------------------------------------------------------------- |
+| `bluefin` | `static/feeds/bluefin-releases.json` + SBOM enrichment                                |
+| `dakota`  | `static/feeds/dakota-releases.json` + SBOM enrichment (fallback: SBOM-only synthesis) |
 
-Dakota has no release-notes feed to parse, so `buildDakotaRelease()` in
-`scripts/lib/card-feed-parser.mjs` reads the `dakota-stable` SBOM stream
-directly and overlays the Nvidia version from `dakota-nvidia-stable` for the
-matching release date. This mirrors `getDakotaOsEvent()` in
-`src/components/FirehoseFeed.tsx` — the PNG and the pinned card on
-`/changelogs` must agree, so change both together.
+`buildDakotaRelease()` in `scripts/lib/card-feed-parser.mjs` reads the newest
+release item from `static/feeds/dakota-releases.json` when present, enriches with
+SBOM versions, and falls back to the `dakota-stable` SBOM stream directly.
+This mirrors `getDakotaOsEvent()` in `src/components/FirehoseFeed.tsx` — the PNG
+and the pinned card on `/changelogs` agree, so keep both pipelines aligned.
 
 Two traps in the SBOM cache:
 

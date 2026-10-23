@@ -231,6 +231,35 @@ test("buildDakotaRelease reports Nvidia only for matching release date", () => {
   );
 });
 
+test("buildDakotaRelease parses release feed item and preserves change info", () => {
+  const feedItem = {
+    title: "stable-20261023: Stable",
+    link: "https://github.com/projectbluefin/dakota/releases/tag/stable-20261023",
+    content: [
+      "## Key components",
+      "| Component | Version | Change |",
+      "| --- | --- | --- |",
+      "| **Kernel** | `7.2.11` | `7.2.9` → `7.2.11` |",
+      "| **GNOME Shell** | `51.1` | `51.0` → `51.1` |",
+      "| **Flatpak** | `1.18.4` | `1.18.2` → `1.18.4` |",
+      "| **bootc** | `1.17.1` | `1.16.14` → `1.17.1` |",
+      "<details>",
+      "<summary>↑ 1 updated packages</summary>",
+      "| Package | From | To |",
+      "| --- | --- | --- |",
+      "| `CCID` | `1.8.3` | `1.8.4` |",
+      "</details>",
+    ].join("\n"),
+  };
+  const release = buildDakotaRelease(null, feedItem);
+  assert.equal(release.stream, "dakota");
+  assert.equal(release.tag, "stable-20261023");
+  const kernel = release.majorPackages.find((p) => p.name === "Kernel");
+  assert.equal(kernel.version, "7.2.11");
+  assert.equal(kernel.prevVersion, "7.2.9");
+  assert.equal(release.diffStats.changed, 1);
+});
+
 test("enrichFromSbom backfills chip versions from the SBOM cache", () => {
   const release = {
     tag: "41.20250808.0",
