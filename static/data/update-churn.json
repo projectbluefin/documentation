@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-21T05:16:02.428Z",
+  "generatedAt": "2026-10-22T05:16:42.038Z",
   "source": "GHCR OCI Manifests & Attestations",
   "method": "oci-layer-diff-v1",
   "unit": "MB",
@@ -399,7 +399,7 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-10-21",
+          "date": "2026-10-22",
           "previousTag": null,
           "downloadChurnMB": 3507.4,
           "sharedMB": 0,
@@ -423,7 +423,7 @@
       "unavailable": false,
       "releases": [
         {
-          "tag": "testing-20261018-f0a544d",
+          "tag": "testing-20261018-c72fc22",
           "date": "2026-10-18",
           "previousTag": null,
           "downloadChurnMB": 2510.6,
@@ -436,21 +436,6 @@
           "zstdLayers": 128,
           "compressionFormat": "zstd-chunked",
           "isBaseline": true
-        },
-        {
-          "tag": "testing-20261018-c72fc22",
-          "date": "2026-10-18",
-          "previousTag": "testing-20261018-f0a544d",
-          "downloadChurnMB": 622.8,
-          "sharedMB": 1887.8,
-          "totalMB": 2510.6,
-          "reuseEfficiencyPct": 75.2,
-          "totalLayers": 128,
-          "sharedLayers": 111,
-          "newLayers": 17,
-          "zstdLayers": 128,
-          "compressionFormat": "zstd-chunked",
-          "isBaseline": false
         },
         {
           "tag": "testing-20261018-28e9a75",
@@ -628,6 +613,21 @@
           "totalLayers": 128,
           "sharedLayers": 105,
           "newLayers": 23,
+          "zstdLayers": 128,
+          "compressionFormat": "zstd-chunked",
+          "isBaseline": false
+        },
+        {
+          "tag": "testing-20261022-0d7a475",
+          "date": "2026-10-22",
+          "previousTag": "testing-20261020-518fe4a",
+          "downloadChurnMB": 1807.3,
+          "sharedMB": 708.4,
+          "totalMB": 2515.6,
+          "reuseEfficiencyPct": 28.2,
+          "totalLayers": 128,
+          "sharedLayers": 49,
+          "newLayers": 79,
           "zstdLayers": 128,
           "compressionFormat": "zstd-chunked",
           "isBaseline": false
