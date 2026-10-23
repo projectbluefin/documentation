@@ -98,11 +98,18 @@ function extractTag(title: string, stream: OsStream): string {
  */
 function extractSections(html: string): Map<string, string> {
   const sections = new Map<string, string>();
-  const sectionRe = /<h3[^>]*>([\s\S]*?)<\/h3>\s*(<table[\s\S]*?<\/table>)/gi;
+  const sectionRe =
+    /<h[23][^>]*>([\s\S]*?)<\/h[23]>\s*(<table[\s\S]*?<\/table>)/gi;
   let m: RegExpExecArray | null;
   while ((m = sectionRe.exec(html)) !== null) {
     const heading = stripHtml(m[1]);
     sections.set(heading, m[2]);
+  }
+  const detailsRe =
+    /<details[^>]*>[\s\S]*?<summary[^>]*>([\s\S]*?)<\/summary>[\s\S]*?(<table[\s\S]*?<\/table>)[\s\S]*?<\/details>/gi;
+  while ((m = detailsRe.exec(html)) !== null) {
+    const summary = stripHtml(m[1]);
+    sections.set(summary, m[2]);
   }
   return sections;
 }
@@ -143,12 +150,15 @@ function extractSectionsMd(content: string): Map<string, string[][]> {
   let currentRows: string[][] = [];
 
   for (const line of lines) {
-    const headingMatch = line.match(/^###\s+(.*)/);
-    if (headingMatch) {
+    const headingMatch = line.match(/^#{2,3}\s+(.*)/);
+    const summaryMatch = line.match(/^<summary>([^<]+)<\/summary>/i);
+    if (headingMatch || summaryMatch) {
       if (currentHeading !== null && currentRows.length > 0) {
         sections.set(currentHeading, currentRows);
       }
-      currentHeading = stripMd(headingMatch[1]);
+      currentHeading = stripMd(
+        headingMatch ? headingMatch[1] : summaryMatch![1],
+      );
       currentRows = [];
       continue;
     }
@@ -164,24 +174,32 @@ function extractSectionsMd(content: string): Map<string, string[][]> {
   return sections;
 }
 
-/** Parse Markdown 2-column [Name, Version] rows. */
+/** Parse Markdown 2-column or 3-column [Name, Version, Change?] rows. */
 function parseTwoColTableMd(rows: string[][]): ParsedMajorPackage[] {
   const results: ParsedMajorPackage[] = [];
   for (const cells of rows) {
     if (cells.length < 2) continue;
     const name = stripMd(cells[0]);
-    if (!name || name === "Name") continue;
+    if (!name || name === "Name" || name === "Component") continue;
     const versionRaw = stripMd(cells[1]);
+    if (versionRaw === "Version") continue;
     const parts = versionRaw.split(/\s*➡️?\s*/u).map((s) => s.trim());
+    let prevVersion: string | null = null;
+    let version = versionRaw;
     if (parts.length >= 2 && parts[0] && parts[parts.length - 1]) {
-      results.push({
-        name,
-        version: parts[parts.length - 1],
-        prevVersion: parts[0],
-      });
-    } else {
-      results.push({ name, version: versionRaw, prevVersion: null });
+      version = parts[parts.length - 1];
+      prevVersion = parts[0];
+    } else if (cells.length >= 3) {
+      // Check for "prev → current" in Change column
+      const changeRaw = stripMd(cells[2]);
+      const changeParts = changeRaw
+        .split(/\s*(?:→|➡️)\s*/u)
+        .map((s) => s.trim());
+      if (changeParts.length >= 2 && changeParts[0]) {
+        prevVersion = changeParts[0];
+      }
     }
+    results.push({ name, version, prevVersion });
   }
   return results;
 }
@@ -234,24 +252,38 @@ function parseFourColDiffTableMd(rows: string[][]): ParsedDiffEntry[] {
  */
 function parseTwoColTable(tableHtml: string): ParsedMajorPackage[] {
   const results: ParsedMajorPackage[] = [];
-  const rowRe =
-    /<tr>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
-  let m: RegExpExecArray | null;
-  while ((m = rowRe.exec(tableHtml)) !== null) {
-    const name = stripHtml(m[1]);
-    if (!name || name === "Name") continue;
-    const versionRaw = stripHtml(m[2]);
-    // Tolerant split on ➡️ with optional surrounding whitespace
-    const parts = versionRaw.split(/\s*➡️?\s*/u).map((s) => s.trim());
-    if (parts.length >= 2 && parts[0] && parts[parts.length - 1]) {
-      results.push({
-        name,
-        version: parts[parts.length - 1],
-        prevVersion: parts[0],
-      });
-    } else {
-      results.push({ name, version: versionRaw, prevVersion: null });
+  const rowRe = /<tr>([\s\S]*?)<\/tr>/gi;
+  const cellRe = /<td[^>]*>([\s\S]*?)<\/td>/gi;
+  let rm: RegExpExecArray | null;
+  while ((rm = rowRe.exec(tableHtml)) !== null) {
+    const rowContent = rm[1];
+    const cells: string[] = [];
+    let cm: RegExpExecArray | null;
+    cellRe.lastIndex = 0;
+    while ((cm = cellRe.exec(rowContent)) !== null) {
+      cells.push(stripHtml(cm[1]));
     }
+    if (cells.length < 2) continue;
+    const name = cells[0];
+    if (!name || name === "Name" || name === "Component") continue;
+    const versionRaw = cells[1];
+    if (versionRaw === "Version") continue;
+    const parts = versionRaw.split(/\s*➡️?\s*/u).map((s) => s.trim());
+    let prevVersion: string | null = null;
+    let version = versionRaw;
+    if (parts.length >= 2 && parts[0] && parts[parts.length - 1]) {
+      version = parts[parts.length - 1];
+      prevVersion = parts[0];
+    } else if (cells.length >= 3) {
+      const changeRaw = cells[2];
+      const changeParts = changeRaw
+        .split(/\s*(?:→|➡️)\s*/u)
+        .map((s) => s.trim());
+      if (changeParts.length >= 2 && changeParts[0]) {
+        prevVersion = changeParts[0];
+      }
+    }
+    results.push({ name, version, prevVersion });
   }
   return results;
 }
@@ -366,7 +398,11 @@ export function parseOsRelease(
 
   if (isMarkdown) {
     const mdSections = extractSectionsMd(item.content);
-    majorPackages = parseTwoColTableMd(mdSections.get("Major packages") ?? []);
+    majorPackages = parseTwoColTableMd(
+      mdSections.get("Major packages") ??
+        mdSections.get("Key components") ??
+        [],
+    );
     dxPackages = parseTwoColTableMd(mdSections.get("Major DX packages") ?? []);
     commits = parseCommitsTableMd(mdSections.get("Commits") ?? []);
     for (const heading of [
@@ -377,9 +413,60 @@ export function parseOsRelease(
       const rows = mdSections.get(heading);
       if (rows) fullDiff.push(...parseFourColDiffTableMd(rows));
     }
+    for (const [heading, rows] of mdSections.entries()) {
+      if (/updated/i.test(heading)) {
+        for (const row of rows) {
+          if (row.length < 3 || row[0] === "Package") continue;
+          fullDiff.push({
+            indicator: "changed",
+            name: stripMd(row[0]),
+            prevVersion: stripMd(row[1]) || null,
+            newVersion: stripMd(row[2]) || null,
+          });
+        }
+      } else if (/added/i.test(heading)) {
+        for (const row of rows) {
+          if (row.length < 2 || row[0] === "Package") continue;
+          fullDiff.push({
+            indicator: "added",
+            name: stripMd(row[0]),
+            prevVersion: null,
+            newVersion: stripMd(row[1]) || null,
+          });
+        }
+      } else if (/removed/i.test(heading)) {
+        for (const row of rows) {
+          if (row.length < 2 || row[0] === "Package") continue;
+          fullDiff.push({
+            indicator: "removed",
+            name: stripMd(row[0]),
+            prevVersion: stripMd(row[1]) || null,
+            newVersion: null,
+          });
+        }
+      }
+    }
+    // Also parse bullet commit lists like: - feat(x): message (#123)
+    if (commits.length === 0) {
+      const commitLineRe = /^[*-]\s+([a-f0-9]{7,})?\s*(.*)$/gm;
+      let cm: RegExpExecArray | null;
+      while ((cm = commitLineRe.exec(item.content)) !== null) {
+        const text = cm[2].trim();
+        if (/^(feat|fix|chore|docs|refactor|ci|test)\b/i.test(text)) {
+          commits.push({
+            hash: cm[1] ?? "",
+            url: null,
+            subject: text,
+            author: null,
+          });
+        }
+      }
+    }
   } else {
     const sections = extractSections(item.content);
-    majorPackages = parseTwoColTable(sections.get("Major packages") ?? "");
+    majorPackages = parseTwoColTable(
+      sections.get("Major packages") ?? sections.get("Key components") ?? "",
+    );
     dxPackages = parseTwoColTable(sections.get("Major DX packages") ?? "");
     const commitsHtml = sections.get("Commits") ?? "";
     commits = commitsHtml ? parseCommitsTable(commitsHtml) : [];
@@ -390,6 +477,51 @@ export function parseOsRelease(
     ]) {
       const tableHtml = sections.get(heading);
       if (tableHtml) fullDiff.push(...parseFourColDiffTable(tableHtml));
+    }
+    for (const [heading, tableHtml] of sections.entries()) {
+      if (/updated/i.test(heading)) {
+        const rowRe =
+          /<tr>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
+        let rm: RegExpExecArray | null;
+        while ((rm = rowRe.exec(tableHtml)) !== null) {
+          const name = stripHtml(rm[1]);
+          if (!name || name === "Package") continue;
+          fullDiff.push({
+            indicator: "changed",
+            name,
+            prevVersion: stripHtml(rm[2]) || null,
+            newVersion: stripHtml(rm[3]) || null,
+          });
+        }
+      } else if (/added/i.test(heading)) {
+        const rowRe =
+          /<tr>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
+        let rm: RegExpExecArray | null;
+        while ((rm = rowRe.exec(tableHtml)) !== null) {
+          const name = stripHtml(rm[1]);
+          if (!name || name === "Package") continue;
+          fullDiff.push({
+            indicator: "added",
+            name,
+            prevVersion: null,
+            newVersion: stripHtml(rm[2]) || null,
+          });
+        }
+      } else if (/removed/i.test(heading)) {
+        const rowRe =
+          /<tr>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<td[^>]*>([\s\S]*?)<\/td>\s*<\/tr>/gi;
+        let rm: RegExpExecArray | null;
+        while ((rm = rowRe.exec(tableHtml)) !== null) {
+          const name = stripHtml(rm[1]);
+          if (!name || name === "Package") continue;
+          fullDiff.push({
+            indicator: "removed",
+            name,
+            prevVersion: stripHtml(rm[2]) || null,
+            newVersion: null,
+          });
+        }
+      }
     }
   }
 
@@ -407,14 +539,19 @@ export function parseOsRelease(
   // gets a synthetic "changed" entry so the collapsible list shows the full upgrade path.
   const fullDiffNames = new Set(fullDiff.map((e) => e.name.toLowerCase()));
   for (const pkg of [...majorPackages, ...dxPackages]) {
-    if (pkg.prevVersion && !fullDiffNames.has(pkg.name.toLowerCase())) {
+    const pkgLower = pkg.name.toLowerCase();
+    const isPresent =
+      fullDiffNames.has(pkgLower) ||
+      (pkgLower === "kernel" && fullDiffNames.has("linux")) ||
+      (pkgLower === "gnome shell" && fullDiffNames.has("gnome-shell"));
+    if (pkg.prevVersion && !isPresent) {
       fullDiff.unshift({
         indicator: "changed",
         name: pkg.name,
         prevVersion: pkg.prevVersion,
         newVersion: pkg.version,
       });
-      fullDiffNames.add(pkg.name.toLowerCase());
+      fullDiffNames.add(pkgLower);
     }
   }
 

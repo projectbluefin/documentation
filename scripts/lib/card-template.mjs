@@ -166,13 +166,32 @@ export function renderCard(
   ];
 
   const headerChips = (headerPackageNames ?? HEADER_NAMES).flatMap((name) => {
-    const pkg = (release.majorPackages ?? []).find(
-      (p) => p.name.toLowerCase() === name.toLowerCase(),
-    );
-    if (pkg)
+    const pkg = (release.majorPackages ?? []).find((p) => {
+      const lower = p.name.toLowerCase();
+      const target = name.toLowerCase();
+      return (
+        lower === target || (target === "gnome" && lower === "gnome shell")
+      );
+    });
+    if (pkg) {
+      const label =
+        pkg.name.toLowerCase() === name.toLowerCase() ? pkg.name : name;
       return [
-        { name: pkg.name, version: pkg.version, prevVersion: pkg.prevVersion },
+        { name: label, version: pkg.version, prevVersion: pkg.prevVersion },
       ];
+    }
+    const diff = (release.fullDiff ?? []).find(
+      (d) => d.name.toLowerCase() === name.toLowerCase(),
+    );
+    if (diff && diff.newVersion) {
+      return [
+        {
+          name,
+          version: diff.newVersion,
+          prevVersion: diff.prevVersion,
+        },
+      ];
+    }
     return [];
   });
 

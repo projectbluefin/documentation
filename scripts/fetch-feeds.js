@@ -80,7 +80,7 @@ const SANITIZE_OPTIONS = {
   // (http/https/mailto etc.) — javascript: URLs are dropped.
 };
 
-function cleanHtml(v, maxLen = 5000) {
+function cleanHtml(v, maxLen = 100000) {
   if (typeof v !== "string") {
     return "";
   }
@@ -272,6 +272,7 @@ async function fetchAndSaveFeed(owner, repo, filename) {
 
 async function main() {
   await fetchAndSaveFeed("ublue-os", "bluefin", "bluefin-releases.json");
+  await fetchAndSaveFeed("projectbluefin", "dakota", "dakota-releases.json");
 }
 
 if (require.main === module) {

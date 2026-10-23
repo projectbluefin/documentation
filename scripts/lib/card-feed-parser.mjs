@@ -24,10 +24,11 @@ export function extractSectionsMd(content) {
   let rows = [];
 
   for (const line of lines) {
-    const hm = line.match(/^###\s+(.*)/);
-    if (hm) {
+    const hm = line.match(/^#{2,3}\s+(.*)/);
+    const sm = line.match(/^<summary>([^<]+)<\/summary>/i);
+    if (hm || sm) {
       if (heading !== null && rows.length > 0) sections.set(heading, rows);
-      heading = stripMd(hm[1]);
+      heading = stripMd(hm ? hm[1] : sm[1]);
       rows = [];
       continue;
     }
@@ -77,11 +78,18 @@ export function parseHtmlTableRows(tableHtml) {
 
 export function extractSectionsHtml(content) {
   const sections = new Map();
-  const sectionRe = /<h3[^>]*>([\s\S]*?)<\/h3>\s*(<table[\s\S]*?<\/table>)/gi;
+  const sectionRe =
+    /<h[23][^>]*>([\s\S]*?)<\/h[23]>\s*(<table[\s\S]*?<\/table>)/gi;
   let m;
   while ((m = sectionRe.exec(content)) !== null) {
     const heading = stripHtml(m[1]);
     sections.set(heading, parseHtmlTableRows(m[2]));
+  }
+  const detailsRe =
+    /<details[^>]*>[\s\S]*?<summary[^>]*>([\s\S]*?)<\/summary>[\s\S]*?(<table[\s\S]*?<\/table>)[\s\S]*?<\/details>/gi;
+  while ((m = detailsRe.exec(content)) !== null) {
+    const summary = stripHtml(m[1]);
+    sections.set(summary, parseHtmlTableRows(m[2]));
   }
   return sections;
 }
@@ -91,18 +99,25 @@ export function parseTwoColTableMd(rows) {
   for (const cells of rows) {
     if (cells.length < 2) continue;
     const name = stripMd(cells[0]);
-    if (!name || name === "Name") continue;
+    if (!name || name === "Name" || name === "Component") continue;
     const raw = stripMd(cells[1]);
+    if (raw === "Version") continue;
     const parts = raw.split(/\s*➡️?\s*/u).map((s) => s.trim());
+    let prevVersion = null;
+    let version = raw;
     if (parts.length >= 2 && parts[0] && parts[parts.length - 1]) {
-      results.push({
-        name,
-        version: parts[parts.length - 1],
-        prevVersion: parts[0],
-      });
-    } else {
-      results.push({ name, version: raw, prevVersion: null });
+      version = parts[parts.length - 1];
+      prevVersion = parts[0];
+    } else if (cells.length >= 3) {
+      const changeRaw = stripMd(cells[2]);
+      const changeParts = changeRaw
+        .split(/\s*(?:→|➡️)\s*/u)
+        .map((s) => s.trim());
+      if (changeParts.length >= 2 && changeParts[0]) {
+        prevVersion = changeParts[0];
+      }
     }
+    results.push({ name, version, prevVersion });
   }
   return results;
 }
@@ -140,14 +155,35 @@ export function parseFeedItem(item, streamHint) {
     : extractSectionsHtml(content);
 
   const majorPackages = parseTwoColTableMd(
-    sections.get("Major packages") ?? [],
+    sections.get("Major packages") ?? sections.get("Key components") ?? [],
   );
   const dxPackages = parseTwoColTableMd(
     sections.get("Major DX packages") ?? [],
   );
   if (majorPackages.length === 0) return null;
 
-  const diffStats = parseDiffRows(sections.get("All Images") ?? []);
+  let diffStats = parseDiffRows(sections.get("All Images") ?? []);
+  if (
+    diffStats.added === 0 &&
+    diffStats.changed === 0 &&
+    diffStats.removed === 0
+  ) {
+    for (const [heading, rows] of sections.entries()) {
+      if (/updated/i.test(heading)) {
+        diffStats.changed += rows.filter(
+          (r) => r.length >= 3 && r[0] !== "Package",
+        ).length;
+      } else if (/added/i.test(heading)) {
+        diffStats.added += rows.filter(
+          (r) => r.length >= 2 && r[0] !== "Package",
+        ).length;
+      } else if (/removed/i.test(heading)) {
+        diffStats.removed += rows.filter(
+          (r) => r.length >= 2 && r[0] !== "Package",
+        ).length;
+      }
+    }
+  }
   const commitCount = parseCommitRows(sections.get("Commits") ?? []);
 
   const fedoraMatch = item.title.match(/\(F(\d+)\./);
@@ -172,6 +208,66 @@ export function parseFeedItem(item, streamHint) {
   };
 }
 
+export function extractFullDiffFromSections(sections) {
+  const fullDiff = [];
+  for (const heading of [
+    "All Images",
+    "Base Images",
+    "Dev Experience Images",
+  ]) {
+    const rows = sections.get(heading);
+    if (rows) {
+      for (const row of rows) {
+        if (row.length < 4 || row[1] === "Name") continue;
+        const emoji = row[0].trim();
+        let indicator = "changed";
+        if (emoji.includes("✨") || emoji === "+") indicator = "added";
+        else if (emoji.includes("❌") || emoji === "-") indicator = "removed";
+        fullDiff.push({
+          indicator,
+          name: stripMd(row[1]),
+          prevVersion: stripMd(row[2]) || null,
+          newVersion: stripMd(row[3]) || null,
+        });
+      }
+    }
+  }
+  for (const [heading, rows] of sections.entries()) {
+    if (/updated/i.test(heading)) {
+      for (const row of rows) {
+        if (row.length < 3 || row[0] === "Package") continue;
+        fullDiff.push({
+          indicator: "changed",
+          name: stripMd(row[0]),
+          prevVersion: stripMd(row[1]) || null,
+          newVersion: stripMd(row[2]) || null,
+        });
+      }
+    } else if (/added/i.test(heading)) {
+      for (const row of rows) {
+        if (row.length < 2 || row[0] === "Package") continue;
+        fullDiff.push({
+          indicator: "added",
+          name: stripMd(row[0]),
+          prevVersion: null,
+          newVersion: stripMd(row[1]) || null,
+        });
+      }
+    } else if (/removed/i.test(heading)) {
+      for (const row of rows) {
+        if (row.length < 2 || row[0] === "Package") continue;
+        fullDiff.push({
+          indicator: "removed",
+          name: stripMd(row[0]),
+          prevVersion: stripMd(row[1]) || null,
+          newVersion: null,
+        });
+      }
+    }
+  }
+  return fullDiff;
+}
+
 export const CHIP_TO_SBOM = [
   { chipName: "kernel", displayName: "Kernel", field: "kernel" },
   { chipName: "gnome", displayName: "Gnome", field: "gnome" },
@@ -194,20 +290,54 @@ export function sbomKeyForRelease(tag, stream) {
     };
   if (stream === "stable")
     return { streamId: "bluefin-stable", cacheKey: `stable-${date}` };
+  if (stream === "dakota")
+    return { streamId: "dakota-stable", cacheKey: `stable-${date}` };
   return null;
 }
 
 export const DAKOTA_LINK = "https://github.com/projectbluefin/dakota";
 
 /**
- * Build the Dakota release card data from the SBOM attestation cache.
+ * Build the Dakota release card data from release notes feed or SBOM cache.
  *
- * Mirrors getDakotaOsEvent() in src/components/FirehoseFeed.tsx: the newest
- * `dakota-stable` entry that carries package versions, with the Nvidia version
- * overlaid from `dakota-nvidia-stable` for the same release date. Returns null
- * when the cache has no usable Dakota data.
+ * Mirrors getDakotaOsEvent() in src/components/FirehoseFeed.tsx.
  */
-export function buildDakotaRelease(sbomCache) {
+export function buildDakotaRelease(sbomCache, feedItem = null) {
+  if (feedItem) {
+    const parsed = parseFeedItem(feedItem, "dakota");
+    if (parsed) {
+      const content = feedItem.content ?? "";
+      const isMarkdown = /^\|[\s|:-]*---[\s|:-]*\|/m.test(content);
+      const sections = isMarkdown
+        ? extractSectionsMd(content)
+        : extractSectionsHtml(content);
+      const fullDiff = extractFullDiffFromSections(sections);
+      const enriched = enrichFromSbom(
+        { ...parsed, fullDiff },
+        "dakota",
+        sbomCache,
+      );
+      const nvidiaReleases =
+        sbomCache?.streams?.["dakota-nvidia-stable"]?.releases ?? {};
+      const dateMatch = enriched.tag.match(/(\d{8})/);
+      const date = dateMatch ? dateMatch[1] : null;
+      const nvidiaVersion =
+        (date && nvidiaReleases[`stable-${date}`]?.packageVersions?.nvidia) ||
+        null;
+      const hasNvidia = enriched.majorPackages.some(
+        (p) => p.name.toLowerCase() === "nvidia",
+      );
+      if (nvidiaVersion && !hasNvidia) {
+        enriched.majorPackages.push({
+          name: "Nvidia",
+          version: nvidiaVersion,
+          prevVersion: null,
+        });
+      }
+      return enriched;
+    }
+  }
+
   const releases = sbomCache?.streams?.["dakota-stable"]?.releases;
   if (!releases) return null;
 

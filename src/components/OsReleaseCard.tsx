@@ -237,10 +237,18 @@ const OsReleaseCard: React.FC<OsReleaseCardProps> = ({ event }) => {
   // Key package chips (header row): subset of well-known packages.
   // Falls back to fullDiff when a name isn't in the curated majorPackages table.
   const headerChips = HEADER_CHIP_NAMES.flatMap((name) => {
-    const major = release.majorPackages.find(
-      (p) => p.name.toLowerCase() === name.toLowerCase(),
-    );
-    if (major) return [major];
+    const major = release.majorPackages.find((p) => {
+      const lower = p.name.toLowerCase();
+      const target = name.toLowerCase();
+      return (
+        lower === target || (target === "gnome" && lower === "gnome shell")
+      );
+    });
+    if (major) {
+      const label =
+        major.name.toLowerCase() === name.toLowerCase() ? major.name : name;
+      return [{ ...major, name: label }];
+    }
     const diff = release.fullDiff.find(
       (d) => d.name.toLowerCase() === name.toLowerCase(),
     );

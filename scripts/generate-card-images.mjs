@@ -145,11 +145,24 @@ async function main() {
   const stableRelease = stableRaw
     ? enrichFromSbom(stableRaw, "stable", SBOM_CACHE)
     : null;
+  let dakotaRaw = null;
+  const dakotaFeedPath = join(ROOT, "static/feeds/dakota-releases.json");
+  if (existsSync(dakotaFeedPath)) {
+    try {
+      const feed = JSON.parse(readFileSync(dakotaFeedPath, "utf8"));
+      for (const item of feed.items ?? []) {
+        dakotaRaw = item;
+        break;
+      }
+    } catch {
+      dakotaRaw = null;
+    }
+  }
 
-  const dakotaRelease = buildDakotaRelease(SBOM_CACHE);
+  const dakotaRelease = buildDakotaRelease(SBOM_CACHE, dakotaRaw);
   if (!dakotaRelease) {
     console.warn(
-      "WARN: no Dakota data in the SBOM cache — dakota card not regenerated",
+      "WARN: no Dakota data in feed or SBOM cache — dakota card not regenerated",
     );
   }
 

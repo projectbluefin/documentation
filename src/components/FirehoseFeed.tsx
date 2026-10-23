@@ -13,6 +13,7 @@ import type {
   FlatTimelineEvent,
   ParsedMajorPackage,
   OsFeedItem,
+  OsStream,
 } from "../types/os-feed";
 import type { SbomAttestationsData } from "../types/sbom";
 import { parseOsRelease } from "../utils/parseOsRelease";
@@ -41,7 +42,18 @@ function getBluefinReleasesData() {
   }
   return _bluefinReleasesData!;
 }
-
+let _dakotaReleasesData: { items?: OsFeedItem[] } | null = null;
+function getDakotaReleasesData(): { items?: OsFeedItem[] } {
+  if (!_dakotaReleasesData) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      _dakotaReleasesData = require("@site/static/feeds/dakota-releases.json");
+    } catch {
+      _dakotaReleasesData = { items: [] };
+    }
+  }
+  return _dakotaReleasesData!;
+}
 /** A single release event flattened out of its parent app. */
 export interface FlatRelease {
   app: FirehoseApp;
@@ -51,10 +63,13 @@ export interface FlatRelease {
 
 // ── OS release events ─────────────────────────────────────────────────────────
 
-function loadOsEvents(feedData: { items?: OsFeedItem[] }): OsReleaseEvent[] {
+function loadOsEvents(
+  feedData: { items?: OsFeedItem[] },
+  streamHint?: OsStream,
+): OsReleaseEvent[] {
   const events: OsReleaseEvent[] = [];
   for (const item of feedData.items ?? []) {
-    const release = parseOsRelease(item);
+    const release = parseOsRelease(item, streamHint);
     if (!release) continue;
     const dateMs = new Date(item.pubDate).getTime();
     if (isNaN(dateMs)) continue;
@@ -91,8 +106,7 @@ function getSbomCache(): SbomAttestationsData {
  * prevVersion (the gold change-indicator arrow) is preserved from release notes
  * so the UI can still show what changed. Packages outside CHIP_TO_SBOM (Nvidia,
  * DX) are kept from release notes unchanged.
- *
- * Only applies to stable events. Dakota events are sourced separately via getDakotaOsEvent().
+ * Applies to all streams (stable, stable-daily, dakota).
  */
 function enrichFromSbom(events: OsReleaseEvent[]): OsReleaseEvent[] {
   return events.map((event) => {
@@ -188,12 +202,39 @@ let _dakotaStreamEvents: OsReleaseEvent[] | null = null;
 function getDakotaStreamEvents(): OsReleaseEvent[] {
   if (!_dakotaStreamEvents) {
     const cutoff = Date.now() - ROLLING_WINDOW_MS;
-    _dakotaStreamEvents = sbomStreamToEvents(
+    const feedEvents = enrichFromSbom(
+      loadOsEvents(getDakotaReleasesData(), "dakota"),
+    );
+    const sbomEvents = sbomStreamToEvents(
       getSbomCache(),
       "dakota-stable",
       "dakota",
       DAKOTA_GITHUB_URL,
-    ).filter((e) => e.dateMs > cutoff);
+    );
+    const byTag = new Map<string, OsReleaseEvent>();
+    for (const event of sbomEvents) {
+      byTag.set(event.release.tag, event);
+    }
+    for (const event of feedEvents) {
+      const existing = byTag.get(event.release.tag);
+      if (existing) {
+        byTag.set(event.release.tag, {
+          ...event,
+          release: {
+            ...event.release,
+            majorPackages:
+              event.release.majorPackages.length > 0
+                ? event.release.majorPackages
+                : existing.release.majorPackages,
+          },
+        });
+      } else {
+        byTag.set(event.release.tag, event);
+      }
+    }
+    _dakotaStreamEvents = Array.from(byTag.values()).filter(
+      (e) => e.dateMs > cutoff,
+    );
   }
   return _dakotaStreamEvents;
 }
@@ -215,20 +256,14 @@ let _dakotaOsEvent: OsReleaseEvent | null | undefined = undefined;
 function getDakotaOsEvent(): OsReleaseEvent | undefined {
   if (_dakotaOsEvent !== undefined) return _dakotaOsEvent ?? undefined;
 
-  const events = sbomStreamToEvents(
-    getSbomCache(),
-    "dakota-stable",
-    "dakota",
-    DAKOTA_GITHUB_URL,
-  );
-
+  const events = getDakotaStreamEvents();
   if (events.length === 0) {
     _dakotaOsEvent = null;
     return undefined;
   }
 
-  // Most recent SBOM release for the pinned card.
-  const latest = events.sort((a, b) => b.dateMs - a.dateMs)[0];
+  // Most recent release for the pinned card.
+  const latest = events.slice().sort((a, b) => b.dateMs - a.dateMs)[0];
 
   // Overlay nvidia version strictly from the dakota-nvidia-stable stream for matching release date
   let nvidiaVersion: string | null = null;
@@ -240,9 +275,13 @@ function getDakotaOsEvent(): OsReleaseEvent | undefined {
     nvidiaVersion =
       (stableKey && nvidiaReleases[stableKey]?.packageVersions?.nvidia) || null;
   }
-  const nvidiaPackage: ParsedMajorPackage | null = nvidiaVersion
-    ? { name: "Nvidia", version: nvidiaVersion, prevVersion: null }
-    : null;
+  const hasNvidia = latest.release.majorPackages.some(
+    (p) => p.name.toLowerCase() === "nvidia",
+  );
+  const nvidiaPackage: ParsedMajorPackage | null =
+    nvidiaVersion && !hasNvidia
+      ? { name: "Nvidia", version: nvidiaVersion, prevVersion: null }
+      : null;
 
   _dakotaOsEvent = {
     ...latest,
