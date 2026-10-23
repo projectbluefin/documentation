@@ -153,21 +153,6 @@ Selecteer in het menu “Ask Bluefin” om de chatagent te gebruiken.
 
 <img src="/img/goose-quick-launch.png" alt="Goose quick launch" />
 
-### Klaar-om-te-gebruiken opzet: `ujust probe`
-
-Bluefin bevat ingebouwde automatisering om een AI-probleemoplossingssessie op te zetten en te starten:
-
-```bash
-ujust probe
-```
-
-`ujust probe` voert automatisch uit:
-
-1. Verifieert dat Goose geïnstalleerd is (of vraagt om het via Homebrew te installeren).
-2. Installeert `ublue-os/tap/linux-mcp-server` als het nog niet aanwezig is.
-3. Schrijft automatisch de Goose-configuratie met `linux-tools` ingeschakeld via `goose-mcp-setup`.
-4. Zoekt naar een geconfigureerde LLM-provider en start de sessie.
-
 ### Handmatige installatie & configuratie
 
 Als je het handmatig wilt installeren of dit op macOS opzet:
@@ -266,8 +251,6 @@ OLLAMA_HOST: http://localhost:17434
 Start een interactieve sessie:
 
 ```bash
-ujust probe
-# or directly:
 goose session
 ```
 
