@@ -70,7 +70,7 @@ suspend/sleep이 대부분의 경우 동작하지 않으며, Mac의 펌웨어 �
 
 여기서 결정할 선택이 있습니다. wifi/bluetooth 펌웨어가 필요하다면, custom 또는 커뮤니티 T2 전용 Bluefin 이미지로 rebasing이 필요합니다. 아니라면, 여러 패키지를 layer하여 T2 전용 이미지와 같은 경험을 얻을 수 있습니다. 아래 표와 아래 단계에서 분해와 단계를 확인하세요.
 
-|                         | T2-특정 Bluefin 이미지 | Layer된 패키지                 | Bluefin                                      |
+|                         | T2-특정 Bluefin 이미지 | 레이어된 패키지                 | Bluefin                                      |
 | ----------------------- | ---------------------- | ------------------------------ | -------------------------------------------- |
 | T2-Patched 커널         | **yes, fsync**         | base 이미지가 fsync를 사용하면 | **yes, fsync on latest, fsync-ba on stable** |
 | 내부 키보드와 Trackpad  | **yes**                | **yes**                        | **yes**                                      |

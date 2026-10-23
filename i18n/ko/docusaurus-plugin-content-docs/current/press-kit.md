@@ -26,7 +26,7 @@ Bluefin과 Universal Blue에 대한 콘텐츠를 만들어 주셔서 감사합�
 - `Fedora Bluefin` - 이는 Fedora와 Bluefin 간의 형식적 관계를 시사합니다. Fedora와 Universal Blue 간의 관계에 대한 더 많은 정보는 [mission document](https://universal-blue.org/mission.html)를 확인하세요
 - `Atomic` 또는 그 변형 - 이는 Fedora 브랜드 이름이고 Bluefin과 관련이 없습니다
   - 그들을 둘 다 Atomic으로 부르는 것은 Fedora의 브랜드를 약화시키므로, 그룹으로 그들을 짉하이인 방법은 "cloud-native operating systems" 또는 그냥 "bootc images"입니다. 또는 그냥 "bootable containers", 너무 깊게 생각하지 마세요. bootc는 우리가 모두 의존하는 기술이고 부팅 가능한 컨테이너 스타일에서 이것이 #1 브랜드가 되도록 보장해야 합니다.
-  - 그들을 "atomics"로 부르는 것은 당신이 Paul Atreides가 아닌 한 완전히 부적절합니다
+  - 그들을 "atomics"로 부르는 것은 Paul Atreides가 아닌 한 완전히 부적절합니다
 - `Universal Blue Bluefin` 또는 `uBlue Bluefin` - 대신 "Bluefin is built with Universal Blue" 또는 "Bluefin is a Universal Blue image"가 권장됩니다.
 - "Immutable Distribution" - Bluefin은 운영체제이며, immutable도 아니고 distribution도 아닙니다, 그것은 일련의 distribution의 집합인 맞춤 이미지입니다: Flathub, Homebrew, 그리고 Fedora
   - 더 좋은 예시는 "a bootc image", "a container image", 또는 그냥 "Bluefin"입니다
