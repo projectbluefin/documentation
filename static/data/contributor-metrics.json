@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-24T19:31:44.206Z",
+  "generatedAt": "2026-10-24T19:44:40.704Z",
   "source": "GitHub GraphQL & PR Events",
   "org": "projectbluefin",
   "unavailable": false,
@@ -14,6 +14,8 @@
       },
       "activeContributors": 12,
       "streams": {
+        "prsOpened": 899,
+        "prsMerged": 776,
         "humanPrs": 342,
         "automationPrs": 434,
         "issues": 143,
@@ -35,6 +37,8 @@
       },
       "activeContributors": 17,
       "streams": {
+        "prsOpened": 1366,
+        "prsMerged": 1182,
         "humanPrs": 452,
         "automationPrs": 730,
         "issues": 355,
@@ -56,6 +60,8 @@
       },
       "activeContributors": 29,
       "streams": {
+        "prsOpened": 3132,
+        "prsMerged": 2492,
         "humanPrs": 1421,
         "automationPrs": 1071,
         "issues": 861,
@@ -77,7 +83,9 @@
       },
       "activeContributors": 21,
       "streams": {
-        "humanPrs": 483,
+        "prsOpened": 1782,
+        "prsMerged": 1404,
+        "humanPrs": 484,
         "automationPrs": 920,
         "issues": 277,
         "reviews": null

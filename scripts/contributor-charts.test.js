@@ -218,15 +218,13 @@ test("renders full contributor analytics metrics and charts", () => {
   assert.ok(html.includes("Monthly Active Humans"));
   assert.ok(html.includes("First-Time Humans"));
   assert.ok(html.includes("PR Merge Rate"));
-  assert.ok(html.includes("Median Response Time"));
+  assert.ok(html.includes("Human Merged PRs"));
 
   // Check numeric values rendered prominently
   assert.ok(html.includes("18")); // Latest active humans (2026-09)
   assert.ok(html.includes("5")); // Latest first-time humans (2026-09)
   assert.ok(html.includes("93%")); // Latest merge rate (2026-09)
-  assert.ok(html.includes("10h")); // Latest median response time (2026-09)
-
-  // 3 line charts
+  assert.ok(html.includes("290")); // Latest human merged PRs (2026-09)
   assert.ok(html.includes("Active Human Contributors Trend"));
   assert.ok(html.includes("Human Contribution Types Breakdown"));
   assert.ok(

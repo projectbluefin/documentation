@@ -429,10 +429,11 @@ async function fetchMonthMetrics(targetMonth, token, knownSet, isCurrentMonth) {
   const monthStart = `${targetMonth}-01`;
   const monthEnd = `${targetMonth}-${String(daysInMonth).padStart(2, "0")}`;
 
-  // 1. Get totals via search counts (using is:merged so basis matches report-history.json)
+  // 1. Get totals via search counts: both created PRs and merged PRs
   const countQuery = `
     query {
-      all_prs: search(query: "org:projectbluefin type:pr is:merged created:${monthStart}..${monthEnd}", type: ISSUE, first: 1) { issueCount }
+      all_prs_created: search(query: "org:projectbluefin type:pr created:${monthStart}..${monthEnd}", type: ISSUE, first: 1) { issueCount }
+      all_prs_merged: search(query: "org:projectbluefin type:pr is:merged created:${monthStart}..${monthEnd}", type: ISSUE, first: 1) { issueCount }
       issues: search(query: "org:projectbluefin type:issue -author:app/github-actions -author:app/hivecommons-hive created:${monthStart}..${monthEnd}", type: ISSUE, first: 1) { issueCount }
     }
   `;
@@ -460,7 +461,8 @@ async function fetchMonthMetrics(targetMonth, token, knownSet, isCurrentMonth) {
     };
   }
 
-  const totalPrs = countsData.all_prs.issueCount;
+  const totalPrsCreated = countsData.all_prs_created.issueCount;
+  const totalPrsMerged = countsData.all_prs_merged.issueCount;
   const issueCount = countsData.issues.issueCount;
 
   // 2. Resolve sub-1,000 slices adaptively
@@ -557,8 +559,10 @@ async function fetchMonthMetrics(targetMonth, token, knownSet, isCurrentMonth) {
     },
     activeContributors: activeCount,
     streams: {
+      prsOpened: totalPrsCreated,
+      prsMerged: totalPrsMerged,
       humanPrs: truncated ? null : humanPrsCount,
-      automationPrs: truncated ? null : totalPrs - humanPrsCount,
+      automationPrs: truncated ? null : totalPrsMerged - humanPrsCount,
       issues: issueCount,
       reviews: null,
     },
