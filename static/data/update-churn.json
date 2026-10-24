@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-22T05:16:42.038Z",
+  "generatedAt": "2026-10-24T05:14:51.971Z",
   "source": "GHCR OCI Manifests & Attestations",
   "method": "oci-layer-diff-v1",
   "unit": "MB",
@@ -386,6 +386,36 @@
           "zstdLayers": 0,
           "compressionFormat": "gzip",
           "isBaseline": false
+        },
+        {
+          "tag": "stable-daily-20261022",
+          "date": "2026-10-22",
+          "previousTag": "stable-daily-20261016",
+          "downloadChurnMB": 1990,
+          "sharedMB": 1202.7,
+          "totalMB": 3192.7,
+          "reuseEfficiencyPct": 37.7,
+          "totalLayers": 74,
+          "sharedLayers": 39,
+          "newLayers": 35,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": false
+        },
+        {
+          "tag": "stable-daily-20261024",
+          "date": "2026-10-24",
+          "previousTag": "stable-daily-20261022",
+          "downloadChurnMB": 757.9,
+          "sharedMB": 2436.5,
+          "totalMB": 3194.4,
+          "reuseEfficiencyPct": 76.3,
+          "totalLayers": 74,
+          "sharedLayers": 64,
+          "newLayers": 10,
+          "zstdLayers": 0,
+          "compressionFormat": "gzip",
+          "isBaseline": false
         }
       ]
     },
@@ -399,11 +429,11 @@
       "releases": [
         {
           "tag": "stable",
-          "date": "2026-10-22",
+          "date": "2026-10-24",
           "previousTag": null,
-          "downloadChurnMB": 3507.4,
+          "downloadChurnMB": 3623.3,
           "sharedMB": 0,
-          "totalMB": 3507.4,
+          "totalMB": 3623.3,
           "reuseEfficiencyPct": 0,
           "totalLayers": 120,
           "sharedLayers": 0,
@@ -423,12 +453,12 @@
       "unavailable": false,
       "releases": [
         {
-          "tag": "testing-20261018-c72fc22",
+          "tag": "testing-20261018-28e9a75",
           "date": "2026-10-18",
           "previousTag": null,
-          "downloadChurnMB": 2510.6,
+          "downloadChurnMB": 2511.5,
           "sharedMB": 0,
-          "totalMB": 2510.6,
+          "totalMB": 2511.5,
           "reuseEfficiencyPct": 0,
           "totalLayers": 128,
           "sharedLayers": 0,
@@ -436,21 +466,6 @@
           "zstdLayers": 128,
           "compressionFormat": "zstd-chunked",
           "isBaseline": true
-        },
-        {
-          "tag": "testing-20261018-28e9a75",
-          "date": "2026-10-18",
-          "previousTag": "testing-20261018-c72fc22",
-          "downloadChurnMB": 623.7,
-          "sharedMB": 1887.8,
-          "totalMB": 2511.5,
-          "reuseEfficiencyPct": 75.2,
-          "totalLayers": 128,
-          "sharedLayers": 111,
-          "newLayers": 17,
-          "zstdLayers": 128,
-          "compressionFormat": "zstd-chunked",
-          "isBaseline": false
         },
         {
           "tag": "testing-20261018-86135fe",
@@ -628,6 +643,21 @@
           "totalLayers": 128,
           "sharedLayers": 49,
           "newLayers": 79,
+          "zstdLayers": 128,
+          "compressionFormat": "zstd-chunked",
+          "isBaseline": false
+        },
+        {
+          "tag": "testing-20261024-028d3f4",
+          "date": "2026-10-24",
+          "previousTag": "testing-20261022-0d7a475",
+          "downloadChurnMB": 655.3,
+          "sharedMB": 1860.7,
+          "totalMB": 2516.1,
+          "reuseEfficiencyPct": 74,
+          "totalLayers": 128,
+          "sharedLayers": 108,
+          "newLayers": 20,
           "zstdLayers": 128,
           "compressionFormat": "zstd-chunked",
           "isBaseline": false
