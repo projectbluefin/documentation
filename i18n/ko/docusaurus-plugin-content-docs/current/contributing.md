@@ -93,7 +93,7 @@ Bluefin은 다른 이미지에 ship되는 설정 OCI 컨테이너의 조합입�
 
 ## Bluefin 아키텍처 이해
 
-다른 구성 요소는 다음 순서로 assemble됩니다. 이것은 GitHub Actions와 자동화된 워크플로우를 통해 수행됩니다:
+다른 구성 요소는 다음 순서로 조립됩니다. 이것은 GitHub Actions와 자동화된 워크플로우를 통해 수행됩니다:
 
 ```mermaid
 flowchart TB
