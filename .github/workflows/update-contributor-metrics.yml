@@ -6,18 +6,20 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
   pull-requests: write
+  issues: read
+  discussions: read
 
 jobs:
   update-contributor-metrics:
     name: Compute contributor metrics and create PR
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
 
     steps:
       - name: Harden Runner
@@ -33,10 +35,33 @@ jobs:
         with:
           node-version: "24"
 
+      - name: Verify collector offline
+        run: node --test scripts/fetch-contributor-metrics.test.js
+
+      - name: Retain the newest verified refresh awaiting review
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const { execFileSync, spawnSync } = require('node:child_process');
+          const ref = 'refs/remotes/origin/chore/update-contributor-metrics';
+          const found = spawnSync('git', ['show-ref', '--verify', '--quiet', ref]);
+          if (found.status === 1) process.exit(0);
+          if (found.status !== 0) throw new Error('Could not inspect the pending refresh branch');
+          const file = 'static/data/contributor-metrics.json';
+          const pending = JSON.parse(execFileSync('git', ['show', `${ref}:${file}`], { encoding: 'utf8' }));
+          const current = JSON.parse(fs.readFileSync(file, 'utf8'));
+          const stamp = Date.parse(pending.generatedAt);
+          if (pending.schemaVersion === 2 && pending.coverage?.complete === true &&
+              Number.isFinite(stamp) && stamp <= Date.now() &&
+              stamp > (Date.parse(current.generatedAt) || 0)) {
+            fs.writeFileSync(file, JSON.stringify(pending, null, 2) + '\n');
+          }
+          NODE
+
       - name: Compute contributor metrics
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/fetch-contributor-metrics.js
+        run: node scripts/fetch-contributor-metrics.js --force
 
       - name: Check for contributor metrics dataset changes
         id: check-changes
@@ -51,16 +76,16 @@ jobs:
           fi
 
       - name: Create or update PR with fresh contributor data
-        if: steps.check-changes.outputs.changed == 'true'
+        if: steps.check-changes.outputs.changed == 'true' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          BRANCH="chore/update-contributor-metrics-$(date +%Y%m%d)"
+          BRANCH="chore/update-contributor-metrics"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
-          git commit -m "chore(analytics): update contributor metrics cache"
-          git push -u origin "$BRANCH" --force
+          git commit -m "chore(analytics): refresh public contributor participation"
+          git push -u origin "$BRANCH" --force-with-lease
 
           # Check if PR already exists before opening duplicate
           EXISTING_PR=$(gh pr list --repo projectbluefin/documentation --head "$BRANCH" --state open --json number --jq '.[0].number')
@@ -71,6 +96,6 @@ jobs:
               --repo projectbluefin/documentation \
               --base main \
               --head "$BRANCH" \
-              --title "chore(analytics): update contributor metrics cache" \
-              --body "Automated update of monthly contributor metrics, active cohorts, and activity streams. Requires maintainer approval before merge per repository policy."
+              --title "chore(analytics): refresh public contributor participation" \
+              --body "Refreshes the complete public GitHub participation snapshot. Known bots and imported fork commit history are excluded; failed collection preserves last-good history and marks unavailability. Requires maintainer approval before merge."
           fi

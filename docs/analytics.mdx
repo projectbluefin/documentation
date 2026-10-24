@@ -65,13 +65,34 @@ See the [Homebrew analytics documentation](https://docs.brew.sh/Analytics) for a
 
 ### Contributor Metrics Methodology
 
-Contributor analytics adopt a CNCF DevStats and LFX-derived methodology:
+These charts measure participation, not pull request throughput. A contributor is
+one identifiable GitHub account with a recorded public contribution in a repository
+currently owned by `projectbluefin`. Each account is counted once across the organization.
 
-- **4 summary metrics and 3 trend charts:** Tracking monthly active human contributors (merged PR authors), first-time contributors, pull request merge rate, and human throughput alongside historical trends for contributor cohorts, activity breakdowns, and PR velocity.
-- **Public GitHub dataset with automated bot and AI agent filtering:** Metrics are derived from public GitHub activity across the entire `projectbluefin` organization while strictly filtering automated bots, dependency managers, and autonomous AI agents to ensure counts represent real human open-source participation.
-- **Organization-wide activity streams:** Activity streams track merged pull requests and issues across all public repositories in `projectbluefin` on a shared domain.
-- **Community forum discussions:** Community discussions are hosted at [ublue-os/bluefin](https://github.com/ublue-os/bluefin/discussions).
+- **Ways to contribute:** code and documentation changes, pull requests, issues,
+  comments, submitted reviews, and GitHub Discussions, including replies. Changes
+  do not have to be merged to recognize their authors.
+- **Repository coverage:** all public organization repositories, including archived
+  repositories and forks. Commit authors are read from non-merge commits on non-fork
+  default branches; imported fork commit history is excluded. Other participation
+  in forks is included. Recorded history may predate a repository joining the org.
+- **Community growth:** the cumulative number of accounts by their first recorded
+  contribution date. This is surviving public history, not a claim to recover deleted
+  contributions or activity in private repositories.
+- **Recent participation:** distinct accounts active in the last 90 days. Monthly
+  counts use UTC calendar months; the current month is incomplete. The same person
+  may help in multiple ways, so the contribution-type counts must not be added together.
+- **Identity limits:** known bots and bot account types are excluded. Accounts that
+  cannot be linked to a public GitHub identity are not counted. Public GitHub data
+  cannot establish whether an ordinary account used AI assistance, or whether two
+  accounts belong to the same person.
+- **Freshness and gaps:** the scheduled collector follows every required page of
+  the original public GitHub APIs. A failed collection retains the last successful
+  snapshot and its timestamp, with a visible reason rather than a partial total.
 
-For real-time development and organizational velocity metrics across all 15 factory repositories, see the [Factory metrics view](/factory/metrics).
-
-Upstream repository metrics for `projectbluefin/bluefin` are also tracked on [Linux Foundation Insights](https://insights.linuxfoundation.org/project/ublue-os-bluefin).
+Sources: GitHub's [repository API](https://docs.github.com/en/rest/repos/repos#list-organization-repositories),
+[GraphQL repository reference](https://docs.github.com/en/graphql/reference/objects#repository),
+and [pagination documentation](https://docs.github.com/en/graphql/guides/using-pagination-in-the-graphql-api).
+The precise local definition is implemented in `scripts/fetch-contributor-metrics.js`.
+Community forum discussions at [ublue-os/bluefin](https://github.com/ublue-os/bluefin/discussions)
+are outside this organization and are not mixed into its totals.
