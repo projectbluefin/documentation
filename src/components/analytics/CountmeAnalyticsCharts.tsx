@@ -15,6 +15,7 @@ import {
   DAILY_URL,
   FIRST_PARTY_ORIGIN,
   allBluefinDaily,
+  allBluefinSummary,
   familyDaily,
   latestDaily,
   measuredDays,
@@ -329,24 +330,31 @@ function DailyPanel({
 }): React.JSX.Element {
   const measured = measuredDays(daily);
   const latest = latestDaily(daily);
-  const plotted = combined
-    ? [
-        {
-          name: "Total",
-          values: daily.days.map((_, i) => {
-            const values = DAILY_STREAMS.map(
-              (stream) => daily.streams[stream][i],
-            );
-            return values.every((v) => v === null)
-              ? null
-              : values.reduce<number>((sum, v) => sum + (v ?? 0), 0);
-          }),
-        },
-      ]
-    : DAILY_STREAMS.map((stream) => ({
-        name: stream,
-        values: daily.streams[stream],
-      }));
+  const plotted = useMemo(
+    () =>
+      combined
+        ? [
+            {
+              name: "Daily reports",
+              values: daily.days.map((_, i) => {
+                const values = DAILY_STREAMS.map(
+                  (stream) => daily.streams[stream][i],
+                );
+                return values.every((value) => value === null)
+                  ? null
+                  : values.reduce<number>(
+                      (sum, value) => sum + (value ?? 0),
+                      0,
+                    );
+              }),
+            },
+          ]
+        : DAILY_STREAMS.map((stream) => ({
+            name: stream,
+            values: daily.streams[stream],
+          })),
+    [daily, combined],
+  );
   const option = useMemo(
     () => ({
       grid: { left: 40, right: 16, top: 48, bottom: 40, containLabel: true },
@@ -421,7 +429,8 @@ function DailyPanel({
     <div className={styles.dailyChart}>
       {latest && (
         <p className={styles.currentValue}>
-          <strong>{latest.value.toLocaleString("en-US")}</strong> active systems
+          <strong>{latest.value.toLocaleString("en-US")}</strong>{" "}
+          {combined ? "daily reports" : "active systems"}
           {" · "}
           {compactWeek(latest.day)}
         </p>
@@ -429,7 +438,11 @@ function DailyPanel({
       {measured > 0 ? (
         <EChart
           option={option}
-          title={`${label} daily active systems`}
+          title={
+            combined
+              ? "Daily-reporting Bluefins"
+              : `${label} daily active systems`
+          }
           summary={
             latest
               ? `${latest.value.toLocaleString("en-US")} active systems on ${latest.day}.`
@@ -438,7 +451,11 @@ function DailyPanel({
           points={measured}
           minPoints={2}
           height={320}
-          tableCaption={`${label} systems active per day`}
+          tableCaption={
+            combined
+              ? "Daily reports from all reporting Bluefins; Classic reports weekly and is not part of this trend."
+              : `${label} systems active per day`
+          }
         />
       ) : (
         <Unavailable what={`${label} daily active systems`} reason={reason} />
@@ -482,7 +499,9 @@ function useLegacyActive(enabled = true) {
         const res = await fetch(LEGACY_BADGE_URL);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const badge = (await res.json()) as { message?: string };
-        setLegacyActive(badge?.message ?? null);
+        setLegacyActive(
+          typeof badge?.message === "string" ? badge.message : null,
+        );
       } catch {
         setLegacyActive(null);
       }
@@ -617,11 +636,14 @@ export interface CountmeAnalyticsChartsProps {
   registry?: GhcrDataset;
   /** Injected by tests; production fetches the daily ping counts. */
   daily?: DailyDataset;
+  /** Injected snapshot; production reads the permitted Classic badge. */
+  classic?: string | null;
 }
 
 export default function CountmeAnalyticsCharts({
   registry,
   daily,
+  classic,
 }: CountmeAnalyticsChartsProps = {}): React.JSX.Element {
   const [themeRef, fxTheme] = useFactoryTheme();
   const cat = fxTheme.categorical;
@@ -653,12 +675,14 @@ export default function CountmeAnalyticsCharts({
   // ublue-os/bluefin:stable, counted by ublue-os/countme. Both the badge and
   // the chart are proxied by our worker, so this stays on one origin and needs
   // no second CSP entry.
-  const legacyActive = useLegacyActive();
+  const fetchedClassic = useLegacyActive(classic === undefined);
+  const legacyActive = classic === undefined ? fetchedClassic : classic;
 
   // ── Bluefin and Bluefin Utah: daily pings from projectbluefin-countme ─
   const { dailyData, emptyReason } = useDailyDataset(daily);
   const allBluefin = useMemo(
-    () => allBluefinDaily(dailyData?.days ?? []),
+    () =>
+      allBluefinDaily(dailyData?.unavailable ? [] : (dailyData?.days ?? [])),
     [dailyData],
   );
   const bluefin = useMemo(
@@ -670,6 +694,10 @@ export default function CountmeAnalyticsCharts({
     [dailyData],
   );
   const bluefinLatest = latestDaily(bluefin);
+  const summary = allBluefinSummary(allBluefin, legacyActive);
+  const totalLabel = summary
+    ? `About ${summary.total.toLocaleString("en-US", { maximumSignificantDigits: summary.approximate ? 2 : 21 })} systems`
+    : "";
 
   const ghcr = registry ?? fetchedRegistry;
 
@@ -771,9 +799,22 @@ export default function CountmeAnalyticsCharts({
             All Bluefins (Total)
           </Heading>
           <p className={styles.sectionSubtext}>
-            Daily reports combined. Classic is counted weekly below.
+            {summary
+              ? `Classic ${legacyActive} weekly; `
+              : "Classic reports weekly; "}
+            the trend below shows daily reports only.
           </p>
         </header>
+        {summary ? (
+          <p className={styles.currentValue}>
+            <strong>{totalLabel}</strong>
+          </p>
+        ) : (
+          <Unavailable
+            what="All Bluefins total"
+            reason="A complete total needs both Classic and daily counts."
+          />
+        )}
         <DailyPanel
           daily={allBluefin}
           label="All Bluefins"

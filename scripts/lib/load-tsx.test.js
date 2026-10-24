@@ -1,8 +1,8 @@
 /**
  * Unit coverage for scripts/lib/load-tsx.js — loadTsxModule.
  *
- * This loader is test infrastructure: countme-analytics-charts.test.js,
- * image-churn-charts.test.js and report-chart.test.js all reach real `src/`
+ * This loader is test infrastructure: countme-analytics-charts.test.js and
+ * report-chart.test.js both reach real `src/`
  * components through it. It had no test of its own, so a regression in its
  * resolution order would surface only as a confusing MODULE_NOT_FOUND inside
  * an unrelated chart suite.

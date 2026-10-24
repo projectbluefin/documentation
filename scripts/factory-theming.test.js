@@ -20,7 +20,6 @@ const themed = [
   "src/components/factory/FactoryNav.module.css",
   "src/components/factory/FactoryShell.module.css",
   "src/components/analytics/CountmeAnalyticsCharts.module.css",
-  "src/components/analytics/ImageChurnCharts.module.css",
   "src/components/HiveFactoryDashboard.module.css",
   "src/components/HiveFactoryDashboard.tsx",
 ];

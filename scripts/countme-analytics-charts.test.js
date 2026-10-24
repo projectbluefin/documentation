@@ -75,7 +75,7 @@ const {
 } = mod;
 
 // The first-party reader is its own module; see the note in the component.
-const { familyDaily } = loadTsxModule(
+const { familyDaily, allBluefinDaily } = loadTsxModule(
   path.join(
     __dirname,
     "..",
@@ -283,30 +283,51 @@ const DAILY_FIXTURE = {
   ],
 };
 
-test("the combined chart sums same-day flavors and streams, preserving gaps and zero", () => {
-  const html = renderDaily({
-    days: [
-      ...DAILY_FIXTURE.days,
-      { day: "2026-09-25", image: "dakota/main:unknown", n: 0 },
-    ],
-  });
-  const option = dailyOption(html, "All Bluefins");
-  assert.equal(
-    html.match(/data-title="([^"]+)"/)?.[1],
-    "All Bluefins daily active systems",
-    "the combined summary must be the first chart",
-  );
-  assert.deepEqual(option.xAxis.data, [
+test("daily aggregation preserves same-day gaps and zero independently of Classic", () => {
+  const daily = allBluefinDaily([
+    ...DAILY_FIXTURE.days,
+    { day: "2026-09-25", image: "dakota/main:unknown", n: 0 },
+  ]);
+  assert.deepEqual(daily.days, [
     "2026-09-22",
     "2026-09-23",
     "2026-09-24",
     "2026-09-25",
   ]);
-  assert.deepEqual(
-    option.series.map((s) => s.data),
-    [[12, 1, null, 0]],
+  assert.deepEqual(daily.streams.stable, [12, null, null, null]);
+  assert.deepEqual(daily.streams.testing, [null, 1, null, null]);
+  assert.deepEqual(daily.streams.unknown, [null, null, null, 0]);
+});
+
+test("the first daily trend keeps its history while the headline includes Classic", () => {
+  const html = renderDaily({
+    days: [
+      { day: "2026-10-24", image: "dakota/main:stable", n: 150 },
+      { day: "2026-10-24", image: "utah/main:testing", n: 60 },
+    ],
+  });
+  const chart = html.match(/data-title="([^"]+)"[^>]*data-option="([^"]*)"/);
+  assert.ok(chart);
+  assert.equal(
+    chart[1],
+    "Daily-reporting Bluefins",
+    "the combined daily trend comes first",
   );
-  assert.match(html, /<strong>0<\/strong> active systems/);
+  const option = JSON.parse(
+    chart[2].replace(/&quot;/g, '"').replace(/&amp;/g, "&"),
+  );
+  assert.deepEqual(option.series[0].data, [210]);
+  assert.match(html, /About 4,800 systems/);
+});
+
+test("the combined snapshot stays unavailable when either source is missing", () => {
+  for (const html of [
+    renderDaily(DAILY_FIXTURE, null),
+    renderDaily({ days: [] }),
+  ]) {
+    assert.doesNotMatch(html, /About [\d,]+ systems/);
+    assert.match(html, /data-what="All Bluefins total"/);
+  }
 });
 
 test("Utah daily counts sum its flavors per stream and never include Dakota", () => {
@@ -366,11 +387,12 @@ test("a Utah day with no reports stays on the axis as a gap", () => {
   assert.deepEqual(streams.stable, [4, null, 5]);
 });
 
-function renderDaily(daily) {
+function renderDaily(daily, classic = "4.6k") {
   return renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
       daily,
+      classic,
     }),
   );
 }

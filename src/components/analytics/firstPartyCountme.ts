@@ -1,7 +1,7 @@
 import { FIRST_PARTY } from "@site/scripts/lib/countme-sources.mjs";
 
 /**
- * Reading daily active systems from the first-party countme service.
+ * Reading daily active systems and combining them with the Classic badge snapshot.
  *
  * This module is deliberately separate from the component that renders it.
  * `scripts/countme-first-party.test.js` forbids a file that holds the image
@@ -10,8 +10,9 @@ import { FIRST_PARTY } from "@site/scripts/lib/countme-sources.mjs";
  * name. Keeping the reader here means the catalogue and the week keys never sit
  * in one file, and the rule stays a real gate rather than an exemption list.
  *
- * Everything below reads one dataset only: the aggregate served by
- * `countme.projectbluefin.io`, whose `source` the policy module permits.
+ * Daily measurements use the aggregate served by `countme.projectbluefin.io`.
+ * The summary also accepts the permitted Classic badge's current weekly count;
+ * it does not construct combined historical totals from these different periods.
  */
 
 /**
@@ -111,4 +112,46 @@ export function latestDaily(
     }
   }
   return null;
+}
+
+const CLASSIC_SCALES: Record<string, number> = { k: 1e3, m: 1e6, b: 1e9 };
+
+/** A current snapshot combining Classic's weekly badge with one measured day. */
+export function allBluefinSummary(
+  daily: FamilyDaily,
+  classic: string | null,
+): {
+  total: number;
+  classic: number;
+  daily: number;
+  day: string;
+  approximate: boolean;
+} | null {
+  const latest = latestDaily(daily);
+  const message = classic?.trim();
+  if (!latest || !message) return null;
+
+  const compact = message.match(/^(\d+(?:\.\d+)?)([kmb])$/i);
+  if (!compact && !/^(?:\d+|\d{1,3}(?:,\d{3})+)$/.test(message)) {
+    return null;
+  }
+  const classicCount = compact
+    ? Number(compact[1]) * CLASSIC_SCALES[compact[2].toLowerCase()]
+    : Number(message.replace(/,/g, ""));
+  const total = classicCount + latest.value;
+  if (
+    !Number.isFinite(classicCount) ||
+    !Number.isFinite(total) ||
+    latest.value < 0
+  ) {
+    return null;
+  }
+
+  return {
+    total,
+    classic: classicCount,
+    daily: latest.value,
+    day: latest.day,
+    approximate: compact !== null,
+  };
 }
