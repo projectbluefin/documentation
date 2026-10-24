@@ -318,12 +318,7 @@ export default function ContributorMetricsCharts({
         trigger: "axis",
       },
       legend: {
-        data: [
-          "Code & Builds",
-          "Code Reviews",
-          "Issues & Triage",
-          "Documentation",
-        ],
+        data: ["Merged PRs", "Issues & Triage"],
         right: 8,
         top: 6,
         textStyle: { fontSize: 12 },
@@ -341,18 +336,11 @@ export default function ContributorMetricsCharts({
       },
       series: [
         {
-          name: "Code & Builds",
+          name: "Merged PRs",
           type: "line",
           lineStyle: { color: cat[0] ?? "#4285f4", width: 2 },
           itemStyle: { color: cat[0] ?? "#4285f4" },
           data: gapSafe(codeBuildsSeries),
-        },
-        {
-          name: "Code Reviews",
-          type: "line",
-          lineStyle: { color: cat[1] ?? "#22306b", width: 2 },
-          itemStyle: { color: cat[1] ?? "#22306b" },
-          data: gapSafe(codeReviewsSeries),
         },
         {
           name: "Issues & Triage",
@@ -361,23 +349,9 @@ export default function ContributorMetricsCharts({
           itemStyle: { color: cat[2] ?? "#5c7bd1" },
           data: gapSafe(issuesTriageSeries),
         },
-        {
-          name: "Documentation",
-          type: "line",
-          lineStyle: { color: cat[3] ?? "#3f5aa4", width: 2 },
-          itemStyle: { color: cat[3] ?? "#3f5aa4" },
-          data: gapSafe(docsSeries),
-        },
       ],
     };
-  }, [
-    theme,
-    monthLabels,
-    codeBuildsSeries,
-    codeReviewsSeries,
-    issuesTriageSeries,
-    docsSeries,
-  ]);
+  }, [theme, monthLabels, codeBuildsSeries, issuesTriageSeries]);
 
   // Series for Chart 3: PR Velocity & Merge Rate (Opened vs Merged, median days to merge)
   const prsOpenedSeries = useMemo(() => {
@@ -414,12 +388,12 @@ export default function ContributorMetricsCharts({
         trigger: "axis",
       },
       legend: {
-        data: ["PRs Opened", "PRs Merged", "Median Days to Merge"],
+        data: ["PRs Opened", "PRs Merged"],
         right: 8,
         top: 6,
         textStyle: { fontSize: 12 },
       },
-      grid: { left: 48, right: 48, top: 40, bottom: 32, containLabel: true },
+      grid: { left: 48, right: 24, top: 40, bottom: 32, containLabel: true },
       xAxis: {
         type: "category",
         data: monthLabels,
@@ -431,11 +405,6 @@ export default function ContributorMetricsCharts({
           name: "PR Count",
           minInterval: 1,
           splitLine: { show: true },
-        },
-        {
-          type: "value",
-          name: "Days",
-          splitLine: { show: false },
         },
       ],
       series: [
@@ -453,17 +422,9 @@ export default function ContributorMetricsCharts({
           itemStyle: { color: cat[2] ?? "#5c7bd1" },
           data: gapSafe(prsMergedSeries),
         },
-        {
-          name: "Median Days to Merge",
-          type: "line",
-          yAxisIndex: 1,
-          lineStyle: { color: cat[4] ?? "#89a3f0", width: 2, type: "dashed" },
-          itemStyle: { color: cat[4] ?? "#89a3f0" },
-          data: gapSafe(medianDaysSeries),
-        },
       ],
     };
-  }, [theme, monthLabels, prsOpenedSeries, prsMergedSeries, medianDaysSeries]);
+  }, [theme, monthLabels, prsOpenedSeries, prsMergedSeries]);
 
   const currentMonthLabel = latestMeasuredMonth?.month ?? "current";
 
@@ -559,31 +520,29 @@ export default function ContributorMetricsCharts({
       <section className={styles.chartCard}>
         <div className={styles.chartHeader}>
           <Heading as="h3" className={styles.chartHeading}>
-            Human Contribution Types Breakdown
+            Contribution Activity Streams
           </Heading>
           <p className={styles.currentValue}>
             <strong>
-              {(
-                latestMeasuredMonth?.streams?.codeBuilds ??
-                latestMeasuredMonth?.streams?.humanPrs ??
-                0
-              ).toLocaleString("en-US")}
+              {(latestMeasuredMonth?.streams?.humanPrs ?? 0).toLocaleString(
+                "en-US",
+              )}
             </strong>{" "}
-            code contributions · {currentMonthLabel}
+            human merged PRs · {currentMonthLabel}
           </p>
         </div>
         <EChart
           option={chart2Option}
-          title="Human Contribution Types Breakdown"
+          title="Contribution Activity Streams"
           summary={
             latestMeasuredMonth
-              ? `Human activity breakdown for ${currentMonthLabel} across Code & Builds, Code Reviews, Issues & Triage, and Documentation.`
+              ? `Activity volume for ${currentMonthLabel} across Merged PRs and Issues.`
               : "accumulating data"
           }
           points={chart2PointsCount}
           minPoints={3}
           height={300}
-          tableCaption="Activity breakdown by contribution stream across Tier-1 repositories"
+          tableCaption="Monthly activity breakdown by contribution stream across projectbluefin"
         />
       </section>
 
@@ -602,14 +561,14 @@ export default function ContributorMetricsCharts({
           option={chart3Option}
           title="PR Velocity & Merge Rate"
           summary={
-            mergeRate !== null
-              ? `${mergeRate}% PR merge rate in ${currentMonthLabel}.`
+            latestMeasuredMonth
+              ? `Pull request throughput for ${currentMonthLabel}: ${latestMeasuredMonth.streams?.prsOpened ?? 0} opened, ${latestMeasuredMonth.streams?.prsMerged ?? 0} merged.`
               : "accumulating data"
           }
           points={chart3PointsCount}
           minPoints={3}
           height={300}
-          tableCaption="Pull request opening velocity, merges, and median turnaround time"
+          tableCaption="Monthly pull request velocity and merge efficiency across projectbluefin"
         />
       </section>
     </div>
