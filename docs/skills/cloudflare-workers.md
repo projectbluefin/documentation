@@ -30,9 +30,13 @@ One directory per Worker under `workers/`, one `wrangler.<name>.toml` at the
 repository root, one `deploy-<name>.yml` workflow. Follow the existing pair
 rather than inventing a layout.
 
-Deploy workflows pin every action by SHA and deploy with
-`npx wrangler@latest deploy --config wrangler.<name>.toml`, using
-`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. Check both secrets in the
+Deploy workflows pin every action by SHA, run `npm ci` first, and deploy with
+`npm exec --no -- wrangler deploy --config wrangler.<name>.toml`, using
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`. `npm exec --no` runs the
+wrangler already installed from `package-lock.json` and fails if it is absent,
+so the deploy uses the same version Renovate and `npm audit` track; never pin a
+separate `wrangler@<version>` in a `run:` line, because Renovate cannot see it
+and it drifts behind the security bumps in `package.json`. Check both secrets in the
 first step and fail with the missing names (see `Check Cloudflare credentials`
 in `deploy-countme-worker.yml`): an empty token otherwise surfaces only deep in
 wrangler's output, which hid a broken deploy for weeks (projectbluefin/common#1091).
