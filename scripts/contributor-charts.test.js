@@ -226,7 +226,7 @@ test("renders full contributor analytics metrics and charts", () => {
   assert.ok(html.includes("93%")); // Latest merge rate (2026-09)
   assert.ok(html.includes("290")); // Latest human merged PRs (2026-09)
   assert.ok(html.includes("Active Human Contributors Trend"));
-  assert.ok(html.includes("Human Contribution Types Breakdown"));
+  assert.ok(html.includes("Contribution Activity Streams"));
   assert.ok(
     html.includes("PR Velocity &amp; Merge Rate") ||
       html.includes("PR Velocity & Merge Rate"),
@@ -240,12 +240,12 @@ test("renders full contributor analytics metrics and charts", () => {
   );
   assert.ok(
     html.includes(
-      "Activity breakdown by contribution stream across Tier-1 repositories",
+      "Monthly activity breakdown by contribution stream across projectbluefin",
     ),
   );
   assert.ok(
     html.includes(
-      "Pull request opening velocity, merges, and median turnaround time",
+      "Monthly pull request velocity and merge efficiency across projectbluefin",
     ),
   );
 });
