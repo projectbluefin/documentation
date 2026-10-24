@@ -163,8 +163,10 @@ smallest complete test stack for this class of component.
 For analytics charts, a visually hidden caption still needs a visible current
 value beside the plot. Inspect the rendered number after applying CSS, not just
 the caption props. Daily totals use one date across all streams; an older
-stream reading must not inflate today's total. Keep Classic's weekly count
-separate from first-party daily totals.
+stream reading must not inflate today's total. A combined headline may add
+Classic's weekly badge to the latest daily snapshot only as a labeled estimate.
+Keep daily trend series separate; do not project a current Classic badge back
+through daily history or show a partial sum when either source is unavailable.
 
 ## Common Rationalizations
 

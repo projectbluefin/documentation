@@ -5,25 +5,18 @@ displayed_sidebar: null
 ---
 
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
-import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
 <CountmeAnalyticsCharts />
 
-## Update downloads
-
-<ImageChurnCharts />
-
-<details>
-<summary><strong>Methodology, Privacy & Opt-Out</strong></summary>
-
-Project Bluefin measures download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
-
-Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
-operating system updates are segmented into fine-grained package intervals so clients download only specific chunks containing changed packages.
+## Methodology, Privacy & Opt-Out
 
 ### Counting Methodology
 
 Every Project Bluefin count comes from `countme.projectbluefin.io`
+
+The All Bluefins snapshot combines Classic's weekly, rounded upstream badge count with
+daily counts for the other reporting images. The combined total is approximate and
+is not a shared daily-history series.
 
 ### First-party Countme Service & Privacy Guarantees
 
@@ -61,8 +54,6 @@ brew analytics off
 ```
 
 See the [Homebrew analytics documentation](https://docs.brew.sh/Analytics) for additional details.
-
-</details>
 
 ### Contributor Metrics
 

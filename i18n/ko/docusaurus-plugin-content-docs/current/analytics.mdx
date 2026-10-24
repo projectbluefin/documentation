@@ -5,21 +5,10 @@ displayed_sidebar: null
 ---
 
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
-import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
 <CountmeAnalyticsCharts />
 
-## 업데이트 변경량 및 압축 분석 {#update-churn--compression-analytics}
-
-Project Bluefin은 연속적인 안정 버전 릴리스 간 다운로드 바이트 델타, 레이어 재사용 효율성, 그리고 압축 통계를 측정합니다.
-
-[Chunkah](https://github.com/coreos/chunkah)와 `zstd-chunked` 컨테이너 레이어 형식을 사용하여,
-운영체제 업데이트는 미세한 패키지 간격으로 분할되어 클라이언트가 변경된 패키지를 포함하는 특정 청크만 다운로드합니다.
-
-<ImageChurnCharts />
-
-<details>
-<summary><strong>방법론, 개인정보 보호 및 옵트아웃</strong></summary>
+## 방법론, 개인정보 보호 및 옵트아웃
 
 ### 카운팅 방법론
 
@@ -61,8 +50,6 @@ brew analytics off
 ```
 
 [Homebrew analytics documentation](https://docs.brew.sh/Analytics)에서 추가 세부 정보를 확인하세요.
-
-</details>
 
 ### 기여자 지표
 
