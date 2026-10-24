@@ -3,7 +3,7 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 const { loadTsxModule } = require("./lib/load-tsx");
 
-const { allBluefinDaily, allBluefinSummary } = loadTsxModule(
+const { familyDaily, classicPopulation, sumBluefinHistories } = loadTsxModule(
   path.join(
     __dirname,
     "..",
@@ -13,118 +13,306 @@ const { allBluefinDaily, allBluefinSummary } = loadTsxModule(
     "firstPartyCountme.ts",
   ),
 );
+const { UPSTREAM_ALLOWED } = loadTsxModule(
+  path.join(__dirname, "lib", "countme-sources.mjs"),
+);
 
-const daily = allBluefinDaily([
-  { day: "2026-10-23", image: "dakota/core:stable", n: 200 },
-  { day: "2026-10-23", image: "utah/core:testing", n: 10 },
-]);
+// Actual publication dates and badge values from ublue-os/countme's Git history.
+const RECORDED = [
+  { date: "2026-10-08", count: 4500 },
+  { date: "2026-10-15", count: 4100 },
+  { date: "2026-10-22", count: 4600 },
+];
+const EMPTY = { days: [], values: [] };
+const DAYS = Array.from(
+  { length: 17 },
+  (_, i) => `2026-10-${String(i + 8).padStart(2, "0")}`,
+);
 
-test("Classic's 4.6k badge plus one daily 210 is an approximate 4810", () => {
-  assert.deepEqual(allBluefinSummary(daily, "4.6k"), {
-    total: 4810,
-    classic: 4600,
-    daily: 210,
-    day: "2026-10-23",
-    approximate: true,
-  });
-});
-
-test("the latest measured day never carries an older stream forward", () => {
-  const staggered = {
-    days: ["2026-10-22", "2026-10-23", "2026-10-24"],
-    streams: {
-      stable: [200, null, null],
-      testing: [null, 10, null],
-      unknown: [null, null, null],
-    },
+function dataset(observations = RECORDED, extra = {}) {
+  return {
+    generatedAt: "2026-10-24T00:00:00Z",
+    source: UPSTREAM_ALLOWED.source,
+    method: "classic-badge-history-v1",
+    observations,
+    ...extra,
   };
-  assert.deepEqual(allBluefinSummary(staggered, "100"), {
-    total: 110,
-    classic: 100,
-    daily: 10,
-    day: "2026-10-23",
-    approximate: false,
-  });
-});
+}
 
-test("zero in both sources is measured data, not unavailable", () => {
-  const zero = allBluefinDaily([
-    { day: "2026-10-23", image: "dakota/core:stable", n: 0 },
-  ]);
-  assert.deepEqual(allBluefinSummary(zero, "0"), {
-    total: 0,
-    classic: 0,
-    daily: 0,
-    day: "2026-10-23",
-    approximate: false,
-  });
-});
-
-test("badge counts accept whole groups and case-insensitive compact boundaries", () => {
-  for (const [message, classic, approximate] of [
-    ["999", 999, false],
-    ["1k", 1000, true],
-    ["999k", 999000, true],
-    ["1M", 1000000, true],
-    ["1.25m", 1250000, true],
-    ["999m", 999000000, true],
-    ["1B", 1000000000, true],
-    ["0k", 0, true],
-    [" 1,234,567 ", 1234567, false],
-  ]) {
-    const summary = allBluefinSummary(daily, message);
-    assert.equal(summary?.classic, classic, message);
-    assert.equal(summary?.total, classic + 210, message);
-    assert.equal(summary?.approximate, approximate, message);
-  }
-});
-
-test("absent or invalid Classic never becomes a partial daily total", () => {
-  for (const message of [
-    null,
-    "",
-    " ",
-    "unavailable",
-    "NaN",
-    "Infinity",
-    "-1",
-    "-1k",
-    "1.5",
-    "1,23",
-    "12,3456",
-    "1,000k",
-    "1kk",
-    "1e3",
-    "1 k",
-    "1k extra",
-    "9".repeat(400),
-    `${"9".repeat(400)}b`,
-  ]) {
-    assert.equal(allBluefinSummary(daily, message), null, String(message));
-  }
-});
-
-test("missing or invalid daily data never becomes a partial Classic total", () => {
-  assert.equal(allBluefinSummary(allBluefinDaily([]), "4.6k"), null);
-  assert.equal(
-    allBluefinSummary(
-      {
-        days: ["2026-10-23"],
-        streams: { stable: [null], testing: [null], unknown: [null] },
-      },
-      "4.6k",
-    ),
-    null,
+function daily(points, family = "dakota") {
+  return familyDaily(
+    points.map(([day, n, stream = "stable"]) => ({
+      day,
+      image: `${family}/core:${stream}`,
+      n,
+    })),
+    family,
   );
-  for (const n of [NaN, Infinity, -1]) {
-    assert.equal(
-      allBluefinSummary(
-        allBluefinDaily([
-          { day: "2026-10-23", image: "dakota/core:stable", n },
-        ]),
-        "4.6k",
+}
+
+const BLUEFIN = daily(DAYS.map((day) => [day, 129]));
+const UTAH = daily(
+  DAYS.map((day) => [day, 94, "testing"]),
+  "utah",
+);
+
+test("the plotted total includes recorded Classic history, not just daily actives", () => {
+  const classic = classicPopulation(dataset(), null, "2026-10-24");
+  assert.deepEqual(classic, {
+    days: ["2026-10-08", "2026-10-15", "2026-10-22"],
+    values: [4500, 4100, 4600],
+  });
+  const total = sumBluefinHistories(BLUEFIN, UTAH, classic);
+  assert.deepEqual(total, {
+    days: DAYS,
+    values: [
+      ...Array(7).fill(4723),
+      ...Array(7).fill(4323),
+      ...Array(3).fill(4823),
+    ],
+  });
+  assert.equal(total.values.at(-1), 4600 + 129 + 94);
+  assert.notEqual(total.values.at(-1), 129 + 94);
+});
+
+test("different family start days use a sorted union, never index-wise addition", () => {
+  const total = sumBluefinHistories(
+    daily([
+      ["2026-10-22", 10],
+      ["2026-10-23", 20],
+    ]),
+    daily(
+      [
+        ["2026-10-23", 3],
+        ["2026-10-24", 4],
+      ],
+      "utah",
+    ),
+    classicPopulation(dataset(), null, "2026-10-24"),
+  );
+  assert.deepEqual(total, {
+    days: ["2026-10-22", "2026-10-23", "2026-10-24"],
+    values: [null, 4623, null],
+  });
+});
+
+test("each total uses only streams reported on that same date", () => {
+  assert.deepEqual(
+    sumBluefinHistories(
+      daily([
+        ["2026-10-22", 129],
+        ["2026-10-23", 10, "testing"],
+      ]),
+      daily(
+        [
+          ["2026-10-22", 94],
+          ["2026-10-23", 5, "unknown"],
+        ],
+        "utah",
       ),
-      null,
+      classicPopulation(dataset(), null, "2026-10-24"),
+    ),
+    { days: ["2026-10-22", "2026-10-23"], values: [4823, 4615] },
+  );
+});
+
+test("missing family days remain gaps rather than carrying daily counts forward", () => {
+  assert.deepEqual(
+    sumBluefinHistories(
+      daily([
+        ["2026-10-22", 129],
+        ["2026-10-24", 130],
+      ]),
+      daily(
+        [
+          ["2026-10-22", 94],
+          ["2026-10-24", 110],
+        ],
+        "utah",
+      ),
+      classicPopulation(dataset(), null, "2026-10-24"),
+    ),
+    {
+      days: ["2026-10-22", "2026-10-23", "2026-10-24"],
+      values: [4823, null, 4840],
+    },
+  );
+});
+
+test("Classic is unknown before its first actual publication", () => {
+  assert.deepEqual(
+    sumBluefinHistories(
+      daily([
+        ["2026-10-07", 1],
+        ["2026-10-08", 1],
+        ["2026-10-09", 1],
+      ]),
+      daily(
+        [
+          ["2026-10-07", 2],
+          ["2026-10-08", 2],
+          ["2026-10-09", 2],
+        ],
+        "utah",
+      ),
+      classicPopulation(dataset(), null, "2026-10-24"),
+    ),
+    {
+      days: ["2026-10-07", "2026-10-08", "2026-10-09"],
+      values: [null, 4503, 4503],
+    },
+  );
+});
+
+test("an explicit Classic null stops the hold until a valid new publication", () => {
+  const days = DAYS.slice(0, 5);
+  const classic = classicPopulation(
+    dataset([
+      { date: "2026-10-11", count: 4100 },
+      { date: "2026-10-08", count: 4500 },
+      { date: "2026-10-09", count: null },
+    ]),
+    null,
+    "2026-10-24",
+  );
+  assert.deepEqual(classic, {
+    days: ["2026-10-08", "2026-10-09", "2026-10-11"],
+    values: [4500, null, 4100],
+  });
+  assert.deepEqual(
+    sumBluefinHistories(
+      daily(days.map((day) => [day, 1])),
+      daily(
+        days.map((day) => [day, 2]),
+        "utah",
+      ),
+      classic,
+    ),
+    { days, values: [4503, null, null, 4103, 4103] },
+  );
+});
+
+test("valid zero in every source remains a measured zero", () => {
+  const classic = classicPopulation(
+    dataset([{ date: "2026-10-22", count: 0 }]),
+    "0",
+    "2026-10-24",
+  );
+  assert.deepEqual(classic.values, [0, 0]);
+  assert.deepEqual(
+    sumBluefinHistories(
+      daily([["2026-10-24", 0]]),
+      daily([["2026-10-24", 0]], "utah"),
+      classic,
+    ),
+    { days: ["2026-10-24"], values: [0] },
+  );
+});
+
+test("missing, malformed, or wrong-source history cannot produce partial totals", () => {
+  const malformed = [
+    null,
+    undefined,
+    {},
+    dataset(RECORDED, { unavailable: true }),
+    dataset(RECORDED, { source: "https://countme.projectbluefin.io" }),
+    dataset(RECORDED, { source: `${UPSTREAM_ALLOWED.source}?other=true` }),
+    dataset(RECORDED, { method: "classic-snapshot" }),
+    dataset(RECORDED, { generatedAt: "not-a-date" }),
+    dataset(null),
+    dataset([null]),
+    dataset([{ date: "2026-02-30", count: 4600 }]),
+    dataset([{ date: "2026-10-24T00:00:00Z", count: 4600 }]),
+    dataset([{ date: 20261024, count: 4600 }]),
+    ...[NaN, Infinity, -Infinity, -1, "4600", undefined].map((count) =>
+      dataset([...RECORDED, { date: "2026-10-24", count }]),
+    ),
+  ];
+  for (const history of malformed) {
+    const classic = classicPopulation(history, null, "2026-10-24");
+    assert.deepEqual(classic, EMPTY);
+    assert.deepEqual(sumBluefinHistories(BLUEFIN, UTAH, classic), {
+      days: DAYS,
+      values: DAYS.map(() => null),
+    });
+  }
+});
+
+test("missing or invalid daily readings cannot become a partial Classic total", () => {
+  const classic = classicPopulation(dataset(), null, "2026-10-24");
+  assert.deepEqual(sumBluefinHistories(familyDaily([]), UTAH, classic), {
+    days: DAYS,
+    values: DAYS.map(() => null),
+  });
+  assert.deepEqual(sumBluefinHistories(BLUEFIN, familyDaily([]), classic), {
+    days: DAYS,
+    values: DAYS.map(() => null),
+  });
+  for (const n of [NaN, Infinity, -1, Number.MAX_VALUE]) {
+    const total = sumBluefinHistories(
+      daily([
+        ["2026-10-24", n],
+        ["2026-10-24", Number.MAX_VALUE, "testing"],
+      ]),
+      daily([["2026-10-24", 94]], "utah"),
+      classic,
+    );
+    assert.deepEqual(total.values, [null]);
+  }
+});
+
+test("the current badge changes only its actual observed day, not earlier points", () => {
+  const historical = classicPopulation(dataset(), null, "2026-10-24");
+  const current = classicPopulation(dataset(), "4.7k", "2026-10-24");
+  assert.deepEqual(current, {
+    days: [...historical.days, "2026-10-24"],
+    values: [...historical.values, 4700],
+  });
+  const before = sumBluefinHistories(BLUEFIN, UTAH, historical);
+  const after = sumBluefinHistories(BLUEFIN, UTAH, current);
+  assert.deepEqual(after.values.slice(0, -1), before.values.slice(0, -1));
+  assert.equal(after.values.at(-1), 4923);
+  assert.deepEqual(
+    classicPopulation(
+      dataset([{ date: "2026-10-24", count: 4500 }]),
+      "4.6k",
+      "2026-10-24",
+    ),
+    { days: ["2026-10-24"], values: [4600] },
+  );
+});
+
+test("a current badge without history creates one observation, never past history", () => {
+  const classic = classicPopulation(null, "4.6k", "2026-10-24");
+  assert.deepEqual(classic, { days: ["2026-10-24"], values: [4600] });
+  assert.deepEqual(sumBluefinHistories(BLUEFIN, UTAH, classic), {
+    days: DAYS,
+    values: [...Array(16).fill(null), 4823],
+  });
+  for (const badge of [null, "", "unavailable", "-1", "NaN", "Infinity"]) {
+    assert.deepEqual(classicPopulation(null, badge, "2026-10-24"), EMPTY);
+    assert.deepEqual(
+      classicPopulation(dataset(), badge, "2026-10-24"),
+      classicPopulation(dataset(), null, "2026-10-24"),
     );
   }
+  assert.deepEqual(classicPopulation(null, "4.6k", "2026-02-30"), EMPTY);
+});
+
+test("publication ordering and duplicate-day replacement are deterministic", () => {
+  const input = dataset([
+    { date: "2026-10-22", count: 4500 },
+    { date: "2026-10-08", count: 4100 },
+    { date: "2026-10-22", count: 4600 },
+  ]);
+  const expected = {
+    days: ["2026-10-08", "2026-10-22"],
+    values: [4100, 4600],
+  };
+  assert.deepEqual(classicPopulation(input, null, "2026-10-24"), expected);
+  assert.deepEqual(classicPopulation(input, null, "2026-10-24"), expected);
+  assert.deepEqual(
+    sumBluefinHistories(familyDaily([]), familyDaily([]), EMPTY),
+    EMPTY,
+  );
 });

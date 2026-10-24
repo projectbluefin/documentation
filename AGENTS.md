@@ -243,6 +243,8 @@ Rules for every `scripts/fetch-*.js`:
 These apply to any chart, sparkline, or status panel:
 
 1. A graphic never appears without its current value as a number.
+   A summary chart's plotted values and headline must represent the same metric.
+   When a chart sums other charts, test the actual series values against all sources.
 2. Small multiples share one domain; per-series autoscaling makes every cell
    look identical regardless of value.
 3. Severity is one hue at varying intensity **plus a glyph** — never hue alone,
@@ -257,7 +259,7 @@ These apply to any chart, sparkline, or status panel:
    must be written in direct, concise sysadmin terms. Do not include agent scaffolding,
    meta checklists, or internal build-system inventories in operator guides. Keep
    commands, safety interlocks, and rollback behavior explicit.
-`scripts/panel-unavailability.test.js` enforces rule 6 mechanically.
+   `scripts/panel-unavailability.test.js` enforces rule 6 mechanically.
 
 ## PR rules
 

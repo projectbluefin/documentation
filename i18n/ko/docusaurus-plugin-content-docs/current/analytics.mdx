@@ -12,7 +12,12 @@ import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyt
 
 ### 카운팅 방법론
 
-모든 Project Bluefin 카운트는 `countme.projectbluefin.io`에서 옵니다
+Bluefin과 Bluefin Utah의 일별 집계는 `countme.projectbluefin.io`에서 가져옵니다.
+Classic은 `ublue-os/countme`가 집계하는 `ublue-os/bluefin`입니다.
+
+전체 차트는 날짜별로 Bluefin, Bluefin Utah, Classic 값을 더합니다.
+Classic의 마지막 주간 배지 값은 다음 게시일까지 유지됩니다.
+일별 집계가 없는 날짜는 공백으로 표시하며, 배지 값이 반올림되어 총계는 추정치입니다.
 
 ### 첫 번째 파티 Countme 서비스 및 개인정보 보호 보증
 

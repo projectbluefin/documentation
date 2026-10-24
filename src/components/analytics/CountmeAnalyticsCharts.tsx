@@ -14,11 +14,10 @@ import {
   DAILY_STREAMS,
   DAILY_URL,
   FIRST_PARTY_ORIGIN,
-  allBluefinDaily,
-  allBluefinSummary,
+  classicPopulation,
+  sumBluefinHistories,
   familyDaily,
-  latestDaily,
-  measuredDays,
+  type ClassicHistoryDataset,
   type DailyDataset,
   type FamilyDaily,
 } from "./firstPartyCountme";
@@ -34,9 +33,10 @@ import styles from "./CountmeAnalyticsCharts.module.css";
  * the English one (see scripts/lib/translated-locales.mjs).
  */
 const REGISTRY_URL = "/data/ghcr-packages.json";
+const CLASSIC_HISTORY_URL = "/data/classic-countme-history.json";
 
 /**
- * Active-system counts come from the first-party service and nothing else.
+ * First-party image counts come from the first-party service and nothing else.
  *
  * The reader lives in `./firstPartyCountme`, and is imported rather than
  * re-exported from here. This file holds the image catalogue, and
@@ -54,9 +54,8 @@ const REGISTRY_URL = "/data/ghcr-packages.json";
  * page talks to a single origin and `raw.githubusercontent.com` does not need
  * to appear in `connect-src` for this.
  *
- * Upstream publishes a rendered chart and a rounded badge value, and no
- * time-series file, so this panel shows the image it publishes rather than
- * replotting a series that does not exist.
+ * Historical badge revisions are collected at build time for /analytics;
+ * image pages can still embed the original upstream chart.
  */
 const LEGACY_CHART_URL = `${FIRST_PARTY_ORIGIN}/legacy/bluefin.svg`;
 const LEGACY_BADGE_URL = `${FIRST_PARTY_ORIGIN}/badge-endpoints/bluefin.json`;
@@ -312,59 +311,59 @@ export function buildStreamMatrix(
 /** What an empty daily card says until its image family reports. */
 export const NO_RAPTORS = "No raptors reporting in, life finds a way";
 
-/** Daily active systems with a current total, or the reason data is unavailable. */
-function DailyPanel({
-  daily,
+function dailyChartSeries(daily: FamilyDaily) {
+  return DAILY_STREAMS.map((stream) => ({
+    name: stream,
+    values: daily.streams[stream],
+  }));
+}
+
+/** One frame for the total and its three source charts. Numbers come from plotted data. */
+function CountPanel({
+  days,
+  series,
   label,
   reason,
   cat,
   theme,
-  combined = false,
+  cadence = "daily",
+  approximate = false,
+  step = false,
 }: {
-  daily: FamilyDaily;
+  days: string[];
+  series: Array<{ name: string; values: Array<number | null> }>;
   label: string;
   reason: string;
   cat: string[];
   theme: { palette: { border: string; text: string } };
-  combined?: boolean;
+  cadence?: "daily" | "weekly" | "estimated";
+  approximate?: boolean;
+  step?: false | "end";
 }): React.JSX.Element {
-  const measured = measuredDays(daily);
-  const latest = latestDaily(daily);
-  const plotted = useMemo(
-    () =>
-      combined
-        ? [
-            {
-              name: "Daily reports",
-              values: daily.days.map((_, i) => {
-                const values = DAILY_STREAMS.map(
-                  (stream) => daily.streams[stream][i],
-                );
-                return values.every((value) => value === null)
-                  ? null
-                  : values.reduce<number>(
-                      (sum, value) => sum + (value ?? 0),
-                      0,
-                    );
-              }),
-            },
-          ]
-        : DAILY_STREAMS.map((stream) => ({
-            name: stream,
-            values: daily.streams[stream],
-          })),
-    [daily, combined],
-  );
+  let measured = 0;
+  let latestIndex = -1;
+  for (let i = 0; i < days.length; i += 1) {
+    if (series.some((s) => s.values[i] !== null)) {
+      measured += 1;
+      latestIndex = i;
+    }
+  }
+  const latestValue =
+    latestIndex < 0
+      ? null
+      : series.reduce((sum, s) => sum + (s.values[latestIndex] ?? 0), 0);
+  const title = `${label} ${cadence} active systems`;
+  const valueLabel =
+    latestValue === null
+      ? "accumulating data"
+      : `${approximate ? "About " : ""}${latestValue.toLocaleString("en-US", { maximumSignificantDigits: approximate ? 2 : 21 })} active systems`;
   const option = useMemo(
     () => ({
       grid: { left: 40, right: 16, top: 48, bottom: 40, containLabel: true },
-      tooltip: {
-        trigger: "axis",
-        axisPointer: { type: "line" },
-      },
+      tooltip: { trigger: "axis", axisPointer: { type: "line" } },
       xAxis: {
         type: "category",
-        data: daily.days,
+        data: days,
         boundaryGap: false,
         axisLine: { lineStyle: { color: theme.palette.border, width: 0.8 } },
         axisTick: { show: false },
@@ -385,7 +384,6 @@ function DailyPanel({
         type: "value",
         min: 0,
         minInterval: 1,
-        name: "",
         axisLine: { show: false },
         axisTick: { show: false },
         splitLine: {
@@ -406,14 +404,15 @@ function DailyPanel({
         itemHeight: 4,
         textStyle: { fontSize: 12 },
       },
-      series: plotted.map(({ name, values }, i) => ({
+      series: series.map(({ name, values }, i) => ({
         name,
         type: "line",
         smooth: false,
         connectNulls: false,
+        step,
         showSymbol: true,
         symbolSize: 6,
-        symbol: SERIES_SYMBOLS[i],
+        symbol: SERIES_SYMBOLS[i % SERIES_SYMBOLS.length],
         data: values,
         itemStyle: { color: cat[i % cat.length] },
         lineStyle: {
@@ -423,42 +422,33 @@ function DailyPanel({
         },
       })),
     }),
-    [daily, cat, theme, plotted],
+    [days, series, cat, theme, step],
   );
   return (
     <div className={styles.dailyChart}>
-      {latest && (
+      {latestValue !== null && (
         <p className={styles.currentValue}>
-          <strong>{latest.value.toLocaleString("en-US")}</strong>{" "}
-          {combined ? "daily reports" : "active systems"}
+          <strong>{valueLabel}</strong>
           {" · "}
-          {compactWeek(latest.day)}
+          {compactWeek(days[latestIndex])}
         </p>
       )}
       {measured > 0 ? (
         <EChart
           option={option}
-          title={
-            combined
-              ? "Daily-reporting Bluefins"
-              : `${label} daily active systems`
-          }
+          title={title}
           summary={
-            latest
-              ? `${latest.value.toLocaleString("en-US")} active systems on ${latest.day}.`
-              : "accumulating data"
+            latestValue === null
+              ? "accumulating data"
+              : `${valueLabel} on ${days[latestIndex]}.`
           }
           points={measured}
           minPoints={2}
           height={320}
-          tableCaption={
-            combined
-              ? "Daily reports from all reporting Bluefins; Classic reports weekly and is not part of this trend."
-              : `${label} systems active per day`
-          }
+          tableCaption={`${label} ${cadence} active systems by UTC date`}
         />
       ) : (
-        <Unavailable what={`${label} daily active systems`} reason={reason} />
+        <Unavailable what={title} reason={reason} />
       )}
     </div>
   );
@@ -490,8 +480,9 @@ function useDailyDataset(daily?: DailyDataset, enabled = true) {
 }
 
 function useLegacyActive(enabled = true) {
-  const [legacyActive, setLegacyActive] = useState<string | null>(null);
-
+  const [reading, setReading] = useState<{ value: string | null; day: string }>(
+    { value: null, day: "" },
+  );
   useEffect(() => {
     if (!enabled) return;
     void (async () => {
@@ -499,16 +490,16 @@ function useLegacyActive(enabled = true) {
         const res = await fetch(LEGACY_BADGE_URL);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const badge = (await res.json()) as { message?: string };
-        setLegacyActive(
-          typeof badge?.message === "string" ? badge.message : null,
-        );
+        setReading({
+          value: typeof badge?.message === "string" ? badge.message : null,
+          day: new Date().toISOString().slice(0, 10),
+        });
       } catch {
-        setLegacyActive(null);
+        setReading({ value: null, day: "" });
       }
     })();
   }, [enabled]);
-
-  return legacyActive;
+  return reading;
 }
 
 function LegacyChart({
@@ -550,7 +541,7 @@ export function PerImageUsage({
   const [themeRef, fxTheme] = useFactoryTheme();
   const firstParty = family !== "classic" && family !== "lts";
   const { dailyData, emptyReason } = useDailyDataset(daily, firstParty);
-  const legacyActive = useLegacyActive(family === "classic");
+  const { value: legacyActive } = useLegacyActive(family === "classic");
   const [legacyChartFailed, setLegacyChartFailed] = useState(false);
   const usage = useMemo(
     () => familyDaily(firstParty ? (dailyData?.days ?? []) : [], family),
@@ -619,8 +610,9 @@ export function PerImageUsage({
             )}
           </>
         ) : (
-          <DailyPanel
-            daily={usage}
+          <CountPanel
+            days={usage.days}
+            series={dailyChartSeries(usage)}
             label={label}
             reason={emptyReason}
             cat={fxTheme.categorical}
@@ -638,12 +630,14 @@ export interface CountmeAnalyticsChartsProps {
   daily?: DailyDataset;
   /** Injected snapshot; production reads the permitted Classic badge. */
   classic?: string | null;
+  history?: ClassicHistoryDataset;
 }
 
 export default function CountmeAnalyticsCharts({
   registry,
   daily,
   classic,
+  history,
 }: CountmeAnalyticsChartsProps = {}): React.JSX.Element {
   const [themeRef, fxTheme] = useFactoryTheme();
   const cat = fxTheme.categorical;
@@ -669,35 +663,59 @@ export default function CountmeAnalyticsCharts({
     })();
   }, [registry]);
 
-  // ── Upstream image, the one permitted legacy series ────────────────────
-  //
-  // UPSTREAM_ALLOWED is the single exception to the first-party rule:
-  // ublue-os/bluefin:stable, counted by ublue-os/countme. Both the badge and
-  // the chart are proxied by our worker, so this stays on one origin and needs
-  // no second CSP entry.
+  // Classic is ublue-os/bluefin from ublue-os/countme: the current badge is
+  // proxied by our worker; real badge revisions are collected at build time.
   const fetchedClassic = useLegacyActive(classic === undefined);
-  const legacyActive = classic === undefined ? fetchedClassic : classic;
-
-  // ── Bluefin and Bluefin Utah: daily pings from projectbluefin-countme ─
-  const { dailyData, emptyReason } = useDailyDataset(daily);
-  const allBluefin = useMemo(
-    () =>
-      allBluefinDaily(dailyData?.unavailable ? [] : (dailyData?.days ?? [])),
-    [dailyData],
+  const legacyActive = classic === undefined ? fetchedClassic.value : classic;
+  const observedDay =
+    classic === undefined
+      ? fetchedClassic.day
+      : new Date().toISOString().slice(0, 10);
+  const [fetchedHistory, setFetchedHistory] =
+    useState<ClassicHistoryDataset | null>(null);
+  const [historyReason, setHistoryReason] = useState<string | null>(null);
+  useEffect(() => {
+    if (history) return;
+    void (async () => {
+      try {
+        const res = await fetch(CLASSIC_HISTORY_URL);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        setFetchedHistory((await res.json()) as ClassicHistoryDataset);
+      } catch {
+        setHistoryReason("Classic count history could not be read.");
+      }
+    })();
+  }, [history]);
+  const historyData = history ?? fetchedHistory;
+  const classicCurve = useMemo(
+    () => classicPopulation(historyData, legacyActive, observedDay),
+    [historyData, legacyActive, observedDay],
   );
+  const classicReason =
+    historyData?.stateReason ??
+    historyReason ??
+    "Reading Classic count history…";
+  const { dailyData, emptyReason } = useDailyDataset(daily);
   const bluefin = useMemo(
-    () => familyDaily(dailyData?.days ?? [], "dakota"),
+    () =>
+      familyDaily(
+        dailyData?.unavailable ? [] : (dailyData?.days ?? []),
+        "dakota",
+      ),
     [dailyData],
   );
   const utah = useMemo(
-    () => familyDaily(dailyData?.days ?? [], "utah"),
+    () =>
+      familyDaily(
+        dailyData?.unavailable ? [] : (dailyData?.days ?? []),
+        "utah",
+      ),
     [dailyData],
   );
-  const bluefinLatest = latestDaily(bluefin);
-  const summary = allBluefinSummary(allBluefin, legacyActive);
-  const totalLabel = summary
-    ? `About ${summary.total.toLocaleString("en-US", { maximumSignificantDigits: summary.approximate ? 2 : 21 })} systems`
-    : "";
+  const totalCurve = useMemo(
+    () => sumBluefinHistories(bluefin, utah, classicCurve),
+    [bluefin, utah, classicCurve],
+  );
 
   const ghcr = registry ?? fetchedRegistry;
 
@@ -799,29 +817,22 @@ export default function CountmeAnalyticsCharts({
             All Bluefins (Total)
           </Heading>
           <p className={styles.sectionSubtext}>
-            {summary
-              ? `Classic ${legacyActive} weekly; `
-              : "Classic reports weekly; "}
-            the trend below shows daily reports only.
+            Bluefin + Bluefin Utah + Classic.
           </p>
         </header>
-        {summary ? (
-          <p className={styles.currentValue}>
-            <strong>{totalLabel}</strong>
-          </p>
-        ) : (
-          <Unavailable
-            what="All Bluefins total"
-            reason="A complete total needs both Classic and daily counts."
-          />
-        )}
-        <DailyPanel
-          daily={allBluefin}
+        <CountPanel
+          days={totalCurve.days}
+          series={[{ name: "All Bluefins", values: totalCurve.values }]}
           label="All Bluefins"
-          reason={emptyReason}
+          cadence="estimated"
+          approximate
+          reason={
+            classicCurve.days.length
+              ? "A total needs counts from all three Bluefins on the same date."
+              : classicReason
+          }
           cat={cat}
           theme={fxTheme}
-          combined
         />
       </section>
 
@@ -833,8 +844,9 @@ export default function CountmeAnalyticsCharts({
           </Heading>
           <p className={styles.sectionSubtext}>Systems active per day.</p>
         </header>
-        <DailyPanel
-          daily={bluefin}
+        <CountPanel
+          days={bluefin.days}
+          series={dailyChartSeries(bluefin)}
           label="Bluefin"
           reason={emptyReason}
           cat={cat}
@@ -850,8 +862,9 @@ export default function CountmeAnalyticsCharts({
           </Heading>
           <p className={styles.sectionSubtext}>Systems active per day.</p>
         </header>
-        <DailyPanel
-          daily={utah}
+        <CountPanel
+          days={utah.days}
+          series={dailyChartSeries(utah)}
           label="Bluefin Utah"
           reason={emptyReason}
           cat={cat}
@@ -865,40 +878,23 @@ export default function CountmeAnalyticsCharts({
             Bluefin Classic (ublue-os/bluefin)
           </Heading>
           <p className={styles.sectionSubtext}>
-            <code>ublue-os/bluefin:stable</code>, counted by{" "}
+            Weekly counts from{" "}
             <Link to="https://github.com/ublue-os/countme">
               ublue-os/countme
             </Link>
-            . Metalink hits, not image check-ins.
           </p>
         </header>
-        {/* Rule 1: both sides of the comparison carry their current value. */}
-        <p className={styles.legendRow}>
-          <span className={styles.legendChip}>
-            <span className={styles.legendGlyph} aria-hidden="true">
-              ◇
-            </span>
-            Bluefin Classic: {legacyActive ?? "unavailable"}
-          </span>
-          <span className={styles.legendChip}>
-            <span className={styles.legendGlyph} aria-hidden="true">
-              ●
-            </span>
-            Bluefin:{" "}
-            {bluefinLatest
-              ? `${bluefinLatest.value.toLocaleString()} (${bluefinLatest.day})`
-              : "accumulating data"}
-          </span>
-        </p>
-
-        {legacyActive === null ? (
-          <Unavailable
-            what="Upstream count"
-            reason="The upstream badge could not be read."
-          />
-        ) : (
-          <LegacyChart active={legacyActive} />
-        )}
+        <CountPanel
+          days={classicCurve.days}
+          series={[{ name: "Classic", values: classicCurve.values }]}
+          label="Bluefin Classic"
+          cadence="weekly"
+          approximate
+          step="end"
+          reason={classicReason}
+          cat={cat}
+          theme={fxTheme}
+        />
       </section>
 
       {/* ── 4. Image × stream publication matrix ────────────────────────── */}

@@ -12,11 +12,14 @@ import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyt
 
 ### Counting Methodology
 
-Every Project Bluefin count comes from `countme.projectbluefin.io`
+Bluefin and Bluefin Utah use `countme.projectbluefin.io`. Classic is
+`ublue-os/bluefin`, counted by `ublue-os/countme`.
 
-The All Bluefins snapshot combines Classic's weekly, rounded upstream badge count with
-daily counts for the other reporting images. The combined total is approximate and
-is not a shared daily-history series.
+All Bluefins adds Bluefin, Bluefin Utah, and Classic on each date. Classic uses the
+recorded Bluefin badge history from `ublue-os/countme`; its last published weekly
+reading is used until the next publication. Bluefin and Utah use their own daily
+counts. Missing daily counts leave gaps. The badge values are rounded, so the
+combined chart is an estimate, not a deduplicated device inventory.
 
 ### First-party Countme Service & Privacy Guarantees
 
