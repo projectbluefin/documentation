@@ -52,6 +52,7 @@ const sidebars: SidebarsConfig = {
         "server/diskless-troubleshooting",
         "server/systemd-sysext-extensions",
         "server/enabling-extensions",
+        "server/system-containers",
         "server/kubeadm-sysext",
         "server/k0s-sysext-ops",
         "server/homelab-profile",

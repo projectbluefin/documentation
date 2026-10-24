@@ -165,6 +165,11 @@ card entry from `IMAGES` in `ImageCards.tsx`.
   explicit, and link build-time recipes to upstream repositories. When headings
   are simplified, place explicit HTML anchors (`<a id="..."></a>`) so legacy links
   do not 404.
+- **Container execution context**: Label host and guest command blocks. Check
+  the launcher's own command resolution as well as the target program: a
+  package-installed launcher may enter a container before its recipe starts.
+  Keep public operator procedures here and link from upstream agent skills
+  instead of mirroring their internal implementation notes.
 
 ## Common Rationalizations
 
