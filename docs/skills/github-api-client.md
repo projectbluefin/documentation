@@ -109,6 +109,15 @@ instead of restating a token read or a header object.
     `**/*.{js,jsx,ts,tsx}`, so `npm run lint` says nothing about
     `scripts/lib/*.mjs`. A green lint on an ESM-client change is not evidence —
     the `*.test.js` for that module is.
+13. **Incremental month-partitioned caching & refetch window.**
+    Historical completed months are immutable and must be frozen once finalized.
+    To avoid losing PRs and activity occurring on the final day of a calendar
+    month due to delayed reporting or webhook latencies, an incremental monthly
+    fetcher must refetch both the current in-flight month and the immediately
+    preceding calendar month. A month is only frozen if completed strictly
+    after month-end and no pagination truncation or rate limits were tripped.
+    If truncation or rate limiting is tripped, record `null` for the affected
+    stream rather than coercing to 0 or publishing a partial undercount.
 
 ## Common Rationalizations
 

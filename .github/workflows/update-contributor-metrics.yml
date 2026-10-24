@@ -1,0 +1,76 @@
+name: Update Contributor Metrics Cache
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # 02:00 UTC daily
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-contributor-metrics:
+    name: Compute contributor metrics and create PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@bf7454d06d71f1098171f2acdf0cd4708d7b5920 # v2.20.0
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
+
+      - name: Compute contributor metrics
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node scripts/fetch-contributor-metrics.js
+
+      - name: Check for contributor metrics dataset changes
+        id: check-changes
+        run: |
+          git add static/data/contributor-metrics.json
+          if git diff --cached --quiet; then
+            echo "No contributor metrics changes detected."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Contributor metrics dataset changed."
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create or update PR with fresh contributor data
+        if: steps.check-changes.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BRANCH="chore/update-contributor-metrics-$(date +%Y%m%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git commit -m "chore(analytics): update contributor metrics cache"
+          git push -u origin "$BRANCH" --force
+
+          # Check if PR already exists before opening duplicate
+          EXISTING_PR=$(gh pr list --repo projectbluefin/documentation --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists for $BRANCH — skipping creation."
+          else
+            gh pr create \
+              --repo projectbluefin/documentation \
+              --base main \
+              --head "$BRANCH" \
+              --title "chore(analytics): update contributor metrics cache" \
+              --body "Automated update of monthly contributor metrics, active cohorts, and activity streams. Requires maintainer approval before merge per repository policy."
+          fi

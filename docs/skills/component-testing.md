@@ -216,6 +216,12 @@ through daily history or show a partial sum when either source is unavailable.
   colors in CSS or TSX. `scripts/factory-theming.test.js` enforces this; new
   accent colors belong in `src/components/factory/tokens.css` as `hsl()` tokens
   and should be consumed via `var(--fx-*)` and `color-mix()`.
+- Analytics panels and charts under `src/components/analytics/` are bound by the
+  visible-unavailability rule enforced in `scripts/panel-unavailability.test.js`.
+  They must never return `null` from top-level component guards when data is
+  missing, in-flight, or unavailable; render `<Unavailable what={...} reason={...} />`
+  instead, and ensure `minPoints` (e.g. 3) suppresses premature trends with
+  "accumulating data" rather than failing silently.
 
 ## Sources
 

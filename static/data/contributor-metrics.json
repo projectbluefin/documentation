@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-24T19:31:44.206Z",
+  "source": "GitHub GraphQL & PR Events",
+  "org": "projectbluefin",
+  "unavailable": false,
+  "stateReason": null,
+  "months": [
+    {
+      "month": "2026-07",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-31"
+      },
+      "activeContributors": 12,
+      "streams": {
+        "humanPrs": 342,
+        "automationPrs": 434,
+        "issues": 143,
+        "reviews": null
+      },
+      "cohorts": {
+        "new": 1,
+        "returning": 11
+      },
+      "status": "frozen",
+      "truncated": false,
+      "force": true
+    },
+    {
+      "month": "2026-08",
+      "window": {
+        "start": "2026-08-01",
+        "end": "2026-08-31"
+      },
+      "activeContributors": 17,
+      "streams": {
+        "humanPrs": 452,
+        "automationPrs": 730,
+        "issues": 355,
+        "reviews": null
+      },
+      "cohorts": {
+        "new": 1,
+        "returning": 16
+      },
+      "status": "frozen",
+      "truncated": false,
+      "force": true
+    },
+    {
+      "month": "2026-09",
+      "window": {
+        "start": "2026-09-01",
+        "end": "2026-09-30"
+      },
+      "activeContributors": 29,
+      "streams": {
+        "humanPrs": 1421,
+        "automationPrs": 1071,
+        "issues": 861,
+        "reviews": null
+      },
+      "cohorts": {
+        "new": 3,
+        "returning": 26
+      },
+      "status": "frozen",
+      "truncated": false,
+      "force": true
+    },
+    {
+      "month": "2026-10",
+      "window": {
+        "start": "2026-10-01",
+        "end": "2026-10-31"
+      },
+      "activeContributors": 21,
+      "streams": {
+        "humanPrs": 483,
+        "automationPrs": 920,
+        "issues": 277,
+        "reviews": null
+      },
+      "cohorts": {
+        "new": 4,
+        "returning": 17
+      },
+      "status": "in_flight",
+      "truncated": false,
+      "force": true
+    }
+  ]
+}
