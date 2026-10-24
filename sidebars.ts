@@ -8,12 +8,7 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Get Bluefin",
       collapsed: false,
-      items: [
-        "index",
-        "downloads",
-        "installation",
-        "driver-versions",
-      ],
+      items: ["index", "downloads", "installation", "driver-versions"],
     },
     {
       type: "category",
@@ -29,7 +24,12 @@ const sidebars: SidebarsConfig = {
       type: "category",
       label: "Desktop Guide",
       collapsed: false,
-      items: ["administration", "command-line", "troubleshooting"],
+      items: [
+        "administration",
+        "sync-folder",
+        "command-line",
+        "troubleshooting",
+      ],
     },
     {
       type: "category",
