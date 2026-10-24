@@ -1,7 +1,11 @@
-import { FIRST_PARTY } from "@site/scripts/lib/countme-sources.mjs";
+import {
+  FIRST_PARTY,
+  UPSTREAM_ALLOWED,
+} from "@site/scripts/lib/countme-sources.mjs";
+import { parseBadgeCount } from "@site/scripts/lib/classic-countme.mjs";
 
 /**
- * Reading daily active systems and combining them with the Classic badge snapshot.
+ * Reading daily active systems alongside Classic's published weekly history.
  *
  * This module is deliberately separate from the component that renders it.
  * `scripts/countme-first-party.test.js` forbids a file that holds the image
@@ -11,8 +15,8 @@ import { FIRST_PARTY } from "@site/scripts/lib/countme-sources.mjs";
  * in one file, and the rule stays a real gate rather than an exemption list.
  *
  * Daily measurements use the aggregate served by `countme.projectbluefin.io`.
- * The summary also accepts the permitted Classic badge's current weekly count;
- * it does not construct combined historical totals from these different periods.
+ * Classic uses only the permitted badge's dated observations. A weekly reading
+ * holds from its publication date, never before it or through an explicit gap.
  */
 
 /**
@@ -82,13 +86,6 @@ export function familyDaily(
   return { days, streams };
 }
 
-/**
- * Combined daily actives across all Bluefin families and flavors per stream.
- */
-export function allBluefinDaily(rows: DailyRow[]): FamilyDaily {
-  return familyDaily(rows);
-}
-
 export type FamilyDaily = ReturnType<typeof familyDaily>;
 
 /** Days on which at least one stream reported, as `measuredWeekCount` does. */
@@ -114,44 +111,126 @@ export function latestDaily(
   return null;
 }
 
-const CLASSIC_SCALES: Record<string, number> = { k: 1e3, m: 1e6, b: 1e9 };
+export type PopulationSeries = {
+  days: string[];
+  values: Array<number | null>;
+};
 
-/** A current snapshot combining Classic's weekly badge with one measured day. */
-export function allBluefinSummary(
-  daily: FamilyDaily,
-  classic: string | null,
-): {
-  total: number;
-  classic: number;
-  daily: number;
-  day: string;
-  approximate: boolean;
-} | null {
-  const latest = latestDaily(daily);
-  const message = classic?.trim();
-  if (!latest || !message) return null;
+export interface ClassicHistoryDataset {
+  generatedAt: string;
+  source: string;
+  method: "classic-badge-history-v1";
+  observations: Array<{ date: string; count: number | null }>;
+  unavailable?: boolean;
+  stateReason?: string;
+}
 
-  const compact = message.match(/^(\d+(?:\.\d+)?)([kmb])$/i);
-  if (!compact && !/^(?:\d+|\d{1,3}(?:,\d{3})+)$/.test(message)) {
-    return null;
+function isDay(value: unknown): value is string {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    return false;
   }
-  const classicCount = compact
-    ? Number(compact[1]) * CLASSIC_SCALES[compact[2].toLowerCase()]
-    : Number(message.replace(/,/g, ""));
-  const total = classicCount + latest.value;
+  const timestamp = Date.parse(`${value}T00:00:00Z`);
+  return (
+    Number.isFinite(timestamp) &&
+    new Date(timestamp).toISOString().slice(0, 10) === value
+  );
+}
+
+function isCount(value: unknown): value is number {
+  return typeof value === "number" && Number.isFinite(value) && value >= 0;
+}
+
+/** Actual Classic publications, with today's badge only on its observation day. */
+export function classicPopulation(
+  history: ClassicHistoryDataset | null | undefined,
+  currentBadge: string | null,
+  observedDay: string,
+): PopulationSeries {
+  const observations = new Map<string, number | null>();
   if (
-    !Number.isFinite(classicCount) ||
-    !Number.isFinite(total) ||
-    latest.value < 0
+    history &&
+    !history.unavailable &&
+    history.source === UPSTREAM_ALLOWED.source &&
+    history.method === "classic-badge-history-v1" &&
+    typeof history.generatedAt === "string" &&
+    Number.isFinite(Date.parse(history.generatedAt)) &&
+    Array.isArray(history.observations) &&
+    history.observations.every(
+      (observation) =>
+        observation !== null &&
+        typeof observation === "object" &&
+        isDay(observation.date) &&
+        (observation.count === null || isCount(observation.count)),
+    )
   ) {
-    return null;
+    for (const { date, count } of history.observations) {
+      observations.set(date, count);
+    }
   }
+  const current = parseBadgeCount(currentBadge);
+  if (current !== null && isDay(observedDay)) {
+    observations.set(observedDay, current);
+  }
+  const days = [...observations.keys()].sort();
+  return { days, values: days.map((day) => observations.get(day)!) };
+}
 
-  return {
-    total,
-    classic: classicCount,
-    daily: latest.value,
-    day: latest.day,
-    approximate: compact !== null,
-  };
+/** Each family's own same-day streams; missing or invalid days remain gaps. */
+function dailyTotals(daily: FamilyDaily): Map<string, number | null> {
+  const totals = new Map<string, number | null>();
+  for (const [i, day] of daily.days.entries()) {
+    if (!isDay(day)) continue;
+    let total: number | null = null;
+    for (const stream of DAILY_STREAMS) {
+      const value = daily.streams[stream]?.[i];
+      if (value === null) continue;
+      if (!isCount(value)) {
+        total = null;
+        break;
+      }
+      total = (total ?? 0) + value;
+    }
+    totals.set(day, total !== null && Number.isFinite(total) ? total : null);
+  }
+  return totals;
+}
+
+/** Date-aligned daily totals with the latest Classic publication as of each day. */
+export function sumBluefinHistories(
+  bluefin: FamilyDaily,
+  utah: FamilyDaily,
+  classic: PopulationSeries,
+): PopulationSeries {
+  const bluefinTotals = dailyTotals(bluefin);
+  const utahTotals = dailyTotals(utah);
+  const days = [
+    ...new Set([...bluefinTotals.keys(), ...utahTotals.keys()]),
+  ].sort();
+  const publications = new Map<string, number | null>();
+  for (const [i, day] of classic.days.entries()) {
+    if (isDay(day)) {
+      const value = classic.values[i];
+      publications.set(day, isCount(value) ? value : null);
+    }
+  }
+  const classicDays = [...publications.keys()].sort();
+  let nextPublication = 0;
+  let classicCount: number | null = null;
+  const values = days.map((day) => {
+    while (
+      nextPublication < classicDays.length &&
+      classicDays[nextPublication] <= day
+    ) {
+      classicCount = publications.get(classicDays[nextPublication])!;
+      nextPublication += 1;
+    }
+    const bluefinCount = bluefinTotals.get(day);
+    const utahCount = utahTotals.get(day);
+    if (bluefinCount == null || utahCount == null || classicCount === null) {
+      return null;
+    }
+    const total = bluefinCount + utahCount + classicCount;
+    return Number.isFinite(total) ? total : null;
+  });
+  return { days, values };
 }

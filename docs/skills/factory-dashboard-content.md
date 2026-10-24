@@ -170,19 +170,24 @@ which pings at most once per day with the booted `stable` or `testing` tag
 (else `unknown`). An empty card can mean no image ships that client yet; see
 `cloudflare-workers.md` → _Diagnosing an empty countme panel_.
 No machine ID is transmitted, so `n` estimates systems active that day rather
-than counting distinct devices. The older upstream artifact is **Bluefin
-Classic** and remains separate. Fedora's `totals.csv` and the tracked
+than counting distinct devices. Classic is the separate `ublue-os/bluefin`
+counter from `ublue-os/countme`. Fedora's `totals.csv` and the tracked
 `countme-history.json` are not sources for a Project Bluefin image count.
 
-- The cards read **Bluefin** (`dakota…` images), **Bluefin Utah** (`utah…`),
-  **Bluefin Classic**, in that order. Both first-party cards are one
-  `DailyPanel`, fed by `familyDaily(rows, family)` in `firstPartyCountme.ts`.
-- They plot systems active **per day** by stream on one zero-anchored domain.
-  The day axis is continuous, so an unreported day is a `null` gap, never a
-  zero and never bridged. Never add days together into weekly users.
-- An empty card says "No raptors reporting in, life finds a way"; a failed
-  fetch shows the generic pending reason instead.
-- The Bluefin Classic comparison chip shows the latest Bluefin daily total.
+- The cards read **All Bluefins**, **Bluefin** (`dakota…` images),
+  **Bluefin Utah** (`utah…`), then **Bluefin Classic**. All use `CountPanel`;
+  its visible current number comes from the plotted data.
+- First-party cards use `familyDaily(rows, family)` and plot daily stream
+  counts on a zero-anchored domain. An unreported day is a null gap, not zero.
+- `fetch-classic-countme-history.mjs` collects real revisions of the permitted
+  Bluefin badge, never other upstream counters. `classicPopulation` supplies
+  the same weekly-publication series to Classic and `sumBluefinHistories`.
+- The top curve adds both same-day family totals and Classic's latest reading
+  published on or before that date. A missing family or explicit Classic gap
+  leaves the total null. Never substitute a daily-only curve beneath a combined
+  headline, backfill today's badge through the past, or add days into weekly users.
+- Empty first-party cards show their generic countme reason; missing Classic
+  history is visible rather than silently omitted from the sum.
 
 Verify suspicious numbers against the read-only D1 `daily_pings` rows grouped
 by `day` and `image`, then compare `/v1/daily.json`. Re-running a fetcher only

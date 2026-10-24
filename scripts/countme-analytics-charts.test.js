@@ -75,7 +75,7 @@ const {
 } = mod;
 
 // The first-party reader is its own module; see the note in the component.
-const { familyDaily, allBluefinDaily } = loadTsxModule(
+const { familyDaily } = loadTsxModule(
   path.join(
     __dirname,
     "..",
@@ -283,8 +283,21 @@ const DAILY_FIXTURE = {
   ],
 };
 
+const CLASSIC_HISTORY = {
+  generatedAt: "2026-10-24T00:00:00Z",
+  source:
+    "https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin.json",
+  method: "classic-badge-history-v1",
+  observations: [
+    { date: "2026-09-20", count: 4400 },
+    { date: "2026-10-08", count: 4500 },
+    { date: "2026-10-15", count: 4100 },
+    { date: "2026-10-22", count: 4600 },
+  ],
+};
+
 test("daily aggregation preserves same-day gaps and zero independently of Classic", () => {
-  const daily = allBluefinDaily([
+  const daily = familyDaily([
     ...DAILY_FIXTURE.days,
     { day: "2026-09-25", image: "dakota/main:unknown", n: 0 },
   ]);
@@ -299,34 +312,68 @@ test("daily aggregation preserves same-day gaps and zero independently of Classi
   assert.deepEqual(daily.streams.unknown, [null, null, null, 0]);
 });
 
-test("the first daily trend keeps its history while the headline includes Classic", () => {
+test("the top plotted history is Bluefin plus Utah plus the displayed Classic history", () => {
   const html = renderDaily({
-    days: [
-      { day: "2026-10-24", image: "dakota/main:stable", n: 150 },
-      { day: "2026-10-24", image: "utah/main:testing", n: 60 },
-    ],
+    days: ["2026-10-08", "2026-10-15", "2026-10-24"].flatMap((day) => [
+      { day, image: "dakota/main:stable", n: 129 },
+      { day, image: "utah/main:testing", n: 94 },
+    ]),
   });
-  const chart = html.match(/data-title="([^"]+)"[^>]*data-option="([^"]*)"/);
-  assert.ok(chart);
+  const first = html.match(/data-title="([^"]+)"/);
   assert.equal(
-    chart[1],
-    "Daily-reporting Bluefins",
-    "the combined daily trend comes first",
+    first?.[1],
+    "All Bluefins estimated active systems",
+    "the total chart comes first",
   );
-  const option = JSON.parse(
-    chart[2].replace(/&quot;/g, '"').replace(/&amp;/g, "&"),
+  const total = chartOption(html, "All Bluefins estimated active systems");
+  const expected = Array(17).fill(null);
+  expected[0] = 4723;
+  expected[7] = 4323;
+  expected[16] = 4823;
+  assert.deepEqual(
+    total.series[0].data,
+    expected,
+    "plot all three counts, not 223 daily reports",
   );
-  assert.deepEqual(option.series[0].data, [210]);
-  assert.match(html, /About 4,800 systems/);
+  assert.equal(total.xAxis.data[16], "2026-10-24");
+  const classic = chartOption(html, "Bluefin Classic weekly active systems");
+  assert.deepEqual(classic.series[0].data, [4400, 4500, 4100, 4600]);
+  assert.equal(
+    classic.series[0].step,
+    "end",
+    "Classic is held from its actual publication date",
+  );
 });
 
-test("the combined snapshot stays unavailable when either source is missing", () => {
+test("zero in all three charts remains a plotted total", () => {
+  const html = renderDaily(
+    {
+      days: ["2026-10-23", "2026-10-24"].flatMap((day) => [
+        { day, image: "dakota/main:stable", n: 0 },
+        { day, image: "utah/main:testing", n: 0 },
+      ]),
+    },
+    null,
+    { ...CLASSIC_HISTORY, observations: [{ date: "2026-10-22", count: 0 }] },
+  );
+  const total = chartOption(html, "All Bluefins estimated active systems");
+  assert.deepEqual(total.series[0].data, [0, 0]);
+});
+
+test("the total stays unavailable when a required chart has no readings", () => {
   for (const html of [
-    renderDaily(DAILY_FIXTURE, null),
+    renderDaily(DAILY_FIXTURE, null, {
+      ...CLASSIC_HISTORY,
+      observations: [],
+      unavailable: true,
+    }),
     renderDaily({ days: [] }),
   ]) {
-    assert.doesNotMatch(html, /About [\d,]+ systems/);
-    assert.match(html, /data-what="All Bluefins total"/);
+    assert.doesNotMatch(
+      html,
+      /data-title="All Bluefins estimated active systems"/,
+    );
+    assert.match(html, /data-what="All Bluefins estimated active systems"/);
   }
 });
 
@@ -387,28 +434,30 @@ test("a Utah day with no reports stays on the axis as a gap", () => {
   assert.deepEqual(streams.stable, [4, null, 5]);
 });
 
-function renderDaily(daily, classic = "4.6k") {
+function renderDaily(daily, classic = null, history = CLASSIC_HISTORY) {
   return renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
       daily,
       classic,
+      history,
     }),
   );
 }
 
-function dailyOption(html, label) {
+function chartOption(html, title) {
   const m = html.match(
-    new RegExp(
-      `data-title="${label} daily active systems"[^>]*data-option="([^"]*)"`,
-    ),
+    new RegExp(`data-title="${title}"[^>]*data-option="([^"]*)"`),
   );
-  assert.ok(m, `${label} must render a chart`);
+  assert.ok(m, `${title} must render a chart`);
   return JSON.parse(m[1].replace(/&quot;/g, '"').replace(/&amp;/g, "&"));
 }
 
 test("the Bluefin card charts Dakota pings per stream and never Utah", () => {
-  const option = dailyOption(renderDaily(DAILY_FIXTURE), "Bluefin");
+  const option = chartOption(
+    renderDaily(DAILY_FIXTURE),
+    "Bluefin daily active systems",
+  );
   assert.deepEqual(
     option.series.map((s) => s.name),
     ["stable", "testing", "unknown"],
@@ -420,13 +469,11 @@ test("the Bluefin card charts Dakota pings per stream and never Utah", () => {
   );
 });
 
-test("the Bluefin Classic comparison uses the latest Bluefin daily total", () => {
-  assert.match(renderDaily(DAILY_FIXTURE), /Bluefin: 9 \(2026-09-22\)/);
-  assert.match(renderDaily({ days: [] }), /Bluefin: accumulating data/);
-});
-
 test("the day axis shortens its ticks but keeps the full date in the data", () => {
-  const option = dailyOption(renderDaily(DAILY_FIXTURE), "Bluefin Utah");
+  const option = chartOption(
+    renderDaily(DAILY_FIXTURE),
+    "Bluefin Utah daily active systems",
+  );
   assert.deepEqual(option.xAxis.data, ["2026-09-22", "2026-09-23"]);
   for (const series of option.series) {
     assert.equal(series.connectNulls, false, "a gap must break the line");

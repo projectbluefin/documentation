@@ -161,12 +161,16 @@ static SSR output, the production build, and one local-browser check are the
 smallest complete test stack for this class of component.
 
 For analytics charts, a visually hidden caption still needs a visible current
-value beside the plot. Inspect the rendered number after applying CSS, not just
-the caption props. Daily totals use one date across all streams; an older
-stream reading must not inflate today's total. A combined headline may add
-Classic's weekly badge to the latest daily snapshot only as a labeled estimate.
-Keep daily trend series separate; do not project a current Classic badge back
-through daily history or show a partial sum when either source is unavailable.
+value beside the plot. Derive that number from the plotted series, not a separate
+headline calculation. A total chart must add every source chart's values on each
+date; inspect the ECharts data and scale, not just the heading text. First-party
+daily counts use the same UTC date. Classic uses its real badge publication
+history, with each weekly reading held until the next publication. Preserve
+missing daily readings and invalid Classic publications as gaps; never backfill
+today's Classic badge into earlier history.
+
+Populate Classic history with `npm run fetch-classic-countme` before browser
+checks. `build:ci` can compile successfully while a runtime data file is missing.
 
 ## Common Rationalizations
 
