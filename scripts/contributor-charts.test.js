@@ -5,290 +5,199 @@ const React = require("react");
 const { renderToStaticMarkup } = require("react-dom/server");
 const { loadTsxModule } = require("./lib/load-tsx");
 
-const TSX_PATH = path.join(
-  __dirname,
-  "..",
-  "src",
-  "components",
-  "analytics",
-  "ContributorMetricsCharts.tsx",
-);
-
-function loadComponent() {
-  return loadTsxModule(TSX_PATH, (id) => {
+const root = path.join(__dirname, "..", "src", "components");
+const css = (id) => (id.endsWith(".css") ? {} : undefined);
+const EChart = loadTsxModule(
+  path.join(root, "factory", "EChart.tsx"),
+  css,
+).default;
+const charts = [];
+const ContributorMetricsCharts = loadTsxModule(
+  path.join(root, "analytics", "ContributorMetricsCharts.tsx"),
+  (id) => {
     if (id.endsWith(".css")) return {};
-    if (id === "react") return React;
-    if (id === "@theme/Heading") {
+    if (id === "@theme/Heading")
       return {
         __esModule: true,
-        default: ({ as: Tag = "h3", children, ...rest }) =>
-          React.createElement(Tag, rest, children),
+        default: ({ as: Tag = "h3", children, ...props }) =>
+          React.createElement(Tag, props, children),
       };
-    }
-    if (id.includes("EChart")) {
+    if (id === "@site/static/data/contributor-metrics.json")
+      return { unavailable: true };
+    if (id === "../factory/EChart")
       return {
         __esModule: true,
-        default: (props) =>
-          React.createElement(
-            "div",
-            {
-              "data-testid": "echart",
-              "data-title": props.title,
-              "data-summary": props.summary,
-              "data-points": String(props.points),
-              "data-min-points": String(props.minPoints),
-              "data-option": JSON.stringify(props.option),
-            },
-            props.points < (props.minPoints ?? 2)
-              ? "accumulating data"
-              : props.summary,
-            props.tableCaption
-              ? React.createElement(
-                  "details",
-                  null,
-                  React.createElement("summary", null, "Show the numbers"),
-                  React.createElement(
-                    "table",
-                    null,
-                    React.createElement("caption", null, props.tableCaption),
-                  ),
-                )
-              : null,
-          ),
+        default: (props) => {
+          charts.push(props);
+          return React.createElement(EChart, props);
+        },
       };
-    }
-    if (id.includes("Unavailable")) {
-      return {
-        __esModule: true,
-        default: (props) =>
-          React.createElement(
-            "div",
-            {
-              "data-testid": "unavailable",
-              "data-what": props.what,
-              "data-reason": props.reason,
-            },
-            `${props.what} unavailable: ${props.reason}`,
-          ),
-      };
-    }
     return undefined;
+  },
+).default;
+
+let collectedFixture;
+test.before(async () => {
+  const { aggregateContributions } = require("./fetch-contributor-metrics");
+  const event = (id, kind, at) => ({
+    repositoryId: "R1",
+    kind,
+    at,
+    author: { id, login: `account-${id}`, __typename: "User" },
   });
+  collectedFixture = await aggregateContributions({
+    repositories: [
+      { id: "R1", name: "documentation", fork: false, archived: false },
+    ],
+    asOf: "2026-10-24T00:00:00.000Z",
+    complete: true,
+    events: [
+      event("A", "changes", "2026-07-01T00:00:00Z"),
+      event("C", "changes", "2026-07-02T00:00:00Z"),
+      event("B", "issues", "2026-09-20T00:00:00Z"),
+      event("B", "comments", "2026-09-20T00:00:00Z"),
+      event("A", "changes", "2026-10-01T00:00:00Z"),
+      event("A", "comments", "2026-10-01T00:00:00Z"),
+    ],
+  });
+});
+
+function fixture() {
+  return structuredClone(collectedFixture);
 }
 
-const mod = loadComponent();
-const ContributorMetricsCharts = mod.default;
-
-const FULL_DATA_FIXTURE = {
-  schemaVersion: 1,
-  generatedAt: "2026-10-24T00:00:00.000Z",
-  source: "GitHub GraphQL & PR Events",
-  org: "projectbluefin",
-  unavailable: false,
-  stateReason: null,
-  months: [
-    {
-      month: "2026-07",
-      activeContributors: 11,
-      firstTimeContributors: 3,
-      streams: {
-        humanPrs: 126,
-        automationPrs: 427,
-        codeBuilds: 126,
-        codeReviews: 45,
-        issuesTriage: 80,
-        documentation: 15,
-        prsOpened: 150,
-        prsMerged: 126,
-        medianDaysToMerge: 2.5,
-        medianResponseHours: 18,
-        mergeRatePercent: 84,
-      },
-      cohorts: {
-        new: 3,
-        returning: 8,
-      },
-    },
-    {
-      month: "2026-08",
-      activeContributors: 15,
-      firstTimeContributors: 4,
-      streams: {
-        humanPrs: 258,
-        automationPrs: 283,
-        codeBuilds: 258,
-        codeReviews: 70,
-        issuesTriage: 110,
-        documentation: 25,
-        prsOpened: 270,
-        prsMerged: 258,
-        medianDaysToMerge: 1.8,
-        medianResponseHours: 12,
-        mergeRatePercent: 95,
-      },
-      cohorts: {
-        new: 4,
-        returning: 11,
-      },
-    },
-    {
-      month: "2026-09",
-      activeContributors: 18,
-      firstTimeContributors: 5,
-      streams: {
-        humanPrs: 290,
-        automationPrs: 310,
-        codeBuilds: 290,
-        codeReviews: 85,
-        issuesTriage: 130,
-        documentation: 30,
-        prsOpened: 310,
-        prsMerged: 290,
-        medianDaysToMerge: 1.5,
-        medianResponseHours: 10,
-        mergeRatePercent: 93,
-      },
-      cohorts: {
-        new: 5,
-        returning: 13,
-      },
-    },
-  ],
-};
-
-const ACCUMULATING_DATA_FIXTURE = {
-  schemaVersion: 1,
-  generatedAt: "2026-10-24T00:00:00.000Z",
-  source: "GitHub GraphQL & PR Events",
-  org: "projectbluefin",
-  unavailable: false,
-  stateReason: null,
-  months: [
-    {
-      month: "2026-07",
-      activeContributors: 11,
-      firstTimeContributors: 3,
-      streams: {
-        humanPrs: 126,
-        automationPrs: 427,
-        issues: null,
-        reviews: null,
-      },
-      cohorts: {
-        new: 3,
-        returning: 8,
-      },
-    },
-    {
-      month: "2026-08",
-      activeContributors: 15,
-      firstTimeContributors: 4,
-      streams: {
-        humanPrs: 258,
-        automationPrs: 283,
-        issues: null,
-        reviews: null,
-      },
-      cohorts: {
-        new: 4,
-        returning: 11,
-      },
-    },
-  ],
-};
-
-const UNAVAILABLE_DATA_FIXTURE = {
-  schemaVersion: 1,
-  generatedAt: "2026-10-24T00:00:00.000Z",
-  source: "GitHub GraphQL & PR Events",
-  org: "projectbluefin",
-  unavailable: true,
-  stateReason: "Rate limit exceeded or GITHUB_TOKEN missing",
-  months: [],
-};
-
-test("renders full contributor analytics metrics and charts", () => {
-  const html = renderToStaticMarkup(
-    React.createElement(ContributorMetricsCharts, {
-      data: FULL_DATA_FIXTURE,
-    }),
+function render(data) {
+  charts.length = 0;
+  return renderToStaticMarkup(
+    React.createElement(ContributorMetricsCharts, { data }),
   );
+}
 
-  // 4 summary metric cards
-  assert.ok(html.includes("Monthly Active Humans"));
-  assert.ok(html.includes("First-Time Humans"));
-  assert.ok(html.includes("PR Merge Rate"));
-  assert.ok(html.includes("Human Merged PRs"));
+function assertChartCounts() {
+  assert.equal(charts.length, 2);
+  for (const chart of charts) {
+    assert.equal(chart.option.series.length, 1, "one real series per chart");
+    const series = chart.option.series[0];
+    assert.equal(
+      chart.points,
+      series.data.filter((v) => typeof v === "number" && Number.isFinite(v))
+        .length,
+    );
+    assert.equal(series.smooth, false);
+    assert.equal(series.connectNulls, false);
+    assert.equal(series.type, "line");
+    assert.ok(series.areaStyle);
+    assert.equal(series.stack, undefined);
+    assert.equal(chart.option.yAxis.min, 0);
+  }
+}
 
-  // Check numeric values rendered prominently
-  assert.ok(html.includes("18")); // Latest active humans (2026-09)
-  assert.ok(html.includes("5")); // Latest first-time humans (2026-09)
-  assert.ok(html.includes("93%")); // Latest merge rate (2026-09)
-  assert.ok(html.includes("290")); // Latest human merged PRs (2026-09)
-  assert.ok(html.includes("Active Human Contributors Trend"));
-  assert.ok(html.includes("Contribution Activity Streams"));
-  assert.ok(
-    html.includes("PR Velocity &amp; Merge Rate") ||
-      html.includes("PR Velocity & Merge Rate"),
-  );
-
-  // Details summary tables
-  assert.ok(html.includes("<details>"));
-  assert.ok(html.includes("<summary>Show the numbers</summary>"));
-  assert.ok(
-    html.includes("Monthly breakdown of new vs returning human contributors"),
-  );
-  assert.ok(
-    html.includes(
-      "Monthly activity breakdown by contribution stream across projectbluefin",
-    ),
-  );
-  assert.ok(
-    html.includes(
-      "Monthly pull request velocity and merge efficiency across projectbluefin",
-    ),
-  );
+test("schema2 total is independently collected, not monthly activity summed; actual EChart tables expose the data", () => {
+  const data = fixture();
+  const html = render(data);
+  assert.match(html, /Total contributors<\/span><strong[^>]*>3<\/strong>/);
+  assert.match(html, /Active in last 90 days<\/span><strong[^>]*>2<\/strong>/);
+  assert.equal((html.match(/<figure/g) || []).length, 2);
+  assert.equal((html.match(/<details/g) || []).length, 2);
+  assert.match(html, /<th scope="row">2026-08<\/th><td>0<\/td>/);
+  assert.deepEqual(charts[0].option.series[0].data, [2, 2, 3, 3]);
+  assert.deepEqual(charts[1].option.series[0].data, [2, 0, 1, 1]);
+  assertChartCounts();
 });
 
-test("renders Unavailable when dataset is marked unavailable", () => {
-  const html = renderToStaticMarkup(
-    React.createElement(ContributorMetricsCharts, {
-      data: UNAVAILABLE_DATA_FIXTURE,
-    }),
+test("null counts remain gaps, zero stays measured, and each chart counts only its own finite points", () => {
+  const data = fixture();
+  data.summary.activeContributors90d = null;
+  data.summary.byType90d.reviews = null;
+  data.months[1].cumulativeContributors = null;
+  data.months[2].contributors = null;
+  data.months[3].contributors = null;
+  const html = render(data);
+  assert.match(html, /Active in last 90 days<\/span><strong[^>]*>—<\/strong>/);
+  assert.match(html, /Count unavailable in this snapshot/);
+  assert.match(
+    html,
+    /<th scope="row">Reviews<\/th><td>— · Count unavailable<\/td>/,
   );
-
-  assert.ok(html.includes('data-testid="unavailable"'));
-  assert.ok(html.includes("Contributor metrics unavailable"));
-  assert.ok(html.includes("Rate limit exceeded or GITHUB_TOKEN missing"));
-  assert.ok(!html.includes("Monthly Active Humans"));
+  assert.deepEqual(charts[0].option.series[0].data, [2, null, 3, 3]);
+  assert.deepEqual(charts[1].option.series[0].data, [2, 0, null, null]);
+  assert.equal(charts[0].points, 3);
+  assert.equal(charts[1].points, 2);
+  assert.match(charts[1].summary, /^— accounts · 2026-10/);
+  assertChartCounts();
 });
 
-test("renders accumulating data when points count is under 3", () => {
-  const html = renderToStaticMarkup(
-    React.createElement(ContributorMetricsCharts, {
-      data: ACCUMULATING_DATA_FIXTURE,
-    }),
-  );
-
-  // Still renders summary metric cards
-  assert.ok(html.includes("Monthly Active Humans"));
-  // ECharts receive points=2 and minPoints=3, rendering accumulating data
-  assert.ok(html.includes("accumulating data"));
-  assert.ok(html.includes('data-min-points="3"'));
-  assert.ok(html.includes('data-points="2"'));
+test("zero and unknown datasets do not disappear or pretend to have chart points", () => {
+  const data = fixture();
+  data.contributors = [];
+  data.summary.totalContributors = 0;
+  data.summary.activeContributors90d = 0;
+  data.summary.activeRepositories90d = 0;
+  data.months = [
+    { month: "2026-10", contributors: 0, cumulativeContributors: null },
+  ];
+  const html = render(data);
+  assert.match(html, /Total contributors<\/span><strong[^>]*>0<\/strong>/);
+  assert.match(html, /accumulating data/);
+  assert.equal(charts[0].points, 0);
+  assert.equal(charts[1].points, 1);
+  assertChartCounts();
+  data.months = [];
+  const empty = render(data);
+  assert.equal((empty.match(/accumulating data/g) || []).length, 2);
+  assertChartCounts();
 });
 
-test("deterministic SSR output across multiple renders", () => {
-  const render1 = renderToStaticMarkup(
-    React.createElement(ContributorMetricsCharts, {
-      data: FULL_DATA_FIXTURE,
-    }),
-  );
-  const render2 = renderToStaticMarkup(
-    React.createElement(ContributorMetricsCharts, {
-      data: FULL_DATA_FIXTURE,
-    }),
-  );
+test("missing, deprecated, malformed, or non-finite data is visibly unavailable", () => {
+  const malformed = fixture();
+  malformed.months[0].contributors = Infinity;
+  const omitted = fixture();
+  delete omitted.summary.byType90d.comments;
+  const discontinuous = fixture();
+  discontinuous.months.splice(1, 1);
+  for (const data of [
+    undefined,
+    null,
+    {},
+    { schemaVersion: 1, months: [] },
+    malformed,
+    omitted,
+    discontinuous,
+  ]) {
+    const html = render(data);
+    assert.match(html, /role="status"/);
+    assert.match(html, /Contributor metrics unavailable/);
+    assert.match(html, /schema version 2/);
+    assert.equal(charts.length, 0);
+  }
+});
 
-  assert.equal(render1, render2, "SSR output must be strictly deterministic");
+test("failed refresh, incomplete coverage, and future snapshots show a visible retained-snapshot warning", () => {
+  for (const patch of [
+    { unavailable: true, stateReason: "GitHub collection could not complete." },
+    { coverage: { ...fixture().coverage, complete: false } },
+    { generatedAt: "2999-01-01T00:00:00Z" },
+    {
+      months: [
+        { month: "2999-01", contributors: 1, cumulativeContributors: 3 },
+      ],
+    },
+  ]) {
+    const html = render({ ...fixture(), ...patch });
+    assert.match(html, /Current contributor metrics unavailable/);
+    assert.match(html, /retained snapshot, not a successful current refresh/);
+    assert.match(html, /role="status"/);
+    assertChartCounts();
+  }
+});
+
+test("coverage and refresh are accessible and SSR output deterministic", () => {
+  const data = fixture();
+  const html = render(data);
+  assert.match(html, /<time dateTime="2026-10-24T00:00:00.000Z"/);
+  assert.match(html, /Complete scan of 1 current public/);
+  assert.match(html, /0 unlinked author records excluded/);
+  assert.match(html, /not verified people/);
+  assert.match(html, /Kinds overlap/);
+  assert.equal(render(data), html);
 });

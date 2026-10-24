@@ -119,6 +119,45 @@ instead of restating a token read or a header object.
     If truncation or rate limiting is tripped, record `null` for the affected
     stream rather than coercing to 0 or publishing a partial undercount.
 
+14. **Contributor totals require a complete account union, not search counts.**
+    `fetch-contributor-metrics.js` discovers every current public organization
+    repository, including archived repositories and forks. It traverses direct
+    GraphQL resource connections and every nested comment, review and discussion
+    reply cursor. Connection totals, unique resource IDs and cursor progress must
+    agree before a scan is complete. A failed or missing page invalidates the
+    whole new scan; a partial result cannot become an all-time total.
+    Compare discovered repository coverage with the org's REST `public_repos`
+    control total, not a curated list or token-filtered subset. A live connection
+    may append resources during pagination: traverse issues and PRs oldest-first,
+    require all collected raw IDs to match the final advertised total, and apply
+    the snapshot timestamp cutoff to participation. Do not reject a complete scan
+    solely because a total grew, or accept a missing final page. Log only safe
+    source operation names and fixed failure codes, never upstream error bodies.
+    Repository-wide REST inline review comments include replies on old PRs;
+    paginated REST default-branch commits count linked authors on non-merge
+    commits only, and skip fork git history while retaining fork-native resources.
+    Deduplicate accounts by public node ID, filter the canonical
+    `contributor-tracker.mjs` bot policy plus GitHub's Bot type, and count missing
+    or ghost identities separately instead of inventing account IDs.
+    This collector rescans recorded history: the incremental freeze rule above
+    does not apply, and source corrections may change earlier month counts.
+    Keep nested page sizes modest and exhaust their continuations instead of
+    multiplying large parent/comment/review connections. A live full scan hit
+    GitHub's secondary limit despite unused primary quota. Respect the server's
+    `Retry-After` through a shared worker cooldown; stop further requests after an
+    unrecoverable HTTP failure. Offline tests must cover both recovery and bounded
+    failure retaining the last-good snapshot.
+
+    Run `node scripts/fetch-contributor-metrics.js` with `GITHUB_TOKEN` or
+    `GH_TOKEN`; `--force` bypasses its 24-hour `seed-cache.js` generatedAt TTL.
+    Successful scans print request counts and GraphQL cost for real budget
+    measurement. Only verified scans advance generatedAt. Identical serialized
+    output is not rewritten. Failures preserve schema2 history, coverage,
+    identity records and their old timestamp, with a fixed public reason;
+    schema1 counts are never a last-good fallback. The offline fixture in
+    `fetch-contributor-metrics.test.js` drives the actual injectable transport
+    through two-page nested connections and dropped-page failures.
+
 ## Common Rationalizations
 
 - _"It's one line, inlining the token read is clearer than importing a helper."_
@@ -176,5 +215,7 @@ instead of restating a token read or a header object.
 - `AGENTS.md` → _Data pipelines_ — the never-fail-the-build and null-vs-zero
   rules restated in steps 6 and 8.
 - `eslint.config.mjs` — the `files` glob that excludes `.mjs`.
+- GitHub GraphQL documentation (`/websites/github_en_graphql` in Context7):
+  direct node lookup, discussions pagination, submitted review fields and states.
 - `adr/0003-factory-two-level-navigation.md` — authorizes the factory layer's
   shared client.
