@@ -106,7 +106,7 @@ flowchart TB
 
 **[Project Bluefin MCP](https://mcp.projectbluefin.io/mcp)** (`mcp.projectbluefin.io`)은 기여자 에이전트를 위한 공개 Model Context Protocol 엔드포인트입니다. 이것은 토큰 없이 org 지식 저장소와 실시간 Hive 팩토리 상태 (`search_knowledge`, `get_factory_status`, `get_work_queue`)에 접근합니다.
 
-**당신**은 이 시스템의 인간입니다. 작업은 설계를 승인하고, 에이전트 PR을 검토하고, 무엇을 거부할지 결정하고, 기기가 강제할 수 없는 가드를 실행하는 것입니다.
+이 시스템에서 인간의 역할은 설계 승인과 에이전트 PR 검토, 거부할 내용 결정, 기기가 강제할 수 없는 가드 실행입니다.
 
 ---
 

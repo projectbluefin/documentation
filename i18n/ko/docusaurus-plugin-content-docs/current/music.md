@@ -6,7 +6,7 @@ slug: music
 import MusicPlaylist from '@site/src/components/MusicPlaylist';
 import styles from '@site/src/components/ExtensionsGrid.module.css';
 
-Bluefin 팀은 음악 플레이리스트를 정기적으로 출시합니다. 각 곡과 앨범은 담겨 있는 주제와 이유가 있습니다. 곡은 어떻게 당신에게 다가옵니까?
+Bluefin 팀은 음악 플레이리스트를 정기적으로 출시합니다. 각 곡과 앨범은 담겨 있는 주제와 이유가 있습니다. 곡이 어떻게 마음에 닿나요?
 
 ## Seven Days to the Wolves
 
