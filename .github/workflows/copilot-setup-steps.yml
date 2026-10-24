@@ -39,11 +39,8 @@ jobs:
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
         run: npm ci --legacy-peer-deps
 
-      - name: Install Wrangler (Cloudflare CLI)
-        run: npm install -g wrangler@4.129.1
-
       - name: Verify Wrangler auth
         if: env.CLOUDFLARE_API_TOKEN != ''
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: wrangler whoami
+        run: npm exec --no -- wrangler whoami
