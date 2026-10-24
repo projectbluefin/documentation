@@ -30,6 +30,8 @@ const BOT_PATTERNS = [
   /^app\//i,
   /^mergeraptor(\[bot\])?$/i,
   /^Copilot$/i,
+  /^kubestellar-hive(\[bot\])?$/i,
+  /^hivecommons-hive(\[bot\])?$/i,
   /^hivecommons.*$/i,
   /^kubestellar.*$/i,
   /\[bot\]$/i,

@@ -5,6 +5,7 @@ displayed_sidebar: null
 ---
 
 import CountmeAnalyticsCharts from "@site/src/components/analytics/CountmeAnalyticsCharts";
+import ContributorMetricsCharts from "@site/src/components/analytics/ContributorMetricsCharts";
 
 <CountmeAnalyticsCharts />
 
@@ -59,6 +60,19 @@ brew analytics off
 See the [Homebrew analytics documentation](https://docs.brew.sh/Analytics) for additional details.
 
 ## Contributor Metrics
+
+### Contributor Metrics
+
+<ContributorMetricsCharts />
+
+### Contributor Metrics Methodology
+
+Contributor analytics adopt a CNCF DevStats and LFX-derived methodology:
+
+- **4 summary metrics and 3 trend charts:** Tracking monthly active human contributors, first-time contributors, pull request merge rate, and median turnaround time alongside historical trends for contributor cohorts, activity breakdowns, and PR velocity.
+- **Public GitHub dataset with automated bot and AI agent filtering:** Metrics are derived from public GitHub activity while strictly filtering automated bots, dependency managers, and autonomous AI agents to ensure counts represent real human open-source participation.
+- **Activity Streams on Tier-1 repositories:** Activity streams track the 9 tier-1 repositories on a shared domain to provide clear visibility into development velocity across code and builds, code reviews, issues, and documentation.
+- **Community forum discussions:** Community discussions are hosted at [ublue-os/bluefin](https://github.com/ublue-os/bluefin/discussions).
 
 For real-time development and organizational velocity metrics across all 15 factory repositories, see the [Factory metrics view](/factory/metrics).
 

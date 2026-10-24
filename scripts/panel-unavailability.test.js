@@ -16,20 +16,17 @@ const path = require("node:path");
  * hazard in every panel at once, including panels added later.
  */
 
-const panelsDir = path.join(
-  __dirname,
-  "..",
-  "src",
-  "components",
-  "factory",
-  "panels",
+const scannedDirs = [
+  path.join(__dirname, "..", "src", "components", "factory", "panels"),
+  path.join(__dirname, "..", "src", "components", "analytics"),
+];
+
+const panelFiles = scannedDirs.flatMap((dir) =>
+  fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".tsx"))
+    .map((f) => path.join(dir, f)),
 );
-
-const panelFiles = fs
-  .readdirSync(panelsDir)
-  .filter((f) => f.endsWith(".tsx"))
-  .map((f) => path.join(panelsDir, f));
-
 test("there are panels to check", () => {
   assert.ok(panelFiles.length >= 8, `found ${panelFiles.length}`);
 });

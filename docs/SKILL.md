@@ -14,25 +14,25 @@ motivation, or first-person statements under a maintainer's byline. See
 → _Never write in a maintainer's voice_. That rule outranks any writing
 guidance in a general-purpose design or content skill you have loaded.
 
-| If your task is…                                      | Load                                                                                        |
-| ----------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Writing, editing, or embedding in a blog post         | [`skills/blog-posts.md`](skills/blog-posts.md)                                              |
-| Generating or maintaining automated monthly reports   | [`skills/monthly-reports.md`](skills/monthly-reports.md)                                    |
-| Adding or changing a React component                  | [`skills/component-testing.md`](skills/component-testing.md)                                |
-| Editing `/factory` dashboard panels or copy           | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
-| Adding a top-level page for a variant (dakota, utah…) | [`skills/variant-docs-pages.md`](skills/variant-docs-pages.md)                              |
-| Translating docs or UI strings, or adding a locale    | [`skills/translations.md`](skills/translations.md)                                          |
-| Changing the generated release card PNGs              | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
-| Updating logos, wordmarks, or brand assets            | [`skills/brand-assets.md`](skills/brand-assets.md)                                          |
-| Verifying, recovering, or archiving a blog discussion | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
-| Adding a GitHub API call anywhere in `scripts/`       | [`skills/github-api-client.md`](skills/github-api-client.md)                                |
-| Measuring update churn or layer efficiency            | [`skills/update-churn-pipeline.md`](skills/update-churn-pipeline.md)                        |
-| Adding or debugging a Cloudflare Worker or subdomain  | [`skills/cloudflare-workers.md`](skills/cloudflare-workers.md)                              |
-| Landing a pull request, or proving a change is live   | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
-| Editing `.github/workflows/`, caches, or CI speed     | [`skills/ci-workflows.md`](skills/ci-workflows.md)                                          |
-| Writing back what you learned                         | [`skills/skill-improvement.md`](skills/skill-improvement.md)                                |
-| Authoring a new skill                                 | [`skills/write-a-skill.md`](skills/write-a-skill.md)                                        |
-| Anything else                                         | [`../AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) first |
+| If your task is…                                                    | Load                                                                                        |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Writing, editing, or embedding in a blog post                       | [`skills/blog-posts.md`](skills/blog-posts.md)                                              |
+| Generating or maintaining automated monthly reports                 | [`skills/monthly-reports.md`](skills/monthly-reports.md)                                    |
+| Adding or changing a React component                                | [`skills/component-testing.md`](skills/component-testing.md)                                |
+| Editing `/factory` dashboard panels, contributor analytics, or copy | [`skills/factory-dashboard-content.md`](skills/factory-dashboard-content.md)                |
+| Adding a top-level page for a variant (dakota, utah…)               | [`skills/variant-docs-pages.md`](skills/variant-docs-pages.md)                              |
+| Translating docs or UI strings, or adding a locale                  | [`skills/translations.md`](skills/translations.md)                                          |
+| Changing the generated release card PNGs                            | [`skills/release-card-images.md`](skills/release-card-images.md)                            |
+| Updating logos, wordmarks, or brand assets                          | [`skills/brand-assets.md`](skills/brand-assets.md)                                          |
+| Verifying, recovering, or archiving a blog discussion               | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
+| Adding a GitHub API call anywhere in `scripts/`                     | [`skills/github-api-client.md`](skills/github-api-client.md)                                |
+| Measuring update churn or layer efficiency                          | [`skills/update-churn-pipeline.md`](skills/update-churn-pipeline.md)                        |
+| Adding or debugging a Cloudflare Worker or subdomain                | [`skills/cloudflare-workers.md`](skills/cloudflare-workers.md)                              |
+| Landing a pull request, or proving a change is live                 | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
+| Editing `.github/workflows/`, caches, or CI speed                   | [`skills/ci-workflows.md`](skills/ci-workflows.md)                                          |
+| Writing back what you learned                                       | [`skills/skill-improvement.md`](skills/skill-improvement.md)                                |
+| Authoring a new skill                                               | [`skills/write-a-skill.md`](skills/write-a-skill.md)                                        |
+| Anything else                                                       | [`../AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md) first |
 
 Repository rules, build commands, git workflow, data-pipeline contracts and
 presentation rules all live in `AGENTS.md` at the repository root. It is
