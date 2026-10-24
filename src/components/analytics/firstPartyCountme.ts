@@ -47,11 +47,16 @@ export const DAILY_STREAMS = ["stable", "testing", "unknown"] as const;
  */
 export function familyDaily(
   rows: DailyRow[],
-  family: string,
+  family?: string,
 ): { days: string[]; streams: Record<string, Array<number | null>> } {
-  const mine = rows.filter(
-    (r) => r.image.startsWith(`${family}/`) || r.image.startsWith(`${family}-`),
-  );
+  const mine =
+    family === undefined
+      ? rows
+      : rows.filter(
+          (r) =>
+            r.image.startsWith(`${family}/`) ||
+            r.image.startsWith(`${family}-`),
+        );
   const reported = mine.map((r) => r.day).sort();
   const days: string[] = [];
   if (reported.length) {
@@ -74,6 +79,13 @@ export function familyDaily(
     });
   }
   return { days, streams };
+}
+
+/**
+ * Combined daily actives across all Bluefin families and flavors per stream.
+ */
+export function allBluefinDaily(rows: DailyRow[]): FamilyDaily {
+  return familyDaily(rows);
 }
 
 export type FamilyDaily = ReturnType<typeof familyDaily>;

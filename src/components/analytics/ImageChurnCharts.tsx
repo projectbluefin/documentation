@@ -339,10 +339,8 @@ export default function ImageChurnCharts(): React.JSX.Element {
       });
       titles.push({
         text:
-          `${lane.image.name} — ` +
-          (value === null
-            ? "no measured delta yet"
-            : `${INT.format(value)} MB latest delta`),
+          `${lane.image.name.replace(/^Project /, "")} — ` +
+          (value === null ? "not measured" : `${INT.format(value)} MB`),
         left: 0,
         top: top - 22,
         textStyle: {
@@ -535,10 +533,10 @@ export default function ImageChurnCharts(): React.JSX.Element {
       });
       titles.push({
         text:
-          `${lane.image.name} — ` +
+          `${lane.image.name.replace(/^Project /, "")} — ` +
           (latest === null
-            ? "no measured split yet"
-            : `${INT.format(latest.sharedMB)} MB cached / ${INT.format(latest.downloadChurnMB)} MB downloaded`),
+            ? "not measured"
+            : `${INT.format(latest.downloadChurnMB)} MB new`),
         left: 0,
         top: top - 22,
         textStyle: {
@@ -745,7 +743,6 @@ export default function ImageChurnCharts(): React.JSX.Element {
     );
   }
 
-  const bandShort = drawnLanes.filter((l) => !l.banded);
   const heatHeight = lanes.length * HEAT_ROW + HEAT_CHROME;
   const ridgeHeight =
     LANE_TOP + Math.max(drawnLanes.length, 1) * (LANE_HEIGHT + LANE_GAP) + 20;
@@ -761,65 +758,56 @@ export default function ImageChurnCharts(): React.JSX.Element {
       {/* ── Fleet totals, as numbers ─────────────────────────────────────── */}
       <section className={styles.kpiGrid} aria-label="Key update churn metrics">
         <article className={styles.kpiCard}>
-          <span className={styles.kpiEyebrow}>Latest Fleet Churn</span>
+          <span className={styles.kpiEyebrow}>Download size</span>
           <div className={styles.kpiValue}>
             {(topStats.totalDownloadMB / 1024).toFixed(2)}
             <span className={styles.kpiUnit}>GB</span>
           </div>
-          <span className={styles.kpiMeta}>
-            Across all active stable workstation releases
-          </span>
+          <span className={styles.kpiMeta}>Latest release sizes combined</span>
         </article>
 
         <article className={styles.kpiCard}>
-          <span className={styles.kpiEyebrow}>OCI Layer Reuse</span>
+          <span className={styles.kpiEyebrow}>Already on your computer</span>
           <div className={styles.kpiValue}>
             {topStats.avgReusePct}
             <span className={styles.kpiUnit}>%</span>
           </div>
           <span className={styles.kpiMeta}>
-            Shared layers cached on client bootc systems
+            Data that does not need downloading
           </span>
         </article>
 
         <article className={styles.kpiCard}>
-          <span className={styles.kpiEyebrow}>Zstd:Chunked Adoption</span>
+          <span className={styles.kpiEyebrow}>Modern compression</span>
           <div className={styles.kpiValue}>
             {topStats.zstdPct}
             <span className={styles.kpiUnit}>%</span>
           </div>
           <span className={styles.kpiMeta}>
-            {INT.format(topStats.totalChunks)} total package interval chunks
+            {INT.format(topStats.totalChunks)} layers checked
           </span>
         </article>
 
         <article className={styles.kpiCard}>
-          <span className={styles.kpiEyebrow}>Tracked Images</span>
+          <span className={styles.kpiEyebrow}>Images measured</span>
           <div className={styles.kpiValue}>
             {topStats.activeImagesCount}
             <span className={styles.kpiUnit}>
               of {topStats.totalImagesCount}
             </span>
           </div>
-          <span className={styles.kpiMeta}>
-            Images carrying at least one recorded release
-          </span>
+          <span className={styles.kpiMeta}>Images with release data</span>
         </article>
       </section>
 
       {/* ── 1. Download churn per release ────────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
-          <span className={styles.eyebrow}>OCI Layer Caching</span>
           <Heading as="h3" className={styles.sectionTitle}>
-            Download Churn per Release
+            Update download size
           </Heading>
           <p className={styles.sectionSubtext}>
-            Bytes a client actually pulls for each release, one lane per image
-            on a single 0&ndash;{INT.format(domains.maxChurn)} MB domain.
-            Diamonds are baseline pulls: the first tag this pipeline tracked,
-            which has no previous tag to diff against, so it carries the whole
-            image rather than a delta.
+            MB per update. Diamonds mark the first full download.
           </p>
         </header>
 
@@ -828,11 +816,11 @@ export default function ImageChurnCharts(): React.JSX.Element {
             option={churnOption}
             height={ridgeHeight}
             title="Download churn per release"
-            summary={`Latest measured delta — ${latestList((l) =>
+            summary={latestList((l) =>
               l.latestDelta
-                ? `${l.image.name} ${INT.format(l.latestDelta.downloadChurnMB)} MB`
+                ? `${l.image.name}: ${INT.format(l.latestDelta.downloadChurnMB)} MB`
                 : null,
-            )}. ${churnPoints} measured delta${churnPoints === 1 ? "" : "s"} across ${drawnLanes.length} image lanes, all on one 0–${INT.format(domains.maxChurn)} MB domain.`}
+            )}
             points={churnPoints}
             minPoints={1}
             tableCaption="Download churn and baseline pull size per image and release date, in MB"
@@ -843,22 +831,6 @@ export default function ImageChurnCharts(): React.JSX.Element {
             reason="No image has a release with a previous tag to diff against yet"
           />
         )}
-
-        {bandShort.length > 0 && (
-          <p className={styles.chartNote}>
-            <strong>Percentile band withheld:</strong> a rolling p50 and
-            p50&ndash;p95 band needs {BAND_WINDOW} consecutive measured deltas.{" "}
-            {bandShort
-              .map(
-                (l) =>
-                  `${l.image.name} has ${l.deltas.length} (${BAND_WINDOW - l.deltas.length} more needed)`,
-              )
-              .join(", ")}
-            . The band is drawn per lane as soon as that lane reaches{" "}
-            {BAND_WINDOW}.
-          </p>
-        )}
-
         {emptyLanes.map((l) => (
           <Unavailable
             key={l.image.id}
@@ -871,16 +843,13 @@ export default function ImageChurnCharts(): React.JSX.Element {
         ))}
       </section>
 
-      {/* ── 2. Layer reuse heatmap ───────────────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
-          <span className={styles.eyebrow}>Cache Hit Rate</span>
           <Heading as="h3" className={styles.sectionTitle}>
-            Layer Reuse by Image and Release
+            Data already on your computer
           </Heading>
           <p className={styles.sectionSubtext}>
-            Share of bytes already on disk when each release landed. One hue at
-            four intensities, plus a glyph:
+            Percentage of each update that does not need downloading.
           </p>
           <p className={styles.legendRow}>
             {LEGEND_ORDER.map((level) => (
@@ -909,12 +878,11 @@ export default function ImageChurnCharts(): React.JSX.Element {
             option={heatOptions.reuse}
             height={heatHeight}
             title="Layer reuse by image and release"
-            summary={`${reuseMeasured} of ${lanes.length * dateAxis.length} image-by-release cells carry a measured reuse figure. Latest — ${latestList(
-              (l) =>
-                l.latestDelta
-                  ? `${l.image.name} ${l.latestDelta.reuseEfficiencyPct}%`
-                  : null,
-            )}.`}
+            summary={latestList((l) =>
+              l.latestDelta
+                ? `${l.image.name}: ${l.latestDelta.reuseEfficiencyPct}%`
+                : null,
+            )}
             points={reuseMeasured}
             minPoints={1}
             tableCaption="Layer reuse efficiency per image and release date"
@@ -927,20 +895,12 @@ export default function ImageChurnCharts(): React.JSX.Element {
         )}
       </section>
 
-      {/* ── 3. Cached vs downloaded bytes ────────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
-          <span className={styles.eyebrow}>Byte Composition</span>
           <Heading as="h3" className={styles.sectionTitle}>
-            Cached vs Downloaded Bytes
+            Already downloaded vs new download
           </Heading>
-          <p className={styles.sectionSubtext}>
-            Each release split into bytes served from the local layer cache and
-            bytes pulled over the network, stacked to the image&rsquo;s full
-            size. Every lane shares one 0&ndash;{INT.format(domains.maxBytes)}{" "}
-            MB domain; baseline tags are withheld because their split is not
-            measured.
-          </p>
+          <p className={styles.sectionSubtext}>Update size in MB.</p>
           <p className={styles.legendRow}>
             <span className={styles.legendChip}>
               <span
@@ -950,7 +910,7 @@ export default function ImageChurnCharts(): React.JSX.Element {
               >
                 ▬
               </span>
-              Cached, served from disk
+              Cached from disk
             </span>
             <span className={styles.legendChip}>
               <span
@@ -960,7 +920,7 @@ export default function ImageChurnCharts(): React.JSX.Element {
               >
                 ┄
               </span>
-              Downloaded over the network
+              Downloaded
             </span>
           </p>
         </header>
@@ -970,11 +930,11 @@ export default function ImageChurnCharts(): React.JSX.Element {
             option={bytesOption}
             height={ridgeHeight}
             title="Cached versus downloaded bytes per release"
-            summary={`Latest split — ${latestList((l) =>
+            summary={latestList((l) =>
               l.latestDelta
-                ? `${l.image.name} ${INT.format(l.latestDelta.sharedMB)} MB cached and ${INT.format(l.latestDelta.downloadChurnMB)} MB downloaded of ${INT.format(l.latestDelta.totalMB)} MB`
+                ? `${l.image.name}: ${INT.format(l.latestDelta.sharedMB)} MB cached / ${INT.format(l.latestDelta.downloadChurnMB)} MB downloaded`
                 : null,
-            )}.`}
+            )}
             points={bytesPoints}
             minPoints={1}
             tableCaption="Cached and downloaded megabytes per image and release date"
@@ -987,17 +947,13 @@ export default function ImageChurnCharts(): React.JSX.Element {
         )}
       </section>
 
-      {/* ── 4. Compression format state lane ─────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
-          <span className={styles.eyebrow}>Layer Format Migration</span>
           <Heading as="h3" className={styles.sectionTitle}>
-            Compression Format State Lane
+            Download compression
           </Heading>
           <p className={styles.sectionSubtext}>
-            The layer format each release shipped in, with the count of layers
-            already in <code>zstd:chunked</code> form out of the release&rsquo;s
-            total. One hue plus a glyph:
+            Compression used by each release.
           </p>
           <p className={styles.legendRow}>
             {(["ok", "watch", "unknown"] as SeverityLevel[]).map((level) => (
@@ -1024,12 +980,11 @@ export default function ImageChurnCharts(): React.JSX.Element {
             option={heatOptions.compression}
             height={heatHeight}
             title="Compression format per image and release"
-            summary={`${compressionMeasured} recorded release${compressionMeasured === 1 ? "" : "s"} carry a layer format. Latest — ${latestList(
-              (l) =>
-                l.latest
-                  ? `${l.image.name} ${l.latest.compressionFormat} (${l.latest.zstdLayers} of ${l.latest.totalLayers} layers)`
-                  : null,
-            )}.`}
+            summary={latestList((l) =>
+              l.latest
+                ? `${l.image.name}: ${l.latest.compressionFormat}`
+                : null,
+            )}
             points={compressionMeasured}
             minPoints={1}
             tableCaption="Layer compression format per image and release date"
@@ -1045,14 +1000,11 @@ export default function ImageChurnCharts(): React.JSX.Element {
       {/* ── 5. Per-image cards ───────────────────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
-          <span className={styles.eyebrow}>Per Image</span>
           <Heading as="h3" className={styles.sectionTitle}>
             Latest Release per Image
           </Heading>
           <p className={styles.sectionSubtext}>
-            The current numbers behind every lane above, with the measured
-            deltas as a sparkline on the shared 0&ndash;
-            {INT.format(domains.maxChurn)} MB churn domain.
+            Summary metrics for the latest release of each image.
           </p>
         </header>
 
@@ -1069,10 +1021,7 @@ export default function ImageChurnCharts(): React.JSX.Element {
         </div>
 
         <p className={styles.chartNote}>
-          Chunkah rechunks system updates into package-interval OCI layers.
-          Shared layers require 0 download bytes during bootc updates. Source:{" "}
-          {typedChurnData.source} · method <code>{typedChurnData.method}</code>{" "}
-          · generated {typedChurnData.generatedAt.slice(0, 10)}.
+          Updated {typedChurnData.generatedAt.slice(0, 10)}.
         </p>
       </section>
     </div>
@@ -1127,7 +1076,7 @@ function ImageCard({
         <>
           <div className={styles.cardKpiGrid}>
             <div className={styles.cardKpiItem}>
-              <span className={styles.cardKpiLabel}>Churn</span>
+              <span className={styles.cardKpiLabel}>Download</span>
               <div className={styles.cardKpiValue}>
                 {latestDelta === null
                   ? "—"
@@ -1136,7 +1085,7 @@ function ImageCard({
               </div>
             </div>
             <div className={styles.cardKpiItem}>
-              <span className={styles.cardKpiLabel}>Reuse</span>
+              <span className={styles.cardKpiLabel}>Cached</span>
               <div className={styles.cardKpiValue}>
                 {latestDelta === null ? "—" : latestDelta.reuseEfficiencyPct}
                 <span className={styles.cardKpiUnit}>%</span>
@@ -1160,8 +1109,7 @@ function ImageCard({
 
           <div className={styles.cardSparkline}>
             <span className={styles.sparklineLabel}>
-              Measured deltas · {deltas.length} of {lane.releases.length}{" "}
-              releases
+              Update sizes · {deltas.length} measured releases
             </span>
             <Sparkline
               data={gapSafe(deltas.map((r) => r.downloadChurnMB))}

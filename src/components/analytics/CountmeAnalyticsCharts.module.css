@@ -26,6 +26,40 @@
   border-radius: var(--fx-radius-lg);
 }
 
+.dailyChart > figure {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+}
+
+.dailyChart > figure > figcaption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.dailyChart > figure > details {
+  margin-top: var(--fx-space-2);
+}
+
+.currentValue {
+  margin: 0 0 var(--fx-space-2);
+  color: var(--fx-text-muted);
+  font-size: var(--fx-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.currentValue strong {
+  color: var(--fx-text-strong);
+}
+
 /* ── Section headers ────────────────────────────────────────────────────── */
 
 .sectionHeader {

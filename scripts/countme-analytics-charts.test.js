@@ -283,21 +283,30 @@ const DAILY_FIXTURE = {
   ],
 };
 
-test("the three count cards read Bluefin, Bluefin Utah, Bluefin Classic in order", () => {
-  const html = renderToStaticMarkup(
-    React.createElement(CountmeAnalyticsCharts, {
-      registry: REGISTRY_FIXTURE,
-      daily: DAILY_FIXTURE,
-    }),
+test("the combined chart sums same-day flavors and streams, preserving gaps and zero", () => {
+  const html = renderDaily({
+    days: [
+      ...DAILY_FIXTURE.days,
+      { day: "2026-09-25", image: "dakota/main:unknown", n: 0 },
+    ],
+  });
+  const option = dailyOption(html, "All Bluefins");
+  assert.equal(
+    html.match(/data-title="([^"]+)"/)?.[1],
+    "All Bluefins daily active systems",
+    "the combined summary must be the first chart",
   );
-  const headings = [...html.matchAll(/<h3[^>]*>([^<]*)<\/h3>/g)].map(
-    (m) => m[1],
-  );
-  assert.deepEqual(headings.slice(0, 3), [
-    "Bluefin",
-    "Bluefin Utah",
-    "Bluefin Classic (ublue-os/bluefin)",
+  assert.deepEqual(option.xAxis.data, [
+    "2026-09-22",
+    "2026-09-23",
+    "2026-09-24",
+    "2026-09-25",
   ]);
+  assert.deepEqual(
+    option.series.map((s) => s.data),
+    [[12, 1, null, 0]],
+  );
+  assert.match(html, /<strong>0<\/strong> active systems/);
 });
 
 test("Utah daily counts sum its flavors per stream and never include Dakota", () => {
@@ -308,7 +317,7 @@ test("Utah daily counts sum its flavors per stream and never include Dakota", ()
   assert.deepEqual(streams.unknown, [null, null]);
 });
 
-test("the Utah card charts its streams and states each latest value", () => {
+test("the Utah card charts only its own measured streams", () => {
   const html = renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: REGISTRY_FIXTURE,
@@ -328,9 +337,6 @@ test("the Utah card charts its streams and states each latest value", () => {
       [null, null],
     ],
   );
-  assert.match(html, /Bluefin Utah :stable: 3 \(2026-09-22\)/);
-  assert.match(html, /Bluefin Utah :testing: 1 \(2026-09-23\)/);
-  assert.match(html, /Bluefin Utah :unknown: accumulating data/);
 });
 
 test("the Utah card stays empty while only Dakota reports", () => {
@@ -383,7 +389,7 @@ test("the Bluefin card charts Dakota pings per stream and never Utah", () => {
   const option = dailyOption(renderDaily(DAILY_FIXTURE), "Bluefin");
   assert.deepEqual(
     option.series.map((s) => s.name),
-    ["Bluefin :stable", "Bluefin :testing", "Bluefin :unknown"],
+    ["stable", "testing", "unknown"],
   );
   assert.deepEqual(option.xAxis.data, ["2026-09-22"]);
   assert.deepEqual(

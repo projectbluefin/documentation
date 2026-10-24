@@ -266,14 +266,13 @@ test("an image with no releases states the reason instead of vanishing", () => {
 });
 
 test("a percentile band is withheld until a lane has enough real deltas", () => {
-  const { capturedECharts, html } = renderFixture(FIXTURE);
+  const { capturedECharts } = renderFixture(FIXTURE);
   const churn = capturedECharts.find(
     (c) => c.title === "Download churn per release",
   );
   const bandOf = (option) =>
     seriesOf(option).filter((s) => String(s.stack).startsWith("band-"));
   assert.deepEqual(bandOf(churn.option), [], "a band was drawn from one delta");
-  assert.match(html, /Percentile band withheld/);
 
   const dense = structuredClone(FIXTURE);
   dense.images.bluefin.releases = [
