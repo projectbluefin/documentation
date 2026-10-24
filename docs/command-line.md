@@ -65,26 +65,6 @@ Select "Use Custom Command" and add your shell:
 
 ![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
 
-## Maintainer Recommended GNOME Extensions
-
-Here are GNOME extensions that the maintainers recommend to round out your desktop experience. Support extension authors by donating to the ones you love!
-
-<div className={styles.extensionsGrid}>
-
-<GnomeExtensions extensionId={5724} />
-<GnomeExtensions extensionId={6670} />
-<GnomeExtensions extensionId={6325} />
-<GnomeExtensions extensionId={8834} />
-<GnomeExtensions extensionId={3843} />
-<GnomeExtensions extensionId={2236} />
-<GnomeExtensions extensionId={5964} />
-<GnomeExtensions extensionId={6000} />
-<GnomeExtensions extensionId={7065} />
-
-For a Tailscale GUI, we recommend the [official systray application](https://tailscale.com/docs/features/client/linux-systray): `tailscale configure systray --enable-startup=systemd` and reboot.
-
-</div>
-
 ## Fonts
 
 Homebrew is also used for installing fonts. Browse [Homebrew Cask Fonts](https://formulae.brew.sh/cask-font/) and install your favorite fonts into `~/.local/share/fonts`.
