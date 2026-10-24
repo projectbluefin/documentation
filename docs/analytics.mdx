@@ -9,17 +9,17 @@ import ImageChurnCharts from "@site/src/components/analytics/ImageChurnCharts";
 
 <CountmeAnalyticsCharts />
 
-## Update Churn & Compression Analytics
-
-Project Bluefin measures download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
-
-Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
-operating system updates are segmented into fine-grained package intervals so clients download only specific chunks containing changed packages.
+## Update downloads
 
 <ImageChurnCharts />
 
 <details>
 <summary><strong>Methodology, Privacy & Opt-Out</strong></summary>
+
+Project Bluefin measures download byte delta, layer reuse efficiency, and compression statistics between consecutive stable releases.
+
+Using [Chunkah](https://github.com/coreos/chunkah) and the `zstd-chunked` container layer format,
+operating system updates are segmented into fine-grained package intervals so clients download only specific chunks containing changed packages.
 
 ### Counting Methodology
 

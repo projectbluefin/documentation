@@ -14,6 +14,7 @@ import {
   DAILY_STREAMS,
   DAILY_URL,
   FIRST_PARTY_ORIGIN,
+  allBluefinDaily,
   familyDaily,
   latestDaily,
   measuredDays,
@@ -310,108 +311,139 @@ export function buildStreamMatrix(
 /** What an empty daily card says until its image family reports. */
 export const NO_RAPTORS = "No raptors reporting in, life finds a way";
 
-/**
- * One image family's systems active per day, by stream: the latest value of
- * each stream as text, then the chart, or the reason there is no chart.
- */
+/** Daily active systems with a current total, or the reason data is unavailable. */
 function DailyPanel({
   daily,
   label,
   reason,
   cat,
+  theme,
+  combined = false,
 }: {
   daily: FamilyDaily;
   label: string;
   reason: string;
   cat: string[];
+  theme: { palette: { border: string; text: string } };
+  combined?: boolean;
 }): React.JSX.Element {
   const measured = measuredDays(daily);
-  const readings = DAILY_STREAMS.map((stream) => {
-    const values = daily.streams[stream];
-    for (let i = values.length - 1; i >= 0; i -= 1) {
-      if (values[i] !== null) {
-        return {
-          stream,
-          text: `${values[i]!.toLocaleString()} (${daily.days[i]})`,
-        };
-      }
-    }
-    return { stream, text: "accumulating data" };
-  });
+  const latest = latestDaily(daily);
+  const plotted = combined
+    ? [
+        {
+          name: "Total",
+          values: daily.days.map((_, i) => {
+            const values = DAILY_STREAMS.map(
+              (stream) => daily.streams[stream][i],
+            );
+            return values.every((v) => v === null)
+              ? null
+              : values.reduce<number>((sum, v) => sum + (v ?? 0), 0);
+          }),
+        },
+      ]
+    : DAILY_STREAMS.map((stream) => ({
+        name: stream,
+        values: daily.streams[stream],
+      }));
   const option = useMemo(
     () => ({
-      grid: { left: 56, right: 24, top: 16, bottom: 48, containLabel: true },
-      tooltip: { trigger: "axis" },
+      grid: { left: 40, right: 16, top: 48, bottom: 40, containLabel: true },
+      tooltip: {
+        trigger: "axis",
+        axisPointer: { type: "line" },
+      },
       xAxis: {
         type: "category",
         data: daily.days,
+        boundaryGap: false,
+        axisLine: { lineStyle: { color: theme.palette.border, width: 0.8 } },
+        axisTick: { show: false },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: withAlpha(theme.palette.border, 0.25),
+            width: 0.8,
+          },
+        },
         axisLabel: {
-          fontSize: 13,
+          fontSize: 12,
           hideOverlap: true,
           formatter: (value: string) => compactWeek(value),
         },
       },
-      // Anchored at zero: a floating floor turns a flat series into a cliff.
       yAxis: {
         type: "value",
         min: 0,
         minInterval: 1,
-        axisLabel: { fontSize: 13 },
+        name: "",
+        axisLine: { show: false },
+        axisTick: { show: false },
+        splitLine: {
+          show: true,
+          lineStyle: {
+            color: withAlpha(theme.palette.border, 0.25),
+            width: 0.8,
+          },
+        },
+        axisLabel: { fontSize: 12 },
       },
-      legend: { textStyle: { fontSize: 13 }, itemGap: 18 },
-      series: DAILY_STREAMS.map((stream, i) => ({
-        name: `${label} :${stream}`,
+      legend: {
+        show: true,
+        right: 8,
+        top: 6,
+        icon: "roundRect",
+        itemWidth: 14,
+        itemHeight: 4,
+        textStyle: { fontSize: 12 },
+      },
+      series: plotted.map(({ name, values }, i) => ({
+        name,
         type: "line",
-        // Gaps break the line rather than being bridged or turned into zero.
         smooth: false,
         connectNulls: false,
         showSymbol: true,
-        symbolSize: 7,
+        symbolSize: 6,
         symbol: SERIES_SYMBOLS[i],
-        data: daily.streams[stream],
+        data: values,
         itemStyle: { color: cat[i % cat.length] },
         lineStyle: {
-          width: 2,
+          width: 2.2,
           color: cat[i % cat.length],
           type: seriesDash(i),
         },
       })),
     }),
-    [daily, label, cat],
+    [daily, cat, theme, plotted],
   );
   return (
-    <>
-      <p className={styles.legendRow}>
-        {readings.map(({ stream, text }, i) => (
-          <span key={stream} className={styles.legendChip}>
-            <span
-              className={styles.legendGlyph}
-              aria-hidden="true"
-              style={{ color: cat[i % cat.length] }}
-            >
-              ●
-            </span>
-            {label} :{stream}: {text}
-          </span>
-        ))}
-      </p>
+    <div className={styles.dailyChart}>
+      {latest && (
+        <p className={styles.currentValue}>
+          <strong>{latest.value.toLocaleString("en-US")}</strong> active systems
+          {" · "}
+          {compactWeek(latest.day)}
+        </p>
+      )}
       {measured > 0 ? (
         <EChart
           option={option}
           title={`${label} daily active systems`}
-          summary={`Systems active per day across ${measured} measured day${
-            measured === 1 ? "" : "s"
-          } — ${readings.map((r) => `${label} :${r.stream} ${r.text}`).join(", ")}.`}
+          summary={
+            latest
+              ? `${latest.value.toLocaleString("en-US")} active systems on ${latest.day}.`
+              : "accumulating data"
+          }
           points={measured}
           minPoints={2}
-          height={300}
-          tableCaption={`${label} systems active per day by stream`}
+          height={320}
+          tableCaption={`${label} systems active per day`}
         />
       ) : (
-        // Rule 6: unavailability is visible and carries its reason.
         <Unavailable what={`${label} daily active systems`} reason={reason} />
       )}
-    </>
+    </div>
   );
 }
 
@@ -573,6 +605,7 @@ export function PerImageUsage({
             label={label}
             reason={emptyReason}
             cat={fxTheme.categorical}
+            theme={fxTheme}
           />
         )}
       </section>
@@ -624,6 +657,10 @@ export default function CountmeAnalyticsCharts({
 
   // ── Bluefin and Bluefin Utah: daily pings from projectbluefin-countme ─
   const { dailyData, emptyReason } = useDailyDataset(daily);
+  const allBluefin = useMemo(
+    () => allBluefinDaily(dailyData?.days ?? []),
+    [dailyData],
+  );
   const bluefin = useMemo(
     () => familyDaily(dailyData?.days ?? [], "dakota"),
     [dailyData],
@@ -727,6 +764,26 @@ export default function CountmeAnalyticsCharts({
 
   return (
     <div ref={themeRef} className={`fxRoot ${styles.container}`}>
+      {/* ── Summary: All Bluefins combined ─────────────────────────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            All Bluefins (Total)
+          </Heading>
+          <p className={styles.sectionSubtext}>
+            Daily reports combined. Classic is counted weekly below.
+          </p>
+        </header>
+        <DailyPanel
+          daily={allBluefin}
+          label="All Bluefins"
+          reason={emptyReason}
+          cat={cat}
+          theme={fxTheme}
+          combined
+        />
+      </section>
+
       {/* ── 1. Bluefin: daily active systems ─────────────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
@@ -740,6 +797,7 @@ export default function CountmeAnalyticsCharts({
           label="Bluefin"
           reason={emptyReason}
           cat={cat}
+          theme={fxTheme}
         />
       </section>
 
@@ -756,10 +814,10 @@ export default function CountmeAnalyticsCharts({
           label="Bluefin Utah"
           reason={emptyReason}
           cat={cat}
+          theme={fxTheme}
         />
       </section>
 
-      {/* ── 3. Upstream image, for watching the migration ────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>

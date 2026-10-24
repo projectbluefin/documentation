@@ -80,6 +80,17 @@
   border-radius: var(--fx-radius-lg);
 }
 
+.panelCard > figure {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.panelCard > figure > figcaption > span:first-child {
+  display: none;
+}
+
 .sectionHeader {
   margin-bottom: var(--fx-space-2);
 }

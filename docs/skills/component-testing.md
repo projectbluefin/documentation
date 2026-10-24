@@ -160,6 +160,12 @@ Do not add a DOM test framework merely to simulate browser layout. Pure logic,
 static SSR output, the production build, and one local-browser check are the
 smallest complete test stack for this class of component.
 
+For analytics charts, a visually hidden caption still needs a visible current
+value beside the plot. Inspect the rendered number after applying CSS, not just
+the caption props. Daily totals use one date across all streams; an older
+stream reading must not inflate today's total. Keep Classic's weekly count
+separate from first-party daily totals.
+
 ## Common Rationalizations
 
 | Rationalization                          | Reality                                                                                                                                            |
