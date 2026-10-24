@@ -836,7 +836,7 @@ test("a server-directed secondary limit waits before retrying the same public sc
   });
   assert.deepEqual(waits, [60_000]);
   assert.equal(data.unavailable, false);
-  assert.ok(data.summary.totalContributors > 0);
+  assert.equal(data.summary.totalContributors, 19);
 });
 
 test("persistent throttling is bounded and retains the last verified snapshot", async () => {
