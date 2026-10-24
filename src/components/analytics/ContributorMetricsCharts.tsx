@@ -22,6 +22,7 @@ export interface MonthlyStreams {
   codeReviews?: number | null;
   issuesTriage?: number | null;
   prsOpened?: number | null;
+  totalPrsOpened?: number | null;
   prsMerged?: number | null;
   medianDaysToMerge?: number | null;
   medianResponseHours?: number | null;
@@ -165,11 +166,14 @@ export default function ContributorMetricsCharts({
       latestMeasuredMonth.streams?.prsMerged ??
       latestMeasuredMonth.streams?.humanPrs ??
       null;
-    const opened = latestMeasuredMonth.streams?.prsOpened ?? null;
+    const opened =
+      latestMeasuredMonth.streams?.prsOpened ??
+      latestMeasuredMonth.streams?.totalPrsOpened ??
+      null;
     if (merged !== null && opened !== null && opened > 0) {
       return Math.round((merged / opened) * 100);
     }
-    return merged !== null ? 100 : null;
+    return null;
   }, [latestMeasuredMonth]);
 
   // Median response time (in hours or days)
@@ -506,13 +510,16 @@ export default function ContributorMetricsCharts({
         </div>
 
         <div className={styles.metricCard}>
-          <span className={styles.metricTitle}>Median Response Time</span>
+          <span className={styles.metricTitle}>Human Merged PRs</span>
           <span className={styles.metricValue}>
-            {medianResponseHours !== null ? `${medianResponseHours}h` : "—"}
+            {latestMeasuredMonth?.streams?.humanPrs !== undefined &&
+            latestMeasuredMonth?.streams?.humanPrs !== null
+              ? latestMeasuredMonth.streams.humanPrs.toLocaleString("en-US")
+              : "—"}
           </span>
           <span className={styles.metricSubtitle}>
             {latestMeasuredMonth
-              ? `Maintainer responsiveness (${currentMonthLabel})`
+              ? `Human throughput (${currentMonthLabel})`
               : "accumulating data"}
           </span>
         </div>
