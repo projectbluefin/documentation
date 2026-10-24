@@ -126,6 +126,13 @@ instead of restating a token read or a header object.
     reply cursor. Connection totals, unique resource IDs and cursor progress must
     agree before a scan is complete. A failed or missing page invalidates the
     whole new scan; a partial result cannot become an all-time total.
+    Compare discovered repository coverage with the org's REST `public_repos`
+    control total, not a curated list or token-filtered subset. A live connection
+    may append resources during pagination: traverse issues and PRs oldest-first,
+    require all collected raw IDs to match the final advertised total, and apply
+    the snapshot timestamp cutoff to participation. Do not reject a complete scan
+    solely because a total grew, or accept a missing final page. Log only safe
+    source operation names and fixed failure codes, never upstream error bodies.
     Repository-wide REST inline review comments include replies on old PRs;
     paginated REST default-branch commits count linked authors on non-merge
     commits only, and skip fork git history while retaining fork-native resources.

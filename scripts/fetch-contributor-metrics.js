@@ -31,8 +31,9 @@ const REVIEWS = `reviews(first: 25) { ${PAGE} nodes { id submittedAt state ${AUT
 const REPLIES = `replies(first: 25) { ${PAGE} nodes { ${RESOURCE} } }`;
 const DISCUSSION_COMMENTS = `comments(first: 25) { ${PAGE} nodes { ${RESOURCE} ${REPLIES} } }`;
 
-function requireValue(condition) {
-  if (!condition) throw new Error(FAILURE_REASON);
+function requireValue(condition, sourceCode = "invalid_source_response") {
+  if (!condition)
+    throw Object.assign(new Error(FAILURE_REASON), { sourceCode });
 }
 
 function referenceTime(asOf) {
@@ -189,47 +190,58 @@ function unavailableData(previous, reason = FAILURE_REASON) {
   };
 }
 
-/** Fail closed on missing nodes, changed totals, duplicate pages or broken cursors. */
+/** Fail closed on missing nodes, shrinking totals, duplicate pages or broken cursors. */
 async function connectionPages(load, visit, initial) {
   let cursor = null;
   let expected = null;
   let count = 0;
   const cursors = new Set();
   const ids = new Set();
-  do {
-    const connection = initial || (await load(cursor));
-    initial = null;
-    requireValue(
-      connection &&
-        Array.isArray(connection.nodes) &&
-        Number.isInteger(connection.totalCount) &&
-        connection.totalCount >= 0 &&
-        typeof connection.pageInfo?.hasNextPage === "boolean",
-    );
-    expected ??= connection.totalCount;
-    requireValue(expected === connection.totalCount);
-    for (const node of connection.nodes) {
+  try {
+    do {
+      const connection = initial || (await load(cursor));
+      initial = null;
       requireValue(
-        typeof node?.id === "string" && node.id && !ids.has(node.id),
+        connection &&
+          Array.isArray(connection.nodes) &&
+          Number.isInteger(connection.totalCount) &&
+          connection.totalCount >= 0 &&
+          typeof connection.pageInfo?.hasNextPage === "boolean",
       );
-      ids.add(node.id);
-      count++;
-      await visit(node);
-    }
-    requireValue(count <= expected);
-    if (!connection.pageInfo.hasNextPage) {
-      requireValue(count === expected);
-      return;
-    }
-    cursor = connection.pageInfo.endCursor;
-    requireValue(
-      connection.nodes.length > 0 &&
-        typeof cursor === "string" &&
-        cursor &&
-        !cursors.has(cursor),
-    );
-    cursors.add(cursor);
-  } while (true);
+      requireValue(
+        expected === null || connection.totalCount >= expected,
+        "connection_total_decreased",
+      );
+      // Live connections may append new resources while we page. The final count
+      // must still match the latest advertised total; the snapshot cutoff filters future activity.
+      expected = connection.totalCount;
+      for (const node of connection.nodes) {
+        requireValue(
+          typeof node?.id === "string" && node.id && !ids.has(node.id),
+        );
+        ids.add(node.id);
+        count++;
+        await visit(node);
+      }
+      requireValue(count <= expected, "connection_count_overflow");
+      if (!connection.pageInfo.hasNextPage) {
+        requireValue(count === expected, "connection_count_mismatch");
+        return;
+      }
+      cursor = connection.pageInfo.endCursor;
+      requireValue(
+        connection.nodes.length > 0 &&
+          typeof cursor === "string" &&
+          cursor &&
+          !cursors.has(cursor),
+      );
+      cursors.add(cursor);
+    } while (true);
+  } catch (error) {
+    if (error && typeof error === "object")
+      error.stage ??= load.stage || "repository_discovery";
+    throw error;
+  }
 }
 
 function createClient(fetchImpl, token, stats, waitImpl) {
@@ -237,7 +249,7 @@ function createClient(fetchImpl, token, stats, waitImpl) {
   let stopped = false;
   async function request(url, init = {}) {
     for (let attempt = 0; attempt < 3; attempt++) {
-      requireValue(!stopped);
+      requireValue(!stopped, "scan_cancelled");
       if (cooldown) await cooldown;
       stats.requests++;
       const response = await fetchImpl(url, {
@@ -269,7 +281,10 @@ function createClient(fetchImpl, token, stats, waitImpl) {
         continue;
       }
       stopped = true;
-      throw new Error(FAILURE_REASON);
+      requireValue(
+        false,
+        `http_${Number.isInteger(response.status) ? response.status : "failure"}`,
+      );
     }
     throw new Error(FAILURE_REASON);
   }
@@ -291,7 +306,7 @@ function createClient(fetchImpl, token, stats, waitImpl) {
         body: JSON.stringify({ query, variables }),
       });
       const json = await response.json();
-      requireValue(!json.errors?.length && json.data);
+      requireValue(!json.errors?.length && json.data, "graphql_response_error");
       const cost = json.data.rateLimit?.cost;
       requireValue(Number.isInteger(cost) && cost >= 0);
       stats.graphqlCost += cost;
@@ -328,11 +343,15 @@ async function collectRepository(repo, client, asOf) {
     events.push({ repositoryId: repo.id, kind, at, author: node.author });
   }
   function page(type, id, field, fields, operation, size = 50) {
-    return async (cursor) => {
+    const order =
+      type === "Repository" && (field === "issues" || field === "pullRequests")
+        ? ", orderBy: {field: CREATED_AT, direction: ASC}"
+        : "";
+    const load = async (cursor) => {
       const data = await client.graphql(
         `query ${operation}($id: ID!, $cursor: String) {
         node(id: $id) { ... on ${type} {
-          ${field}(first: ${size}, after: $cursor) { ${PAGE} nodes { ${fields} } }
+          ${field}(first: ${size}, after: $cursor${order}) { ${PAGE} nodes { ${fields} } }
         } }
         rateLimit { cost }
       }`,
@@ -340,6 +359,8 @@ async function collectRepository(repo, client, asOf) {
       );
       return data.node?.[field];
     };
+    load.stage = operation;
+    return load;
   }
   async function comments(type, parent, kind = "comments") {
     await connectionPages(
@@ -492,6 +513,7 @@ async function collectContributorMetrics({
     graphqlRequests: 0,
     restRequests: 0,
     graphqlCost: 0,
+    failures: [],
   };
   try {
     const stamp = referenceTime(asOf).toISOString();
@@ -536,13 +558,21 @@ async function collectContributorMetrics({
         });
       },
     );
-    requireValue(repositories.length === publicRepositoryCount);
+    requireValue(
+      repositories.length === publicRepositoryCount,
+      "public_repository_count_mismatch",
+    );
     const batches = await mapWithConcurrency(
       repositories,
       async (repo) => {
         try {
           return await collectRepository(repo, client, stamp);
-        } catch {
+        } catch (error) {
+          stats.failures.push({
+            repository: repo.name,
+            stage: error?.stage || "repository_activity",
+            code: error?.sourceCode || "source_unavailable",
+          });
           return null;
         }
       },
@@ -556,7 +586,12 @@ async function collectContributorMetrics({
       asOf: stamp,
       complete: true,
     });
-  } catch {
+  } catch (error) {
+    if (!stats.failures.length)
+      stats.failures.push({
+        stage: error?.stage || "discovery_or_aggregation",
+        code: error?.sourceCode || "source_unavailable",
+      });
     return unavailableData(previous);
   } finally {
     onStats?.(stats);
@@ -604,7 +639,15 @@ async function main({
     token,
     asOf,
     previous,
-    onStats: ({ requests, graphqlRequests, restRequests, graphqlCost }) => {
+    onStats: ({
+      requests,
+      graphqlRequests,
+      restRequests,
+      graphqlCost,
+      failures,
+    }) => {
+      for (const failure of failures)
+        log(`Contributor source failure: ${JSON.stringify(failure)}`);
       log(
         `Contributor scan: ${requests} requests (${graphqlRequests} GraphQL, ${restRequests} REST), GraphQL cost ${graphqlCost}.`,
       );
@@ -625,7 +668,7 @@ async function main({
   }
   log(
     data.unavailable
-      ? data.stateReason
+      ? `::warning::${data.stateReason}`
       : `Contributor metrics: ${data.summary.totalContributors} public accounts across ${data.coverage.repositories.length} repositories.`,
   );
   return data;

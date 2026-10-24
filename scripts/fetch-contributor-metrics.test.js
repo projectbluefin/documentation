@@ -494,6 +494,52 @@ test("every dropped nested or source page invalidates the all-time total instead
   }
 });
 
+test("failed source pages identify the repository and operation without exposing upstream messages", async () => {
+  let stats;
+  const data = await collect(
+    apiFixture({ fail: "ContributorReviews:P1:reviews-2" }),
+    {
+      onStats: (value) => {
+        stats = value;
+      },
+    },
+  );
+  assert.equal(data.unavailable, true);
+  assert.deepEqual(
+    stats.failures.find((failure) => failure.code === "http_502"),
+    {
+      repository: "main",
+      stage: "ContributorReviews",
+      code: "http_502",
+    },
+  );
+  assert.doesNotMatch(
+    JSON.stringify(stats.failures),
+    /private URL|secret|https:|token=/,
+  );
+});
+
+test("a newly appended review does not invalidate a complete scan or leak future activity", async () => {
+  const expected = await collect(apiFixture());
+  const growing = apiFixture({
+    mutate: (key, body) => {
+      if (key === "ContributorReviews:P1:reviews-2") {
+        body.data.node.reviews.totalCount = 4;
+        body.data.node.reviews.nodes.push({
+          id: "appended-review",
+          author: user("future-reviewer"),
+          state: "APPROVED",
+          submittedAt: "2026-10-25T00:00:00Z",
+        });
+      }
+      return body;
+    },
+  });
+  const actual = await collect(growing);
+  assert.equal(actual.unavailable, false);
+  assert.deepEqual(actual, expected);
+});
+
 test("pagination rejects silently dropped nodes, repeated cursors, duplicate resources and GraphQL partial errors", async () => {
   for (const corrupt of [
     (body) => {
@@ -729,10 +775,14 @@ test("CLI honors generatedAt TTL and --force, writes atomically, and no-ops for 
   );
   assert.equal(fs.existsSync(`${outputFile}.tmp`), false);
   const failed = apiFixture({ fail: "ContributorReviews:P1:reviews-2" });
+  const logs = [];
   const unavailable = await main({
     ...options,
     fetchImpl: failed.fetchImpl,
     args: ["--force"],
+    log: (message) => {
+      logs.push(message);
+    },
   });
   assert.equal(unavailable.generatedAt, AS_OF);
   assert.deepEqual(unavailable.contributors, first.contributors);
@@ -740,6 +790,10 @@ test("CLI honors generatedAt TTL and --force, writes atomically, and no-ops for 
   assert.equal(
     JSON.parse(fs.readFileSync(outputFile, "utf8")).unavailable,
     true,
+  );
+  assert.ok(logs.some((message) => message.startsWith("::warning::")));
+  assert.ok(
+    logs.some((message) => message.includes('"stage":"ContributorReviews"')),
   );
 });
 
