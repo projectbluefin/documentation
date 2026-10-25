@@ -59,9 +59,12 @@ jobs:
           NODE
 
       - name: Compute contributor metrics
+        id: collect
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: node scripts/fetch-contributor-metrics.js --force
+        run: |
+          echo "startedAt=$(node -e 'console.log(Date.now())')" >> "$GITHUB_OUTPUT"
+          node scripts/fetch-contributor-metrics.js --force
 
       - name: Check for contributor metrics dataset changes
         id: check-changes
@@ -99,3 +102,19 @@ jobs:
               --title "chore(analytics): refresh public contributor participation" \
               --body "Refreshes the complete public GitHub participation snapshot. Known bots and imported fork commit history are excluded; failed collection preserves last-good history and marks unavailability. Requires maintainer approval before merge."
           fi
+
+      # Publish the unavailable state first, then report a failed refresh honestly.
+      # The build-facing fetcher still exits zero and preserves the last-good data.
+      - name: Require a verified current refresh
+        env:
+          SCAN_STARTED_AT: ${{ steps.collect.outputs.startedAt }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const { isVerifiedRefresh } = require('./scripts/fetch-contributor-metrics');
+          const snapshot = JSON.parse(fs.readFileSync('static/data/contributor-metrics.json', 'utf8'));
+          if (!isVerifiedRefresh(snapshot, Number(process.env.SCAN_STARTED_AT), Date.now())) {
+            console.error('Scheduled contributor refresh did not produce a complete current snapshot. Last-good data is retained.');
+            process.exitCode = 1;
+          }
+          NODE

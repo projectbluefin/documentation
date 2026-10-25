@@ -11,6 +11,7 @@ const {
   FAILURE_REASON,
   aggregateContributions,
   collectContributorMetrics,
+  isVerifiedRefresh,
   main,
 } = require("./fetch-contributor-metrics.js");
 
@@ -822,47 +823,56 @@ test("TTL uses the seed timestamp rather than checkout mtime and rejects future 
   }
 });
 
-test("the actual CLI exits zero without replacing history when the output cannot be written", (t) => {
+test("the actual CLI exits zero without replacing isolated history when writes are denied", async (t) => {
   const dir = fs.mkdtempSync(
     path.join(os.tmpdir(), "contributor-write-failure-"),
   );
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
+  const scripts = path.join(dir, "scripts");
+  const lib = path.join(scripts, "lib");
+  fs.mkdirSync(lib, { recursive: true });
+  // Run an unmodified copy of the actual CLI in a disposable workspace. A future
+  // writer implementation can fail this test, but cannot overwrite a tracked seed.
+  for (const file of [
+    "fetch-contributor-metrics.js",
+    "lib/request-queue.js",
+    "lib/seed-cache.js",
+    "lib/contributor-tracker.mjs",
+  ]) {
+    fs.copyFileSync(path.join(__dirname, file), path.join(scripts, file));
+  }
+  const seed = path.join(dir, "static", "data", "contributor-metrics.json");
+  fs.mkdirSync(path.dirname(seed), { recursive: true });
+  const previous = await collect(apiFixture());
+  const before = JSON.stringify(previous, null, 2) + "\n";
+  fs.writeFileSync(seed, before);
   const preload = path.join(dir, "fail-write.cjs");
   fs.writeFileSync(
     preload,
     `
-    const fs = require('node:fs');
-    const write = fs.writeFileSync;
-    fs.writeFileSync = (file, ...args) => {
-      if (String(file).endsWith('contributor-metrics.json.tmp')) throw new Error('sensitive-write-error');
-      return write(file, ...args);
+    require('node:fs').writeFileSync = () => {
+      process.stderr.write('injected-write-denied\\n');
+      throw new Error('sensitive-write-error');
     };
   `,
   );
-  const seed = path.join(
-    __dirname,
-    "..",
-    "static",
-    "data",
-    "contributor-metrics.json",
-  );
-  const before = fs.readFileSync(seed, "utf8");
   const result = spawnSync(
     process.execPath,
     [
       "--require",
       preload,
-      path.join(__dirname, "fetch-contributor-metrics.js"),
+      path.join(scripts, "fetch-contributor-metrics.js"),
       "--force",
     ],
     {
+      cwd: dir,
       encoding: "utf8",
       env: { ...process.env, GH_TOKEN: "", GITHUB_TOKEN: "" },
     },
   );
   assert.equal(result.status, 0, result.stderr);
   assert.equal(fs.readFileSync(seed, "utf8"), before);
-  assert.match(result.stderr, /could not be written/);
+  assert.match(result.stderr, /injected-write-denied/);
   assert.doesNotMatch(result.stderr, /sensitive-write-error/);
 });
 
@@ -918,4 +928,39 @@ test("persistent throttling is bounded and retains the last verified snapshot", 
   assert.equal(data.unavailable, true);
   assert.equal(data.generatedAt, previous.generatedAt);
   assert.deepEqual(data.contributors, previous.contributors);
+});
+
+test("scheduled refresh status rejects retained, incomplete, stale or future snapshots", async () => {
+  const verified = await collect(apiFixture());
+  const stamp = Date.parse(AS_OF);
+  assert.equal(isVerifiedRefresh(verified, stamp - 1000, stamp + 1000), true);
+  for (const snapshot of [
+    null,
+    { ...verified, unavailable: true },
+    { ...verified, coverage: { ...verified.coverage, complete: false } },
+    { ...verified, generatedAt: null },
+    { ...verified, generatedAt: "not-a-date" },
+    { ...verified, schemaVersion: 1 },
+  ]) {
+    assert.equal(
+      isVerifiedRefresh(snapshot, stamp - 1000, stamp + 1000),
+      false,
+    );
+  }
+  assert.equal(isVerifiedRefresh(verified, stamp + 1, stamp + 1000), false);
+  assert.equal(isVerifiedRefresh(verified, stamp - 1000, stamp - 1), false);
+  assert.equal(isVerifiedRefresh(verified, 0, stamp + 1000), false);
+  assert.equal(isVerifiedRefresh(verified, NaN, stamp + 1000), false);
+});
+
+test("a verified zero-contributor refresh is still a successful scheduled collection", async () => {
+  const empty = await aggregateContributions({
+    repositories: [],
+    events: [],
+    asOf: AS_OF,
+    complete: true,
+  });
+  const stamp = Date.parse(AS_OF);
+  assert.equal(empty.summary.totalContributors, 0);
+  assert.equal(isVerifiedRefresh(empty, stamp - 1000, stamp + 1000), true);
 });

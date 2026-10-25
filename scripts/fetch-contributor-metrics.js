@@ -598,6 +598,25 @@ async function collectContributorMetrics({
   }
 }
 
+/** The scheduled job must distinguish a fresh scan from retained build-safe data. */
+function isVerifiedRefresh(snapshot, startedAt, finishedAt) {
+  const generatedAt =
+    typeof snapshot?.generatedAt === "string"
+      ? Date.parse(snapshot.generatedAt)
+      : NaN;
+  return (
+    snapshot?.schemaVersion === 2 &&
+    snapshot.unavailable === false &&
+    snapshot.coverage?.complete === true &&
+    Number.isFinite(startedAt) &&
+    startedAt > 0 &&
+    Number.isFinite(finishedAt) &&
+    Number.isFinite(generatedAt) &&
+    startedAt <= generatedAt &&
+    generatedAt <= finishedAt
+  );
+}
+
 async function main({
   args = process.argv.slice(2),
   outputFile = OUTPUT_FILE,
@@ -681,6 +700,7 @@ module.exports = {
   aggregateContributions,
   unavailableData,
   collectContributorMetrics,
+  isVerifiedRefresh,
   main,
 };
 

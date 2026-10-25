@@ -157,6 +157,13 @@ instead of restating a token read or a header object.
     schema1 counts are never a last-good fallback. The offline fixture in
     `fetch-contributor-metrics.test.js` drives the actual injectable transport
     through two-page nested connections and dropped-page failures.
+    The fetcher remains build-safe (exit 0), but the scheduled refresh job must
+    finish red when it retained unavailable or stale data. Its final workflow
+    gate uses `isVerifiedRefresh` to require a complete snapshot timestamped inside
+    the current collection interval, after publishing any unavailable state for
+    review. A genuine measured zero passes. CLI write-failure tests run copied
+    modules and fixture seeds inside a disposable workspace; never point a
+    fault-injected child process at the tracked production dataset.
 
 ## Common Rationalizations
 
