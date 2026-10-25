@@ -98,21 +98,32 @@ the fetcher, its behavior tests, tracked seeds, package scripts, or workflows.
      is never trimmed against the order used for diffing. `limit` then trims the
      merged list, so a seed older than the discovered window cannot push the
      series past the limit.
-2. **Layer Digest Diffing**:
+2. **Freeze Published Points**:
+   - Treat the existing output's release records as published history, not a
+     disposable manifest cache. Preserve every record, including its original
+     `tag`/`previousTag` pair, baseline marker, and measured values.
+   - `appendReleaseChurn` only calculates tags after the last published release.
+     Re-pushed dated tags must not rewrite earlier measurements, even during a
+     forced refresh. Retain published history outside the discovery window.
+   - Fetch an old manifest only when it is the predecessor of a new point.
+     If either manifest is missing, leave a gap rather than bridging releases
+     or introducing a new baseline. Do not hand-edit generated data to restore
+     a historical value: this policy freezes the records already published.
+3. **Layer Digest Diffing**:
    - For release $N$ following release $N-1$:
      - Shared layers: layer digests present in both $N-1$ and $N$. These require 0 download bytes during `bootc update`.
      - Download churn: new layer digests introduced in release $N$.
      - Total update churn size = $\sum \text{size}(\text{new layers})$.
      - Layer reuse efficiency = $\frac{\sum \text{size}(\text{shared layers})}{\sum \text{size}(\text{all layers})} \times 100\%$.
-3. **Zstd-Chunked Detection**:
+4. **Zstd-Chunked Detection**:
    - A layer is recognized as zstd-chunked when its `mediaType` contains `zstd` or its annotations include `io.github.containers.zstd-chunked.manifest-checksum`.
-4. **Data Degradation & Fallback**:
+5. **Data Degradation & Fallback**:
    - If an image has no publishable tags at all, or its tag series could not be
      listed, flag it explicitly with `{ unavailable: true, stateReason: "..." }`.
      Say which of the two happened — a registry that cannot be reached and an
      image that has not shipped are different claims.
    - Never throw or exit non-zero from the pipeline script.
-5. **Baseline Releases Are Not Deltas**:
+6. **Baseline Releases Are Not Deltas**:
    - The first tag the pipeline tracked for an image has `previousTag: null` and
      `isBaseline: true`. The fetcher writes its `downloadChurnMB` as the whole
      image and its `sharedMB` and `reuseEfficiencyPct` as `0`.

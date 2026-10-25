@@ -443,6 +443,41 @@ function calculateReleaseChurn(releases = []) {
 }
 
 /**
+ * Published points are immutable. Only append tags after the last published
+ * release; fetch its manifest solely as the predecessor of a new point.
+ * Missing manifests leave gaps, never a fabricated baseline or bridged pair.
+ */
+async function appendReleaseChurn(tags, published, loadLayers) {
+  const results = [...published];
+  const knownTags = new Set(published.map((release) => release.tag));
+  const lastTag = published.at(-1)?.tag;
+  const start = lastTag ? tags.indexOf(lastTag) + 1 : 0;
+  if (lastTag && start === 0) return results;
+
+  const manifests = new Map();
+  const load = async (tag) => {
+    if (!manifests.has(tag)) manifests.set(tag, await loadLayers(tag));
+    return manifests.get(tag);
+  };
+  for (let i = start; i < tags.length; i++) {
+    const tag = tags[i];
+    if (knownTags.has(tag)) continue;
+    const previousTag = i > 0 ? tags[i - 1] : null;
+    const layers = await load(tag);
+    const previousLayers = previousTag ? await load(previousTag) : null;
+    if (!layers?.length || (previousTag && !previousLayers?.length)) continue;
+    const pair = previousTag
+      ? [
+          { tag: previousTag, layers: previousLayers },
+          { tag, layers },
+        ]
+      : [{ tag, layers }];
+    results.push(calculateReleaseChurn(pair).at(-1));
+  }
+  return results;
+}
+
+/**
  * Extract an ISO date substring (YYYY-MM-DD) from a tag if available.
  */
 function extractDateFromTag(tag = "") {
@@ -793,7 +828,10 @@ async function main() {
       // is exactly when they are not needed as a fallback.
       .slice(tagSeries && seriesListed ? -tagSeries.limit : undefined);
 
-    if (tagsToInspect.length === 0) {
+    if (
+      tagsToInspect.length === 0 &&
+      !existingData?.images?.[id]?.releases?.length
+    ) {
       imagesOutput[id] = {
         id,
         name,
@@ -809,19 +847,22 @@ async function main() {
       continue;
     }
 
-    const releaseManifests = [];
-    for (const tag of tagsToInspect) {
-      const layers = await getPlatformLayers(repo, tag);
-      if (layers && layers.length > 0) {
-        releaseManifests.push({
-          tag,
-          date: extractDateFromTag(tag),
-          layers,
-        });
-      }
-    }
+    const published = existingData?.images?.[id]?.releases || [];
+    // Keep the published tail in the sequence even after it leaves the discovery
+    // window, so the first new point still has its actual predecessor.
+    const appendTags = [
+      ...new Set([
+        ...tagsToInspect,
+        ...published.map((release) => release.tag),
+      ]),
+    ].sort((a, b) => compareTagsByDate(a, b, seriesCreatedAt));
+    const releasesChurn = await appendReleaseChurn(
+      appendTags,
+      published,
+      (tag) => getPlatformLayers(repo, tag),
+    );
 
-    if (releaseManifests.length === 0) {
+    if (releasesChurn.length === 0) {
       // Check if we have existing cached release data for this image
       if (existingData?.images?.[id] && !existingData.images[id].unavailable) {
         imagesOutput[id] = existingData.images[id];
@@ -839,8 +880,6 @@ async function main() {
       }
       continue;
     }
-
-    const releasesChurn = calculateReleaseChurn(releaseManifests);
 
     imagesOutput[id] = {
       id,
@@ -878,6 +917,7 @@ module.exports = {
   analyzeManifestLayers,
   diffReleaseLayers,
   calculateReleaseChurn,
+  appendReleaseChurn,
   datedTagKey,
   compareTagsByDate,
   selectDatedTags,

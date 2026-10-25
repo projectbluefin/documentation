@@ -5,6 +5,7 @@ const {
   analyzeManifestLayers,
   diffReleaseLayers,
   calculateReleaseChurn,
+  appendReleaseChurn,
   extractDateFromTag,
   datedTagKey,
   compareTagsByDate,
@@ -14,6 +15,91 @@ const {
   fetchGhcrTagCreatedAt,
   GHCR_TAG_CREATED_AT_MAX_PAGES,
 } = require("./fetch-update-churn.js");
+
+test("appendReleaseChurn: published points survive repushed tags without registry reads", async () => {
+  const published = [
+    {
+      tag: "stable-daily-20261009",
+      previousTag: "stable-daily-20261008",
+      downloadChurnMB: 728.2,
+      reuseEfficiencyPct: 77.6,
+    },
+  ];
+  const before = JSON.stringify(published);
+  const result = await appendReleaseChurn(
+    ["stable-daily-20261008", "stable-daily-20261009"],
+    published,
+    async () => {
+      throw new Error("published manifests must not be fetched");
+    },
+  );
+  assert.equal(JSON.stringify(result), before);
+  assert.equal(JSON.stringify(published), before);
+});
+
+test("appendReleaseChurn: appends new pairs and preserves history outside the window", async () => {
+  const published = calculateReleaseChurn([
+    {
+      tag: "stable-daily-20261008",
+      layers: [{ digest: "old", size: 1048576 }],
+    },
+    {
+      tag: "stable-daily-20261009",
+      layers: [{ digest: "old", size: 1048576 }],
+    },
+  ]);
+  const calls = [];
+  const load = async (tag) => {
+    calls.push(tag);
+    return [{ digest: tag, size: 2097152 }];
+  };
+  const tags = [
+    "stable-daily-20261008",
+    "stable-daily-20261009",
+    "stable-daily-20261010",
+  ];
+  const result = await appendReleaseChurn(tags, published, load);
+  assert.deepEqual(result.slice(0, 2), published);
+  assert.equal(result[2].previousTag, "stable-daily-20261009");
+  assert.equal(result[2].downloadChurnMB, 2);
+  assert.equal(result[2].isBaseline, false);
+  assert.deepEqual(calls.sort(), [
+    "stable-daily-20261009",
+    "stable-daily-20261010",
+  ]);
+  assert.deepEqual(
+    await appendReleaseChurn(tags, result, async () => {
+      throw new Error("no new tags");
+    }),
+    result,
+  );
+});
+
+test("appendReleaseChurn: missing manifests neither erase history nor bridge gaps", async () => {
+  const published = [{ tag: "a", previousTag: null, isBaseline: true }];
+  const result = await appendReleaseChurn(
+    ["a", "b", "c", "d"],
+    published,
+    async (tag) => (tag === "b" ? null : [{ digest: tag, size: 1048576 }]),
+  );
+  assert.deepEqual(result[0], published[0]);
+  assert.equal(result.length, 2);
+  assert.equal(result[1].tag, "d");
+  assert.equal(result[1].previousTag, "c");
+  assert.deepEqual(
+    await appendReleaseChurn(["a", "b"], published, async () => null),
+    published,
+  );
+});
+
+test("appendReleaseChurn: initial collection has exactly one baseline", async () => {
+  const result = await appendReleaseChurn(["a", "b"], [], async (tag) => [
+    { digest: tag, size: 1048576 },
+  ]);
+  assert.equal(result[0].isBaseline, true);
+  assert.equal(result[1].isBaseline, false);
+  assert.equal(result[1].previousTag, "a");
+});
 
 test("analyzeManifestLayers: handles empty or invalid layers safely", () => {
   const result = analyzeManifestLayers(null);
