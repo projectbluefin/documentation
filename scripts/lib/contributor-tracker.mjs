@@ -32,6 +32,7 @@ const BOT_PATTERNS = [
   /^Copilot$/i,
   /^kubestellar-hive(\[bot\])?$/i,
   /^hivecommons-hive(\[bot\])?$/i,
+  /^codecov-commenter$/i,
   /^hivecommons.*$/i,
   /^kubestellar.*$/i,
   /\[bot\]$/i,
