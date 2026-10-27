@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "org": "projectbluefin",
-  "generatedAt": "2026-10-24T22:45:57.997Z",
+  "generatedAt": "2026-10-27T02:15:51.511Z",
   "unavailable": false,
   "stateReason": null,
   "coverage": {
@@ -373,12 +373,12 @@
   },
   "summary": {
     "totalContributors": 456,
-    "activeContributors90d": 148,
-    "activeRepositories90d": 40,
+    "activeContributors90d": 144,
+    "activeRepositories90d": 41,
     "byType90d": {
-      "changes": 55,
-      "issues": 109,
-      "comments": 103,
+      "changes": 54,
+      "issues": 108,
+      "comments": 100,
       "reviews": 20,
       "discussions": 0
     }
@@ -388,7 +388,7 @@
       "id": "MDQ6VXNlcjc0MDI4MTI=",
       "login": "pieterv-icloud-com",
       "firstContributionAt": "2026-10-22T16:25:19.000Z",
-      "lastContributionAt": "2026-10-23T11:46:40.000Z"
+      "lastContributionAt": "2026-10-26T07:42:32.000Z"
     },
     {
       "id": "MDQ6VXNlcjc1MDk5ODY2",
@@ -790,13 +790,13 @@
       "id": "MDQ6VXNlcjE4NzQ0NTIx",
       "login": "mendezr",
       "firstContributionAt": "2026-08-30T19:10:57.000Z",
-      "lastContributionAt": "2026-10-22T09:14:35.000Z"
+      "lastContributionAt": "2026-10-26T20:07:02.000Z"
     },
     {
       "id": "MDQ6VXNlcjE4OTIyMjU=",
       "login": "ahmedadan",
       "firstContributionAt": "2025-08-03T17:39:13.000Z",
-      "lastContributionAt": "2026-10-24T20:46:21.000Z"
+      "lastContributionAt": "2026-10-26T03:22:10.000Z"
     },
     {
       "id": "MDQ6VXNlcjE5MDUxMjE=",
@@ -874,7 +874,7 @@
       "id": "MDQ6VXNlcjEwNTI5ODgx",
       "login": "KiKaraage",
       "firstContributionAt": "2025-10-22T23:44:57.000Z",
-      "lastContributionAt": "2026-10-22T02:26:06.000Z"
+      "lastContributionAt": "2026-10-26T23:09:56.000Z"
     },
     {
       "id": "MDQ6VXNlcjEwNTYwMTM1",
@@ -916,7 +916,7 @@
       "id": "MDQ6VXNlcjExMzA0MDE5",
       "login": "dtg01100",
       "firstContributionAt": "2025-04-04T13:36:49.000Z",
-      "lastContributionAt": "2026-10-22T02:13:50.000Z"
+      "lastContributionAt": "2026-10-25T11:58:43.000Z"
     },
     {
       "id": "MDQ6VXNlcjExNDI4MTI1",
@@ -964,13 +964,13 @@
       "id": "MDQ6VXNlcjEyMTI3ODc3",
       "login": "kylerankin",
       "firstContributionAt": "2026-08-04T01:23:58.000Z",
-      "lastContributionAt": "2026-10-24T22:45:34.000Z"
+      "lastContributionAt": "2026-10-26T23:38:15.000Z"
     },
     {
       "id": "MDQ6VXNlcjEyNjQxMDk=",
       "login": "castrojo",
       "firstContributionAt": "2023-03-08T19:19:39.000Z",
-      "lastContributionAt": "2026-10-24T22:40:36.000Z"
+      "lastContributionAt": "2026-10-26T21:58:51.000Z"
     },
     {
       "id": "MDQ6VXNlcjEyNzc5MTc=",
@@ -1042,7 +1042,7 @@
       "id": "MDQ6VXNlcjEzOTQ1NTI=",
       "login": "jeefy",
       "firstContributionAt": "2023-08-09T02:43:03.000Z",
-      "lastContributionAt": "2026-10-19T23:32:02.000Z"
+      "lastContributionAt": "2026-10-27T00:59:16.000Z"
     },
     {
       "id": "MDQ6VXNlcjEzOTUyODE2",
@@ -1192,7 +1192,7 @@
       "id": "MDQ6VXNlcjI0ODAxNg==",
       "login": "rapenne-s",
       "firstContributionAt": "2026-08-06T09:05:49.000Z",
-      "lastContributionAt": "2026-09-27T15:05:34.000Z"
+      "lastContributionAt": "2026-10-26T09:18:24.000Z"
     },
     {
       "id": "MDQ6VXNlcjI1MjQzODk0",
@@ -1414,7 +1414,7 @@
       "id": "MDQ6VXNlcjIzMzIzODY5",
       "login": "d0s1s",
       "firstContributionAt": "2026-10-24T17:51:01.000Z",
-      "lastContributionAt": "2026-10-24T22:39:00.000Z"
+      "lastContributionAt": "2026-10-25T14:23:59.000Z"
     },
     {
       "id": "MDQ6VXNlcjIzMzk5MzA=",
@@ -1516,7 +1516,7 @@
       "id": "MDQ6VXNlcjM1MjM5NTg3",
       "login": "arteeh",
       "firstContributionAt": "2026-09-01T21:05:15.000Z",
-      "lastContributionAt": "2026-10-24T17:03:41.000Z"
+      "lastContributionAt": "2026-10-26T09:20:49.000Z"
     },
     {
       "id": "MDQ6VXNlcjM1MzA3NDU1",
@@ -1816,7 +1816,7 @@
       "id": "MDQ6VXNlcjQ5Mzg=",
       "login": "znmeb",
       "firstContributionAt": "2025-12-29T05:37:27.000Z",
-      "lastContributionAt": "2026-10-24T22:43:21.000Z"
+      "lastContributionAt": "2026-10-25T22:18:53.000Z"
     },
     {
       "id": "MDQ6VXNlcjQ5NDEyNzgz",
@@ -1954,7 +1954,7 @@
       "id": "MDQ6VXNlcjQzNjY5NDY=",
       "login": "ximian",
       "firstContributionAt": "2026-07-25T09:54:54.000Z",
-      "lastContributionAt": "2026-10-23T20:30:48.000Z"
+      "lastContributionAt": "2026-10-26T08:03:04.000Z"
     },
     {
       "id": "MDQ6VXNlcjQzNzA4",
@@ -1990,7 +1990,7 @@
       "id": "MDQ6VXNlcjU0MjE5Nzc1",
       "login": "jfmongrain",
       "firstContributionAt": "2025-11-02T01:38:58.000Z",
-      "lastContributionAt": "2026-10-20T22:08:32.000Z"
+      "lastContributionAt": "2026-10-26T13:12:12.000Z"
     },
     {
       "id": "MDQ6VXNlcjU0MjQ4NTkx",
@@ -2056,7 +2056,7 @@
       "id": "MDQ6VXNlcjU4NDA0NDE=",
       "login": "hanthor",
       "firstContributionAt": "2025-01-04T16:27:59.000Z",
-      "lastContributionAt": "2026-10-24T22:08:36.000Z"
+      "lastContributionAt": "2026-10-27T01:30:59.000Z"
     },
     {
       "id": "MDQ6VXNlcjU4NjU0NDQx",
@@ -2206,7 +2206,7 @@
       "id": "MDQ6VXNlcjY1MDA4NjM=",
       "login": "mrbobbytables",
       "firstContributionAt": "2026-07-21T15:44:53.000Z",
-      "lastContributionAt": "2026-10-24T00:53:54.000Z"
+      "lastContributionAt": "2026-10-26T12:43:51.000Z"
     },
     {
       "id": "MDQ6VXNlcjY1MDcyNjMx",
@@ -2251,12 +2251,6 @@
       "lastContributionAt": "2026-10-22T08:55:38.000Z"
     },
     {
-      "id": "MDQ6VXNlcjY1NTUzMDgw",
-      "login": "codecov-commenter",
-      "firstContributionAt": "2026-07-19T19:04:00.000Z",
-      "lastContributionAt": "2026-10-24T19:11:39.000Z"
-    },
-    {
       "id": "MDQ6VXNlcjY1OTE2ODQ2",
       "login": "actions-user",
       "firstContributionAt": "2025-07-30T02:35:48.000Z",
@@ -2284,7 +2278,7 @@
       "id": "MDQ6VXNlcjY3NzIzMzU=",
       "login": "Danathar",
       "firstContributionAt": "2026-05-30T19:26:09.000Z",
-      "lastContributionAt": "2026-10-24T22:45:01.000Z"
+      "lastContributionAt": "2026-10-27T00:58:59.000Z"
     },
     {
       "id": "MDQ6VXNlcjY3ODU5NzM=",
@@ -2578,7 +2572,7 @@
       "id": "U_kgDOBtzkhw",
       "login": "theMimolet",
       "firstContributionAt": "2025-11-18T00:35:07.000Z",
-      "lastContributionAt": "2026-10-23T17:14:59.000Z"
+      "lastContributionAt": "2026-10-26T21:39:09.000Z"
     },
     {
       "id": "U_kgDOBvDRkQ",
@@ -2878,7 +2872,7 @@
       "id": "U_kgDOCV7PMg",
       "login": "Karibhou",
       "firstContributionAt": "2026-10-16T19:07:11.000Z",
-      "lastContributionAt": "2026-10-20T22:44:24.000Z"
+      "lastContributionAt": "2026-10-26T22:05:01.000Z"
     },
     {
       "id": "U_kgDOCVQ4MA",
@@ -3115,6 +3109,12 @@
       "lastContributionAt": "2026-10-18T11:48:46.000Z"
     },
     {
+      "id": "U_kgDOFHdcfA",
+      "login": "thatguywob",
+      "firstContributionAt": "2026-10-25T07:15:21.000Z",
+      "lastContributionAt": "2026-10-27T01:38:12.000Z"
+    },
+    {
       "id": "U_kgDOFJO_ng",
       "login": "soofreaky",
       "firstContributionAt": "2026-10-20T08:48:15.000Z",
@@ -3324,22 +3324,22 @@
     },
     {
       "month": "2026-07",
-      "contributors": 40,
-      "cumulativeContributors": 359
+      "contributors": 39,
+      "cumulativeContributors": 358
     },
     {
       "month": "2026-08",
-      "contributors": 57,
-      "cumulativeContributors": 389
+      "contributors": 56,
+      "cumulativeContributors": 388
     },
     {
       "month": "2026-09",
-      "contributors": 89,
-      "cumulativeContributors": 427
+      "contributors": 88,
+      "cumulativeContributors": 426
     },
     {
       "month": "2026-10",
-      "contributors": 76,
+      "contributors": 77,
       "cumulativeContributors": 456
     }
   ]
