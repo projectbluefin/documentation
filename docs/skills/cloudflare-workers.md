@@ -98,6 +98,17 @@ unless the Worker directory ships its own `.gitignore`.
 `zod@^4`; pinning `zod@^3` fails `ERESOLVE`. Resolve the real versions rather
 than reaching for `--legacy-peer-deps`.
 
+**Patch the MCP peers through `overrides`, not by bumping `agents`.** Every
+`agents` release pins `@modelcontextprotocol/client` and
+`@modelcontextprotocol/server` to one exact version, and `createMcpHandler`
+from `agents/mcp/server` routes every `/mcp` request through that `server`
+package. When `npm audit` flags either peer, add or raise the matching
+`overrides` entry in `workers/knowledge-mcp/package.json` (`^<patched>`), run
+`npm install`, and confirm the lock ends with a single
+`node_modules/@modelcontextprotocol/core` — a nested second copy means the
+override did not take. Re-run `npm test` and a local `initialize` +
+`tools/list` round trip before pushing.
+
 ## CountMe Worker (countme.projectbluefin.io)
 
 `workers/countme-proxy` is the **one** countme service: Worker
