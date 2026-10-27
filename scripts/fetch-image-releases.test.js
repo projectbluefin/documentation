@@ -202,8 +202,15 @@ const serverRelease = imageRelease("v26.10.1200", "2026-10-10T00:00:00Z", {
   ],
 });
 
+// Older server releases, newest first, so the seven-release cap has to drop some.
+const olderServerReleases = [9, 8, 7, 6, 5, 4, 3, 2].map((day) =>
+  imageRelease(`v26.10.0${day}00`, `2026-10-0${day}T00:00:00Z`),
+);
+
+// Newest first, as the GitHub releases API returns them.
 const classicReleases = [
-  imageRelease("stable-20261001", "2026-10-01T00:00:00Z", {
+  imageRelease("stable-20261009", "2026-10-09T00:00:00Z", { draft: true }),
+  imageRelease("stable-20261006", "2026-10-06T00:00:00Z", {
     body: "### Major packages\n| **Kernel** | 6.17.1 |",
     assets: [
       {
@@ -213,8 +220,7 @@ const classicReleases = [
       },
     ],
   }),
-  imageRelease("stable-20261009", "2026-10-09T00:00:00Z", { draft: true }),
-  ...[2, 3, 4, 5, 6].map((day) =>
+  ...[5, 4, 3, 2, 1].map((day) =>
     imageRelease(`stable-2026100${day}`, `2026-10-0${day}T00:00:00Z`),
   ),
 ];
@@ -279,7 +285,7 @@ function stubFetch(t) {
     if (url === CLASSIC_SBOM) return jsonResponse({}, 404);
     const path = url.replace("https://api.github.com", "");
     if (path.startsWith("/repos/projectbluefin/server/releases?"))
-      return jsonResponse([serverRelease]);
+      return jsonResponse([serverRelease, ...olderServerReleases]);
     if (path.startsWith("/repos/projectbluefin/server/contents/"))
       return jsonResponse({
         content: Buffer.from(
@@ -331,7 +337,7 @@ test("fetchImageReleases: an unreachable SBOM keeps release-notes versions and r
   stubFetch(t);
   const { products } = await fetchImageReleases();
   const row = products.classic.releases.find(
-    (r) => r.tag === "stable-20261001",
+    (r) => r.tag === "stable-20261006",
   );
   assert.deepEqual(row.versions, { kernel: "6.17.1" });
   assert.equal(row.versionsSource, "release-notes");
@@ -349,9 +355,27 @@ test("fetchImageReleases: drafts are dropped and each image stream keeps at most
   );
   const tags = imageRows.map((r) => r.tag);
   assert.ok(!tags.includes("stable-20261009"), "draft release must be dropped");
-  assert.equal(tags.filter((tag) => tag.startsWith("stable-")).length, 4);
+  assert.deepEqual(
+    tags.filter((tag) => tag.startsWith("stable-")),
+    [
+      "stable-20261006",
+      "stable-20261005",
+      "stable-20261004",
+      "stable-20261003",
+    ],
+  );
   const published = products.classic.releases.map((r) => r.publishedAt);
   assert.deepEqual(published, [...published].sort().reverse());
+});
+
+test("fetchImageReleases: server keeps its seven newest releases", async (t) => {
+  stubFetch(t);
+  const { products } = await fetchImageReleases();
+  assert.equal(products.server.releases.length, 7);
+  assert.deepEqual(
+    products.server.releases.map((r) => r.tag),
+    [serverRelease, ...olderServerReleases].slice(0, 7).map((r) => r.tag_name),
+  );
 });
 
 test("fetchImageReleases: failed, empty and malformed release lists mark the product unavailable", async (t) => {
