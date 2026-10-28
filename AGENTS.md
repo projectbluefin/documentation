@@ -1,7 +1,7 @@
 # projectbluefin/documentation — Agent Operating Contract
 
 This repository builds <https://docs.projectbluefin.io/>. It is a Docusaurus
-3.10 site (TypeScript, React 19, Node 24) and it is part of the Project Bluefin
+3.10 site (TypeScript, React 19, Node 26) and it is part of the Project Bluefin
 factory.
 
 ## The first rule
