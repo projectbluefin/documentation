@@ -700,6 +700,7 @@ test("pure aggregation unions stable IDs across repositories, kinds, months, ren
     event("C", "discussions", "2026-07-25T23:59:59.999Z"),
     event("D", "comments", "2026-10-24T00:00:00.001Z"), // Future, excluded.
     event("bot", "changes", AS_OF, "R1", "kubestellar-hive"),
+    event("imgbot", "changes", AS_OF, "R1", "ImgBotApp"),
     { repositoryId: "R1", kind: "comments", at: AS_OF, author: null },
     {
       repositoryId: "R1",

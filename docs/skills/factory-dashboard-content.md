@@ -182,6 +182,9 @@ history, not a leaderboard, monthly report snapshots, or hosted Hive.
 - **Make identity limits visible.** Exclude canonical known-bot patterns and bot
   account types, not guessed employers or profile bios. An ordinary account may
   use AI. Deleted or unlinked identities are not invented people.
+- **Account types alone miss legacy bots.** Some automated accounts appear as
+  GitHub users. Add verified legacy logins to the shared exact-match bot filter,
+  and test both the classification and its effect on contributor totals.
 - **Require complete pagination.** Follow all repository, resource and nested
   comment/review/reply cursors. A failed page invalidates the refreshed snapshot;
   keep the last good history and `generatedAt` with visible unavailability.
