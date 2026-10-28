@@ -23,6 +23,7 @@ const BOT_PATTERNS = [
   /^app\/renovate$/,
   /^github-actions\[bot\]$/,
   /^github-actions$/,
+  /^actions-user$/,
   /^copilot-swe-agent$/,
   /^ubot-\d+$/,
   /^pull$/,
