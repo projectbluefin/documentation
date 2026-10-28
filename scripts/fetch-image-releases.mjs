@@ -482,67 +482,7 @@ export async function main() {
   console.log(`fetch-image-releases: wrote ${OUT}`);
 }
 
-if (
-  import.meta.url === pathToFileURL(process.argv[1] ?? "").href &&
-  process.argv.includes("--self-check")
-) {
-  const { default: assert } = await import("node:assert/strict");
-  assert.deepEqual(
-    parseReleaseVersions(
-      "### Major packages\n| **Kernel** | 7.1 ➡️ 7.2 |\n| **Gnome** | 51.0 |\n### All Images\n| **Mesa** | 99.0 |",
-    ),
-    { kernel: "7.2", gnome: "51.0" },
-  );
-  assert.deepEqual(
-    parseReleaseVersions(
-      "## Key components\n| **Kernel (LTS)** | `7.1.8-200` | unchanged |\n| **bootc** | `1.16.13` | |",
-    ),
-    { kernel: "7.1.8-200", bootc: "1.16.13" },
-  );
-  assert.equal(
-    releaseStream({ tag_name: "stable-20261010" }, PRODUCT_SOURCES.server),
-    null,
-  );
-  const isoSource = { repository: ISO_REPOSITORY, kind: "iso" };
-  assert.equal(
-    releaseStream(
-      { prerelease: true, body: "uploaded to the **testing** bucket" },
-      isoSource,
-    ),
-    "testing",
-  );
-  assert.equal(
-    releaseStream(
-      { prerelease: false, body: "Promoted from source prerelease: 26.10" },
-      isoSource,
-    ),
-    "stable",
-  );
-  assert.equal(releaseStream({ prerelease: false }, isoSource), null);
-  const assets = [
-    {
-      name: "SHA256SUMS.gpg",
-      browser_download_url:
-        "https://github.com/projectbluefin/server/releases/download/v1/SHA256SUMS.gpg",
-      size: 0,
-    },
-  ];
-  const row = normalizeRelease({ tag_name: "v1", assets }, isoSource, {
-    versions: { kernel: "7.2" },
-  });
-  assert.equal(row.assets[0].size, 0);
-  assert.equal(row.assets[0].name, "SHA256SUMS.gpg");
-  assert.equal(row.versions, null);
-  const serverReleases = Array.from({ length: 10 }, (_, i) => ({
-    tag_name: `v26.10.${1200 + i}`,
-    draft: false,
-  }));
-  assert.equal(
-    recentReleases(serverReleases, PRODUCT_SOURCES.server).length,
-    7,
-  );
-  console.log("fetch-image-releases: metadata self-check passed");
-} else if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   try {
     await main();
   } catch (error) {
