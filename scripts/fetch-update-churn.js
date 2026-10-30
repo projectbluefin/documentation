@@ -459,10 +459,15 @@ async function appendReleaseChurn(tags, published, loadLayers) {
     if (!manifests.has(tag)) manifests.set(tag, await loadLayers(tag));
     return manifests.get(tag);
   };
+  // The first new point is always measured against the last published point:
+  // tags outside the discovery window may lack created_at, so a re-sort can
+  // move a published tag after lastTag and would otherwise mis-pair it.
+  let predecessor = lastTag ?? null;
   for (let i = start; i < tags.length; i++) {
     const tag = tags[i];
     if (knownTags.has(tag)) continue;
-    const previousTag = i > 0 ? tags[i - 1] : null;
+    const previousTag = predecessor;
+    predecessor = tag;
     const layers = await load(tag);
     const previousLayers = previousTag ? await load(previousTag) : null;
     if (!layers?.length || (previousTag && !previousLayers?.length)) continue;

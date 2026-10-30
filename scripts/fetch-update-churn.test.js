@@ -92,6 +92,42 @@ test("appendReleaseChurn: missing manifests neither erase history nor bridge gap
   );
 });
 
+test("appendReleaseChurn: first new point pairs with the last published tag when the tail is re-sorted", async () => {
+  // Published order f2f3040 → 441655c → 5c63207 → 88d9478; without created_at
+  // for the older tags, text order moves f2f3040 after 88d9478.
+  const published = [
+    { tag: "testing-20261028-f2f3040", previousTag: null, isBaseline: true },
+    {
+      tag: "testing-20261028-441655c",
+      previousTag: "testing-20261028-f2f3040",
+    },
+    {
+      tag: "testing-20261028-5c63207",
+      previousTag: "testing-20261028-441655c",
+    },
+    {
+      tag: "testing-20261028-88d9478",
+      previousTag: "testing-20261028-5c63207",
+    },
+  ];
+  const tags = [
+    "testing-20261028-441655c",
+    "testing-20261028-5c63207",
+    "testing-20261028-88d9478",
+    "testing-20261028-f2f3040",
+    "testing-20261029-81996ce",
+    "testing-20261029-9a0b1c2",
+  ];
+  const result = await appendReleaseChurn(tags, published, async (tag) => [
+    { digest: tag, size: 1048576 },
+  ]);
+  assert.deepEqual(result.slice(0, 4), published);
+  assert.equal(result.length, 6);
+  assert.equal(result[4].tag, "testing-20261029-81996ce");
+  assert.equal(result[4].previousTag, "testing-20261028-88d9478");
+  assert.equal(result[5].previousTag, "testing-20261029-81996ce");
+});
+
 test("appendReleaseChurn: initial collection has exactly one baseline", async () => {
   const result = await appendReleaseChurn(["a", "b"], [], async (tag) => [
     { digest: tag, size: 1048576 },
