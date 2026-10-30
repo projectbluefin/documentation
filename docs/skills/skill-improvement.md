@@ -136,6 +136,7 @@ checkout` stamps every tracked file with the current time and the TTL never
   headings. When moving docs such as `artwork` and `music` out of existing
   categories into dedicated categories like "Lore", keep `sidebars.ts`
   formatting minimal and verify document IDs against the active docs manifest.
+- Retiring an analytics metric requires cutting the full loop: delete its dedicated cron/trigger workflow, package script, fetcher pipeline, tracked data seed, tests, and skill router entry in one change. Leaving orphaned fetchers or scheduled PR workflows running against unrendered datasets consumes unnecessary compute and invites PR review noise.
 
 Each is invisible from the source alone. Each would be paid again by the next
 agent. That is the bar.

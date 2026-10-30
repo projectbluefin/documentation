@@ -83,7 +83,7 @@ jobs:
       - name: Restore GitHub data cache
         # Caches only gitignored files produced by fetch scripts. Git-tracked
         # seeds (SBOM attestations, images, driver-versions, firehose-apps,
-        # artwork*, countme/scorecard/update-churn history, gnome-extensions)
+        # artwork*, countme/scorecard history, gnome-extensions)
         # are excluded so a stale cache entry never overwrites committed data.
         # github-profiles and hive-history have their own dedicated caches.
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5

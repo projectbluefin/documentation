@@ -237,6 +237,7 @@ Rules for every `scripts/fetch-*.js`:
 - **Tracked seeds are judged by their `generatedAt`, not file mtime.** A git
   checkout stamps every tracked file with the current time, so an mtime TTL
   never expires in CI. Use `scripts/lib/seed-cache.js`.
+- **Retire orphaned datasets completely.** When a presentation surface removes the last consumer of a dataset, retire the whole pipeline in that same change: delete the fetcher script, its `scripts/*.test.js`, package scripts and parallel fetch entries, dedicated cache/update workflows, tracked data seeds, `.gitignore` exceptions, and skill router entries. Never leave orphaned fetchers or scheduled PR workflows running against unrendered data.
 
 ## Presentation rules
 

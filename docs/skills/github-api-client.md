@@ -21,8 +21,7 @@ instead of restating a token read or a header object.
 
 - Reading a non-GitHub upstream (feeds, Flathub, Homebrew, GHCR OCI manifests) —
   only the GitHub REST/GraphQL plumbing is shared here.
-- Chart or panel rendering — see [`update-churn-pipeline.md`](update-churn-pipeline.md)
-  and [`factory-dashboard-content.md`](factory-dashboard-content.md).
+- Chart or panel rendering — see [`factory-dashboard-content.md`](factory-dashboard-content.md).
 - The `workers/countme-proxy/` Worker, which has its own tests and deployment.
 
 ## Core Process
