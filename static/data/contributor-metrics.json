@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "org": "projectbluefin",
-  "generatedAt": "2026-10-28T02:10:37.106Z",
+  "generatedAt": "2026-10-29T02:10:27.024Z",
   "unavailable": false,
   "stateReason": null,
   "coverage": {
@@ -372,7 +372,7 @@
     "unlinkedAuthors": 1609
   },
   "summary": {
-    "totalContributors": 459,
+    "totalContributors": 457,
     "activeContributors90d": 147,
     "activeRepositories90d": 41,
     "byType90d": {
@@ -400,7 +400,7 @@
       "id": "MDQ6VXNlcjc1MTc2MDE2",
       "login": "notaf0e",
       "firstContributionAt": "2026-08-23T22:35:14.000Z",
-      "lastContributionAt": "2026-10-15T14:04:29.000Z"
+      "lastContributionAt": "2026-10-29T00:43:25.000Z"
     },
     {
       "id": "MDQ6VXNlcjc1MzI0MDc3",
@@ -796,13 +796,13 @@
       "id": "MDQ6VXNlcjE4NzQ0NTIx",
       "login": "mendezr",
       "firstContributionAt": "2026-08-30T19:10:57.000Z",
-      "lastContributionAt": "2026-10-27T11:05:16.000Z"
+      "lastContributionAt": "2026-10-28T20:20:27.000Z"
     },
     {
       "id": "MDQ6VXNlcjE4OTIyMjU=",
       "login": "ahmedadan",
       "firstContributionAt": "2025-08-03T17:39:13.000Z",
-      "lastContributionAt": "2026-10-28T00:32:53.000Z"
+      "lastContributionAt": "2026-10-28T23:57:59.000Z"
     },
     {
       "id": "MDQ6VXNlcjE5MDUxMjE=",
@@ -970,7 +970,7 @@
       "id": "MDQ6VXNlcjEyMTI3ODc3",
       "login": "kylerankin",
       "firstContributionAt": "2026-08-04T01:23:58.000Z",
-      "lastContributionAt": "2026-10-28T02:06:16.000Z"
+      "lastContributionAt": "2026-10-29T01:44:39.000Z"
     },
     {
       "id": "MDQ6VXNlcjEyNjQxMDk=",
@@ -1054,7 +1054,7 @@
       "id": "MDQ6VXNlcjEzOTQ1NTI=",
       "login": "jeefy",
       "firstContributionAt": "2023-08-09T02:43:03.000Z",
-      "lastContributionAt": "2026-10-28T00:45:13.000Z"
+      "lastContributionAt": "2026-10-28T23:24:51.000Z"
     },
     {
       "id": "MDQ6VXNlcjEzOTUyODE2",
@@ -1687,12 +1687,6 @@
       "lastContributionAt": "2026-06-26T00:45:10.000Z"
     },
     {
-      "id": "MDQ6VXNlcjMxNDI3ODUw",
-      "login": "ImgBotApp",
-      "firstContributionAt": "2025-07-30T22:05:28.000Z",
-      "lastContributionAt": "2025-07-30T22:05:28.000Z"
-    },
-    {
       "id": "MDQ6VXNlcjMyNDQxNDc1",
       "login": "quality",
       "firstContributionAt": "2026-09-06T09:49:13.000Z",
@@ -1966,7 +1960,7 @@
       "id": "MDQ6VXNlcjQzNjY5NDY=",
       "login": "ximian",
       "firstContributionAt": "2026-07-25T09:54:54.000Z",
-      "lastContributionAt": "2026-10-27T22:41:43.000Z"
+      "lastContributionAt": "2026-10-28T23:27:48.000Z"
     },
     {
       "id": "MDQ6VXNlcjQzNzA4",
@@ -2068,7 +2062,7 @@
       "id": "MDQ6VXNlcjU4NDA0NDE=",
       "login": "hanthor",
       "firstContributionAt": "2025-01-04T16:27:59.000Z",
-      "lastContributionAt": "2026-10-28T01:55:29.000Z"
+      "lastContributionAt": "2026-10-29T02:06:57.000Z"
     },
     {
       "id": "MDQ6VXNlcjU4NjU0NDQx",
@@ -2218,7 +2212,7 @@
       "id": "MDQ6VXNlcjY1MDA4NjM=",
       "login": "mrbobbytables",
       "firstContributionAt": "2026-07-21T15:44:53.000Z",
-      "lastContributionAt": "2026-10-28T01:41:02.000Z"
+      "lastContributionAt": "2026-10-29T00:30:18.000Z"
     },
     {
       "id": "MDQ6VXNlcjY1MDcyNjMx",
@@ -2263,12 +2257,6 @@
       "lastContributionAt": "2026-10-22T08:55:38.000Z"
     },
     {
-      "id": "MDQ6VXNlcjY1OTE2ODQ2",
-      "login": "actions-user",
-      "firstContributionAt": "2025-07-30T02:35:48.000Z",
-      "lastContributionAt": "2025-09-06T10:03:43.000Z"
-    },
-    {
       "id": "MDQ6VXNlcjY1OTg4Mjk=",
       "login": "Venefilyn",
       "firstContributionAt": "2025-05-05T16:21:58.000Z",
@@ -2290,7 +2278,7 @@
       "id": "MDQ6VXNlcjY3NzIzMzU=",
       "login": "Danathar",
       "firstContributionAt": "2026-05-30T19:26:09.000Z",
-      "lastContributionAt": "2026-10-28T00:28:32.000Z"
+      "lastContributionAt": "2026-10-28T22:14:28.000Z"
     },
     {
       "id": "MDQ6VXNlcjY3ODU5NzM=",
@@ -2602,7 +2590,7 @@
       "id": "U_kgDOBwv3NQ",
       "login": "codebymarshall",
       "firstContributionAt": "2026-10-21T15:34:25.000Z",
-      "lastContributionAt": "2026-10-28T01:03:19.000Z"
+      "lastContributionAt": "2026-10-28T18:23:09.000Z"
     },
     {
       "id": "U_kgDOBXRqSQ",
@@ -2812,7 +2800,7 @@
       "id": "U_kgDOCpoPHg",
       "login": "nchrtd22",
       "firstContributionAt": "2026-10-19T16:20:22.000Z",
-      "lastContributionAt": "2026-10-27T17:12:02.000Z"
+      "lastContributionAt": "2026-10-28T11:17:15.000Z"
     },
     {
       "id": "U_kgDOCpShqw",
@@ -2884,7 +2872,7 @@
       "id": "U_kgDOCV7PMg",
       "login": "Karibhou",
       "firstContributionAt": "2026-10-16T19:07:11.000Z",
-      "lastContributionAt": "2026-10-27T18:01:31.000Z"
+      "lastContributionAt": "2026-10-29T01:58:40.000Z"
     },
     {
       "id": "U_kgDOCVQ4MA",
@@ -3124,7 +3112,7 @@
       "id": "U_kgDOFHdcfA",
       "login": "thatguywob",
       "firstContributionAt": "2026-10-25T07:15:21.000Z",
-      "lastContributionAt": "2026-10-28T00:43:35.000Z"
+      "lastContributionAt": "2026-10-29T00:42:40.000Z"
     },
     {
       "id": "U_kgDOFJO_ng",
@@ -3282,83 +3270,83 @@
     },
     {
       "month": "2025-07",
-      "contributors": 19,
-      "cumulativeContributors": 173
+      "contributors": 17,
+      "cumulativeContributors": 171
     },
     {
       "month": "2025-08",
-      "contributors": 26,
-      "cumulativeContributors": 187
+      "contributors": 25,
+      "cumulativeContributors": 185
     },
     {
       "month": "2025-09",
-      "contributors": 22,
-      "cumulativeContributors": 195
+      "contributors": 21,
+      "cumulativeContributors": 193
     },
     {
       "month": "2025-10",
       "contributors": 25,
-      "cumulativeContributors": 205
+      "cumulativeContributors": 203
     },
     {
       "month": "2025-11",
       "contributors": 26,
-      "cumulativeContributors": 214
+      "cumulativeContributors": 212
     },
     {
       "month": "2025-12",
       "contributors": 30,
-      "cumulativeContributors": 225
+      "cumulativeContributors": 223
     },
     {
       "month": "2026-01",
       "contributors": 55,
-      "cumulativeContributors": 258
+      "cumulativeContributors": 256
     },
     {
       "month": "2026-02",
       "contributors": 29,
-      "cumulativeContributors": 272
+      "cumulativeContributors": 270
     },
     {
       "month": "2026-03",
       "contributors": 31,
-      "cumulativeContributors": 280
+      "cumulativeContributors": 278
     },
     {
       "month": "2026-04",
       "contributors": 38,
-      "cumulativeContributors": 298
+      "cumulativeContributors": 296
     },
     {
       "month": "2026-05",
       "contributors": 61,
-      "cumulativeContributors": 325
+      "cumulativeContributors": 323
     },
     {
       "month": "2026-06",
       "contributors": 50,
-      "cumulativeContributors": 350
+      "cumulativeContributors": 348
     },
     {
       "month": "2026-07",
       "contributors": 39,
-      "cumulativeContributors": 358
+      "cumulativeContributors": 356
     },
     {
       "month": "2026-08",
       "contributors": 56,
-      "cumulativeContributors": 388
+      "cumulativeContributors": 386
     },
     {
       "month": "2026-09",
       "contributors": 88,
-      "cumulativeContributors": 426
+      "cumulativeContributors": 424
     },
     {
       "month": "2026-10",
       "contributors": 80,
-      "cumulativeContributors": 459
+      "cumulativeContributors": 457
     }
   ]
 }

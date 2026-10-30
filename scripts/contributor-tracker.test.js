@@ -23,6 +23,7 @@ test("isBot matches the bot identities that open PRs in this org", () => {
     "github-actions[bot]",
     "github-actions",
     "actions-user",
+    "ImgBotApp",
     "copilot-swe-agent",
     "ubot-123",
     "pull",
