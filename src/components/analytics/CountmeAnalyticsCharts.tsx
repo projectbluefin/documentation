@@ -168,6 +168,9 @@ export interface ProjectBluefinImageSpec {
  * done
  * ```
  *
+ * Utah's `execute-release.yml` reads its variants from the build matrix
+ * instead (`build.yml`), and promotes the same four flavors as Dakota.
+ *
  * `id` is the first-party countme `repo` identifier.
  */
 export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
@@ -207,9 +210,9 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
     base: "Fedora Hummingbird",
     cat: 3,
     link: "/utah",
-    status: "provisioning",
-    statusText: "Pre-alpha · Provisioning",
-    images: [],
+    status: "bootstrapping",
+    statusText: "Pre-alpha · Collecting",
+    images: ["utah", "utah-nvidia", "utah-gaming", "utah-nvidia-gaming"],
     delivery: "oci",
   },
   {

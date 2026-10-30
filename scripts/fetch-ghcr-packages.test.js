@@ -29,6 +29,8 @@ test("classifyFamily: os images", () => {
   assert.equal(classifyFamily("bluefin-nvidia"), "os");
   assert.equal(classifyFamily("dakota"), "os");
   assert.equal(classifyFamily("dakota-nvidia"), "os");
+  assert.equal(classifyFamily("utah"), "os");
+  assert.equal(classifyFamily("utah-nvidia-gaming"), "os");
 });
 
 test("classifyFamily: userspace", () => {
@@ -240,5 +242,9 @@ test("the promoted set matches each repo's execute-release.yml", () => {
     "dakota-nvidia",
     "dakota-gaming",
     "dakota-nvidia-gaming",
+    "utah",
+    "utah-nvidia",
+    "utah-gaming",
+    "utah-nvidia-gaming",
   ]);
 });

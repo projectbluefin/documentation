@@ -63,7 +63,12 @@ const DATED_STREAM_TAG = /^(stable|testing|latest|nightly|beta|gts)-\d{8}/;
  */
 export function classifyFamily(name) {
   if (name.endsWith("-cache") || name.endsWith("-pr")) return "internal";
-  if (name.startsWith("bluefin") || name.startsWith("dakota")) return "os";
+  if (
+    name.startsWith("bluefin") ||
+    name.startsWith("dakota") ||
+    name.startsWith("utah")
+  )
+    return "os";
   if (
     name.startsWith("base") ||
     name.startsWith("static") ||
@@ -211,6 +216,10 @@ export const FALLBACK_LANES = [
   "dakota-nvidia",
   "dakota-gaming",
   "dakota-nvidia-gaming",
+  "utah",
+  "utah-nvidia",
+  "utah-gaming",
+  "utah-nvidia-gaming",
   "base",
   "static",
   "skopeo",
@@ -236,6 +245,10 @@ export const PROMOTED_IMAGES = [
   "dakota-nvidia",
   "dakota-gaming",
   "dakota-nvidia-gaming",
+  "utah",
+  "utah-nvidia",
+  "utah-gaming",
+  "utah-nvidia-gaming",
 ];
 
 /** Tags worth an inspect call. Everything else is noise or a cosign artefact. */
