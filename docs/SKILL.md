@@ -26,7 +26,6 @@ guidance in a general-purpose design or content skill you have loaded.
 | Updating logos, wordmarks, or brand assets                          | [`skills/brand-assets.md`](skills/brand-assets.md)                                          |
 | Verifying, recovering, or archiving a blog discussion               | [`skills/giscus-discussions.md`](skills/giscus-discussions.md)                              |
 | Adding a GitHub API call anywhere in `scripts/`                     | [`skills/github-api-client.md`](skills/github-api-client.md)                                |
-| Measuring update churn or layer efficiency                          | [`skills/update-churn-pipeline.md`](skills/update-churn-pipeline.md)                        |
 | Adding or debugging a Cloudflare Worker or subdomain                | [`skills/cloudflare-workers.md`](skills/cloudflare-workers.md)                              |
 | Landing a pull request, or proving a change is live                 | [`skills/shipping-and-verifying.md`](skills/shipping-and-verifying.md)                      |
 | Editing `.github/workflows/`, caches, or CI speed                   | [`skills/ci-workflows.md`](skills/ci-workflows.md)                                          |

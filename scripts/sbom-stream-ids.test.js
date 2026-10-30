@@ -2,13 +2,12 @@
  * Drift gate for the SBOM stream-id namespace.
  *
  * scripts/fetch-github-sbom.js STREAM_SPECS is the authoritative list of SBOM
- * stream ids written into static/data/sbom-attestations.json. Four consumer
+ * stream ids written into static/data/sbom-attestations.json. Two consumer
  * sites join against that namespace by raw string:
  *
  *   - fetch-github-images.js  PRODUCT_SPECS  (sbomStreamId / nvidiaSbomStreamId
  *                                             / nvidiaSbomFallbackStreamId)
  *   - fetch-firehose.js       OS_STREAM_SPECS (streamId)
- *   - fetch-update-churn.js   IMAGE_CONFIGS   (sbomStreamId)
  *
  * Nothing else keeps those strings resolvable: a typo or a renamed stream
  * yields silently missing data on the published site instead of a build
@@ -31,7 +30,6 @@ const assert = require("node:assert");
 const { STREAM_SPECS } = require("./fetch-github-sbom");
 const { PRODUCT_SPECS } = require("./fetch-github-images");
 const { OS_STREAM_SPECS } = require("./fetch-firehose");
-const { IMAGE_CONFIGS } = require("./fetch-update-churn");
 
 const STREAM_IDS = new Set(STREAM_SPECS.map((s) => s.id));
 
@@ -71,15 +69,6 @@ test("every OS_STREAM_SPECS streamId is a declared SBOM stream", () => {
     assert.ok(
       STREAM_IDS.has(spec.streamId),
       `firehose OS stream ${spec.appId} names streamId "${spec.streamId}", which is not in fetch-github-sbom.js STREAM_SPECS`,
-    );
-  }
-});
-
-test("every IMAGE_CONFIGS sbomStreamId is a declared SBOM stream", () => {
-  for (const spec of IMAGE_CONFIGS) {
-    assert.ok(
-      STREAM_IDS.has(spec.sbomStreamId),
-      `churn image ${spec.id} names sbomStreamId "${spec.sbomStreamId}", which is not in fetch-github-sbom.js STREAM_SPECS`,
     );
   }
 });
