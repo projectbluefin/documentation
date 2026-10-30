@@ -1,7 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { buildQueries, buildOutput, mapItem } from "./fetch-hive-live-data.js";
+import {
+  buildQueries,
+  buildOutput,
+  mapItem,
+  searchIssues,
+  getJson,
+} from "./fetch-hive-live-data.js";
 
 test("buildQueries produces correct queries including mergedThisWeek from merged PRs", () => {
   const org = "projectbluefin";
@@ -23,7 +29,7 @@ test("buildQueries produces correct queries including mergedThisWeek from merged
   );
   assert.equal(
     queries.agentMerged,
-    "org:projectbluefin type:pr is:merged author:kubestellar-hive[bot] merged:>2026-09-03",
+    "org:projectbluefin type:pr is:merged author:hivecommons-hive[bot] merged:>2026-09-03",
   );
 
   // Guard against regression: mergedThisWeek must query PRs, not issues
@@ -113,4 +119,55 @@ test("mapItem transforms GitHub issue/PR objects cleanly", () => {
   assert.equal(mapped.draft, false);
   assert.equal(mapped.pull_request?.merged_at, "2026-09-10T12:15:00Z");
   assert.deepEqual(mapped.labels, [{ name: "bug", color: "d73a4a" }]);
+});
+
+test("searchIssues returns the parsed search body from the shared client", async () => {
+  const body = { total_count: 7, items: [{ number: 1 }] };
+  let seen;
+  const result = await searchIssues("org:projectbluefin type:pr", 5, {
+    token: "t",
+    fetchJson: async (url, opts) => {
+      seen = { url, opts };
+      return body;
+    },
+  });
+  assert.deepEqual(result, body);
+  assert.match(
+    seen.url,
+    /\/search\/issues\?q=org%3Aprojectbluefin%20type%3Apr&/,
+  );
+  assert.match(seen.url, /per_page=5$/);
+  assert.equal(seen.opts.token, "t");
+});
+
+test("searchIssues falls back to an empty result when the request fails", async () => {
+  const result = await searchIssues("q", 1, {
+    fetchJson: async () => {
+      throw new Error("GET x -> 422");
+    },
+  });
+  assert.deepEqual(result, { total_count: 0, items: [] });
+});
+
+test("getJson returns the parsed body and {} on failure", async () => {
+  assert.deepEqual(
+    await getJson("/orgs/projectbluefin", {
+      fetchJson: async () => ({ public_repos: 19 }),
+    }),
+    { public_repos: 19 },
+  );
+  assert.deepEqual(
+    await getJson("/orgs/projectbluefin", {
+      fetchJson: async () => {
+        throw new Error("boom");
+      },
+    }),
+    {},
+  );
+});
+
+test("hive agent queries use the bot account that authors projectbluefin PRs", () => {
+  const q = buildQueries("projectbluefin", "2026-09-03", "2026-08-11");
+  assert.ok(q.hivePRs.includes("author:hivecommons-hive[bot]"));
+  assert.ok(q.agentMerged.includes("author:hivecommons-hive[bot]"));
 });
