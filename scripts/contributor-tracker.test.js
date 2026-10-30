@@ -27,6 +27,7 @@ test("isBot matches the bot identities that open PRs in this org", () => {
     "ubot-123",
     "pull",
     "testpullapp",
+    "ImgBotApp",
     "app/anything",
     "mergeraptor",
     "mergeraptor[bot]",
@@ -48,6 +49,7 @@ test("isBot does not misclassify humans whose names embed bot substrings", () =>
     "dependabot-fan",
     "ubot-",
     "pullman",
+    "ImgBotAppFan",
   ]) {
     assert.equal(isBot(human), false, `${human} should be treated as human`);
   }

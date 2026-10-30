@@ -28,6 +28,7 @@ const BOT_PATTERNS = [
   /^ubot-\d+$/,
   /^pull$/,
   /^testpullapp$/,
+  /^ImgBotApp$/,
   /^app\//i,
   /^mergeraptor(\[bot\])?$/i,
   /^Copilot$/i,
