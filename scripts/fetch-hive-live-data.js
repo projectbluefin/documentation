@@ -37,17 +37,42 @@ export function buildQueries(org, weekAgo, monthAgo) {
   return {
     merged: `org:${org} type:pr is:merged`,
     discussions: `org:${org} type:issue is:open -label:queue/agent-ready -label:source:agent`,
-    hivePRs: `org:${org} type:pr is:open author:kubestellar-hive[bot]`,
+    hivePRs: `org:${org} type:pr is:open author:hivecommons-hive[bot]`,
     copilotPRs: `org:${org} type:pr is:open label:source:agent`,
     openedIssues: `org:${org} type:issue created:>${weekAgo}`,
     closedIssues: `org:${org} type:issue closed:>${weekAgo}`,
     tapPromotions: `repo:ublue-os/homebrew-tap type:pr is:merged merged:>${monthAgo}`,
-    agentMerged: `org:${org} type:pr is:merged author:kubestellar-hive[bot] merged:>${weekAgo}`,
+    agentMerged: `org:${org} type:pr is:merged author:hivecommons-hive[bot] merged:>${weekAgo}`,
     openIssues: `org:${org} state:open type:issue`,
     openPRs: `org:${org} state:open type:pr`,
     agentReadyIssues: `org:${org} label:queue/agent-ready state:open`,
     mergedThisWeek: `org:${org} type:pr is:merged merged:>${weekAgo}`,
   };
+}
+
+// ghFetch resolves to the parsed JSON body and throws on a non-2xx, so these
+// wrappers only turn a failure into the empty default the dashboard expects.
+export async function searchIssues(
+  q,
+  perPage = 30,
+  { token, fetchJson = ghFetch } = {},
+) {
+  const url = `${GH_API}/search/issues?q=${encodeURIComponent(q)}&sort=updated&order=desc&per_page=${perPage}`;
+  try {
+    return await fetchJson(url, { token });
+  } catch (e) {
+    console.warn(`  warn: ${q.slice(0, 80)} — ${e.message}`);
+    return { total_count: 0, items: [] };
+  }
+}
+
+export async function getJson(path, { token, fetchJson = ghFetch } = {}) {
+  try {
+    return await fetchJson(path, { token });
+  } catch (e) {
+    console.warn(`  warn: GET ${path} — ${e.message}`);
+    return {};
+  }
 }
 
 export function mapItem(i) {
@@ -136,40 +161,8 @@ export async function main() {
     }
   }
 
-  async function ghSearch(q, perPage = 30) {
-    const url = `${GH_API}/search/issues?q=${encodeURIComponent(q)}&sort=updated&order=desc&per_page=${perPage}`;
-    const res = await ghFetch(url, { token });
-    if (!res.ok) {
-      const err = await res.text().catch(() => res.statusText);
-      throw new Error(`${res.status} for ${url}: ${err.slice(0, 200)}`);
-    }
-    return res.json();
-  }
-
-  async function ghGet(path) {
-    const url = path.startsWith("http") ? path : `${GH_API}${path}`;
-    const res = await ghFetch(url, { token });
-    if (!res.ok) throw new Error(`${res.status} for ${url}`);
-    return res.json();
-  }
-
-  async function safeSearch(q, perPage = 30) {
-    try {
-      return await ghSearch(q, perPage);
-    } catch (e) {
-      console.warn(`  warn: ${q.slice(0, 80)} — ${e.message}`);
-      return { total_count: 0, items: [] };
-    }
-  }
-
-  async function safeGet(path) {
-    try {
-      return await ghGet(path);
-    } catch (e) {
-      console.warn(`  warn: GET ${path} — ${e.message}`);
-      return {};
-    }
-  }
+  const safeSearch = (q, perPage) => searchIssues(q, perPage, { token });
+  const safeGet = (path) => getJson(path, { token });
 
   console.log("fetch-hive-live-data: fetching GitHub data...");
 

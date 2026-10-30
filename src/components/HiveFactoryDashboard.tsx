@@ -2731,7 +2731,7 @@ function OrgStatsPanel({ stats }: { stats: OrgStats }) {
             </span>
           </Link>
           <Link
-            href="https://github.com/issues?q=org%3Aprojectbluefin+author%3Akubestellar-hive%5Bbot%5D+state%3Aopen+type%3Apr"
+            href="https://github.com/issues?q=org%3Aprojectbluefin+author%3Ahivecommons-hive%5Bbot%5D+state%3Aopen+type%3Apr"
             className={styles.orgAgentRow}
           >
             <span
