@@ -161,6 +161,10 @@ const PROMOTED = [
   "dakota-nvidia",
   "dakota-gaming",
   "dakota-nvidia-gaming",
+  "utah",
+  "utah-nvidia",
+  "utah-gaming",
+  "utah-nvidia-gaming",
 ];
 
 test("the matrix rows are the images the release workflows promote", () => {
