@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "org": "projectbluefin",
   "generatedAt": "2026-10-29T02:10:27.024Z",
-  "unavailable": true,
-  "stateReason": "A complete public GitHub contribution scan could not be verified. Previous verified data is retained when available.",
+  "unavailable": false,
+  "stateReason": null,
   "coverage": {
     "repositories": [
       {
@@ -372,7 +372,7 @@
     "unlinkedAuthors": 1609
   },
   "summary": {
-    "totalContributors": 458,
+    "totalContributors": 457,
     "activeContributors90d": 147,
     "activeRepositories90d": 41,
     "byType90d": {
@@ -1685,12 +1685,6 @@
       "login": "passthejoe",
       "firstContributionAt": "2025-11-03T23:10:37.000Z",
       "lastContributionAt": "2026-06-26T00:45:10.000Z"
-    },
-    {
-      "id": "MDQ6VXNlcjMxNDI3ODUw",
-      "login": "ImgBotApp",
-      "firstContributionAt": "2025-07-30T22:05:28.000Z",
-      "lastContributionAt": "2025-07-30T22:05:28.000Z"
     },
     {
       "id": "MDQ6VXNlcjMyNDQxNDc1",
@@ -3276,83 +3270,83 @@
     },
     {
       "month": "2025-07",
-      "contributors": 18,
-      "cumulativeContributors": 172
+      "contributors": 17,
+      "cumulativeContributors": 171
     },
     {
       "month": "2025-08",
       "contributors": 25,
-      "cumulativeContributors": 186
+      "cumulativeContributors": 185
     },
     {
       "month": "2025-09",
       "contributors": 21,
-      "cumulativeContributors": 194
+      "cumulativeContributors": 193
     },
     {
       "month": "2025-10",
       "contributors": 25,
-      "cumulativeContributors": 204
+      "cumulativeContributors": 203
     },
     {
       "month": "2025-11",
       "contributors": 26,
-      "cumulativeContributors": 213
+      "cumulativeContributors": 212
     },
     {
       "month": "2025-12",
       "contributors": 30,
-      "cumulativeContributors": 224
+      "cumulativeContributors": 223
     },
     {
       "month": "2026-01",
       "contributors": 55,
-      "cumulativeContributors": 257
+      "cumulativeContributors": 256
     },
     {
       "month": "2026-02",
       "contributors": 29,
-      "cumulativeContributors": 271
+      "cumulativeContributors": 270
     },
     {
       "month": "2026-03",
       "contributors": 31,
-      "cumulativeContributors": 279
+      "cumulativeContributors": 278
     },
     {
       "month": "2026-04",
       "contributors": 38,
-      "cumulativeContributors": 297
+      "cumulativeContributors": 296
     },
     {
       "month": "2026-05",
       "contributors": 61,
-      "cumulativeContributors": 324
+      "cumulativeContributors": 323
     },
     {
       "month": "2026-06",
       "contributors": 50,
-      "cumulativeContributors": 349
+      "cumulativeContributors": 348
     },
     {
       "month": "2026-07",
       "contributors": 39,
-      "cumulativeContributors": 357
+      "cumulativeContributors": 356
     },
     {
       "month": "2026-08",
       "contributors": 56,
-      "cumulativeContributors": 387
+      "cumulativeContributors": 386
     },
     {
       "month": "2026-09",
       "contributors": 88,
-      "cumulativeContributors": 425
+      "cumulativeContributors": 424
     },
     {
       "month": "2026-10",
       "contributors": 80,
-      "cumulativeContributors": 458
+      "cumulativeContributors": 457
     }
   ]
 }

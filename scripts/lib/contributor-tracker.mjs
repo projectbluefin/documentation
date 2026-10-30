@@ -24,6 +24,7 @@ const BOT_PATTERNS = [
   /^github-actions\[bot\]$/,
   /^github-actions$/,
   /^actions-user$/,
+  /^ImgBotApp$/i,
   /^copilot-swe-agent$/,
   /^ubot-\d+$/,
   /^pull$/,
