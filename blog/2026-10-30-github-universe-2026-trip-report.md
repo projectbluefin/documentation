@@ -9,7 +9,7 @@ image: /img/blog/2026-10-30-github-universe-2026-trip-report/ship-and-tell.jpg
 
 Bluefin was fortunate to get nominated for a "Ship and Tell" session at GitHub Universe.
 
-[![Watch: What open source can teach us about agents in CI/CD](/img/blog/2026-10-30-github-universe-2026-trip-report/ship-and-tell.jpg)](https://www.youtube.com/watch?v=bUhCBYi4dys)
+[![Watch: What open source can teach us about agents in CI/CD](/img/blog/2026-10-30-github-universe-2026-trip-report/ship-and-tell.jpg)](https://www.youtube.com/watch?v=J75hdXqKEv8)
 
 A little while ago [we had a thread](https://github.com/ublue-os/bluefin/discussions/4949) in our discussions about the nightmare that is printing on Linux. What started as a joke turned into an actual thing that we built. It was such a cool story that Martin Woodward mentioned us in his closing keynote at Universe!
 
