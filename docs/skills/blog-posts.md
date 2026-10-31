@@ -46,6 +46,8 @@ temptation is to fill the page:
 - Never invent narrative, lore, project history, motivation, or a promise.
 - Never write a first-person sentence that will publish under someone's byline.
 - If copy is missing, **ask.** Ship structure/embeds with an empty body hole.
+- For a PR the maintainer will finish, keep supplied sentence fragments and
+  photo insertion notes in MDX comments (`{/* ... */}`), not visible prose.
 
 A design skill saying "come up with copy" refers to mockups, not authorship.
 
@@ -75,6 +77,11 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
    use that local path as the front-matter `image`; otherwise save the oEmbed
    `thumbnail_url`. When the maintainer supplied no prose, the body may contain
    only the standard accessible YouTube iframe.
+
+   For clickable YouTube thumbnails, use
+   `[![Watch: video title](/img/blog/<post-folder>/thumbnail.jpg)](<watch-url>)`
+   with the downloaded image. Preserve any `t=` timestamp in the watch URL;
+   the same local image can serve as the front-matter social card.
 
 3. **Write the front matter.**
 
@@ -221,6 +228,10 @@ and keeps it when the fetch fails. Three consequences when you touch a post:
   paragraph or add a `description`; never write a summary into the index.
 - **An embed-only post gets no card text**, which is correct. The card renders
   with title and date alone rather than with invented copy.
+- **Page title formatting has no site suffix.** The site swizzles
+  `src/theme/ThemeProvider/TitleFormatter/index.tsx` so titles render without
+  the default ` | Bluefin` suffix. Do not add ` | Bluefin` to post titles in
+  front matter.
 
 Regenerate and read the result rather than guessing:
 
