@@ -255,6 +255,7 @@ function buildOsApp(spec, sbomCache) {
     const companionNvidia = resolveCompanionNvidia(
       nvidiaByTag,
       latestWithVersions.cacheKey,
+      latestWithVersions.releaseUrl,
     );
     const resolvedPackageVersions = {
       ...latestWithVersions.packageVersions,
@@ -300,7 +301,7 @@ function buildOsApp(spec, sbomCache) {
     }
 
     const companionNvidia = r.packageVersions
-      ? resolveCompanionNvidia(nvidiaByTag, r.cacheKey)
+      ? resolveCompanionNvidia(nvidiaByTag, r.cacheKey, r.releaseUrl)
       : null;
     const nvidiaVersion = r.packageVersions
       ? r.packageVersions.nvidia || companionNvidia || null

@@ -1,3 +1,7 @@
+import sbomVersions from "./sbom-versions.js";
+
+const { companionReleaseKeys } = sbomVersions;
+
 export function stripMd(text) {
   return text
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
@@ -362,17 +366,26 @@ export function buildDakotaRelease(sbomCache, feedItem = null) {
     if (majorPackages.length === 0) continue;
 
     if (!latest || dateMs > latest.dateMs) {
-      latest = { cacheKey, date, dateMs, majorPackages, packages };
+      latest = {
+        cacheKey,
+        date,
+        dateMs,
+        majorPackages,
+        packages,
+        releaseUrl: releaseData.releaseUrl ?? null,
+      };
     }
   }
 
   if (!latest) return null;
 
-  // Overlay Nvidia strictly from the companion stream for the same release date
+  // Overlay Nvidia strictly from the companion image of the same release
   const nvidiaReleases =
     sbomCache?.streams?.["dakota-nvidia-stable"]?.releases ?? {};
   const nvidiaVersion =
-    nvidiaReleases[`stable-${latest.date}`]?.packageVersions?.nvidia ?? null;
+    companionReleaseKeys(`stable-${latest.date}`, latest.releaseUrl)
+      .map((key) => nvidiaReleases[key]?.packageVersions?.nvidia)
+      .find(Boolean) ?? null;
 
   const majorPackages = nvidiaVersion
     ? [
