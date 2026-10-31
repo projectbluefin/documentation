@@ -459,10 +459,14 @@ async function appendReleaseChurn(tags, published, loadLayers) {
     if (!manifests.has(tag)) manifests.set(tag, await loadLayers(tag));
     return manifests.get(tag);
   };
-  for (let i = start; i < tags.length; i++) {
-    const tag = tags[i];
-    if (knownTags.has(tag)) continue;
-    const previousTag = i > 0 ? tags[i - 1] : null;
+  // Anchor on the last published point, not on whatever sorts before the
+  // first new tag: a published tag whose build time was not looked up can
+  // sort after `lastTag`, and diffing against it would skip real builds.
+  const fresh = tags.slice(start).filter((tag) => !knownTags.has(tag));
+  const sequence = lastTag ? [lastTag, ...fresh] : fresh;
+  for (let i = lastTag ? 1 : 0; i < sequence.length; i++) {
+    const tag = sequence[i];
+    const previousTag = i > 0 ? sequence[i - 1] : null;
     const layers = await load(tag);
     const previousLayers = previousTag ? await load(previousTag) : null;
     if (!layers?.length || (previousTag && !previousLayers?.length)) continue;
@@ -689,6 +693,24 @@ function allRequestedCovered(requested, createdAt) {
 }
 
 /**
+ * Pure function: The last published tag plus every published tag sharing its
+ * YYYYMMDD stamp — the only published tags whose build time decides where new
+ * points start. Asking for the whole history would page the API to its cap.
+ *
+ * @param {{ tag?: string }[]} [releases]
+ * @returns {string[]}
+ */
+function publishedTail(releases = []) {
+  const tags = (Array.isArray(releases) ? releases : [])
+    .map((release) => release?.tag)
+    .filter((tag) => typeof tag === "string");
+  const last = tags.at(-1);
+  if (!last) return [];
+  const key = datedTagKey(last);
+  return key ? tags.filter((tag) => datedTagKey(tag) === key) : [last];
+}
+
+/**
  * Resolve an image's published tag series from GHCR.
  *
  * Never throws and never exits non-zero: an unreachable or unauthorized tag
@@ -697,7 +719,7 @@ function allRequestedCovered(requested, createdAt) {
  *
  * @returns {Promise<{ tags: string[], createdAt: Record<string, string>, listed: boolean }>}
  */
-async function discoverSeriesTags(repo, series) {
+async function discoverSeriesTags(repo, series, publishedTags = []) {
   const [org, pkg] = String(repo || "").split("/");
   if (!org || !pkg) return { tags: [], createdAt: {}, listed: false };
   try {
@@ -715,7 +737,17 @@ async function discoverSeriesTags(repo, series) {
     // is enough for daily builders and not for Utah's cadence, so pagination
     // continues until the window candidates are covered. The function warns
     // on partial coverage and the sort falls back to tag text for the gaps.
-    const required = selectWindowCandidates(matches, series?.limit);
+    // Published tags join the lookup too: the append step sorts them with the
+    // window, and a published tag without a build time sorts as the oldest of
+    // its day, which would mis-anchor the first new point.
+    const required = [
+      ...new Set([
+        ...selectWindowCandidates(matches, series?.limit),
+        ...(Array.isArray(publishedTags) ? publishedTags : []).filter(
+          (t) => typeof t === "string" && series?.pattern?.test(t),
+        ),
+      ]),
+    ];
     const createdAt = await fetchGhcrTagCreatedAt(org, pkg, 2, required);
     const tags = selectDatedTags(allTags, series, createdAt);
     if (tags.length === 0) return { tags: [], createdAt: {}, listed: false };
@@ -786,7 +818,11 @@ async function main() {
     let seriesCreatedAt = {};
     let seriesListed = false;
     if (tagSeries) {
-      const discovered = await discoverSeriesTags(repo, tagSeries);
+      const discovered = await discoverSeriesTags(
+        repo,
+        tagSeries,
+        publishedTail(existingData?.images?.[id]?.releases),
+      );
       seriesTags = discovered.tags;
       seriesCreatedAt = discovered.createdAt;
       seriesListed = discovered.listed;
@@ -918,6 +954,7 @@ module.exports = {
   diffReleaseLayers,
   calculateReleaseChurn,
   appendReleaseChurn,
+  publishedTail,
   datedTagKey,
   compareTagsByDate,
   selectDatedTags,
