@@ -384,6 +384,50 @@ test("driver rows never borrow NVIDIA from another release date or family", () =
   );
 });
 
+test("driver rows pair NVIDIA with the release the base entry links to", () => {
+  // Shape of the live cache: dakota base image cached a day before its
+  // release, the NVIDIA image cached under the release date.
+  const cache = {
+    streams: {
+      "dakota-stable": {
+        releases: {
+          "stable-20261022": {
+            tag: "stable",
+            releaseUrl:
+              "https://github.com/projectbluefin/dakota/releases/tag/stable-20261023",
+            packageVersions: { kernel: "7.2.11" },
+          },
+        },
+      },
+      "dakota-nvidia-stable": {
+        org: "projectbluefin",
+        package: "dakota-nvidia",
+        releases: {
+          "stable-20261021": { packageVersions: { nvidia: "600.1" } },
+          "stable-20261023": { packageVersions: { nvidia: "615.71.09" } },
+        },
+      },
+    },
+  };
+  const companion = buildNvidiaMapFromSbomStream(cache, "dakota-nvidia-stable");
+  const row = buildStreamFromSbom(
+    "dakota-stable",
+    "Dakota",
+    "",
+    "",
+    cache,
+    companion,
+    9999,
+  ).latest;
+
+  assert.equal(row.versions.nvidia, "615.71.09");
+  assert.equal(
+    resolveCompanionNvidia(companion, "stable-20261022"),
+    null,
+    "without a release link, a neighbouring date is never borrowed",
+  );
+});
+
 test("NVIDIA map rejects a retired package with a matching date", () => {
   const cache = {
     streams: {

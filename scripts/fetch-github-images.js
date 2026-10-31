@@ -5,6 +5,7 @@ const { promisify } = require("util");
 const {
   readSbomCache,
   lookupVersionsForStream,
+  companionReleaseKeys,
 } = require("./lib/sbom-versions");
 const { trustForRepo } = require("./lib/signing-trust");
 
@@ -243,7 +244,15 @@ function companionVersionsForStream(sbomCache, spec, streamTag) {
     .sort()
     .reverse()
     .find((releaseKey) => base.releases[releaseKey]?.packageVersions);
-  return key ? companion.releases?.[key]?.packageVersions || null : null;
+  if (!key) return null;
+  for (const companionKey of companionReleaseKeys(
+    key,
+    base.releases[key].releaseUrl,
+  )) {
+    const versions = companion.releases?.[companionKey]?.packageVersions;
+    if (versions) return versions;
+  }
+  return null;
 }
 
 function latestFeedItem(feeds, source) {

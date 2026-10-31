@@ -5,6 +5,7 @@ import CodeBlock from "@theme/CodeBlock";
 import DownloadCard, { type DownloadEntry } from "./DownloadCard";
 import imageReleasesData from "@site/static/data/image-releases.json";
 import sbomData from "@site/static/data/sbom-attestations.json";
+import driverVersionsData from "@site/static/data/driver-versions.json";
 import identities from "./image-identities.json";
 import styles from "./ImageProductSection.module.css";
 import catalogStyles from "./DriverVersionsCatalog.module.css";
@@ -81,6 +82,33 @@ const sbomFile = sbomData as unknown as {
   >;
 };
 
+interface DriverRow {
+  releaseUrl?: string | null;
+  versions?: { nvidia?: string | null } | null;
+}
+
+// Build-generated JSON; same boundary typing as releasesFile/sbomFile above.
+const driverFile = driverVersionsData as unknown as {
+  streams?: { history?: DriverRow[] }[];
+};
+const driverRows: DriverRow[] = (driverFile.streams ?? []).flatMap(
+  (stream) => stream.history ?? [],
+);
+
+/**
+ * Release SBOMs describe only the base image. The NVIDIA driver comes from the
+ * companion image of the same release, which the driver-versions pipeline
+ * pairs and records against the release URL.
+ */
+function withCompanionNvidia(
+  release: ImageReleaseRecord | null,
+): Record<string, string | null> | null | undefined {
+  if (!release?.versions || release.versions.nvidia) return release?.versions;
+  const nvidia = driverRows.find(
+    (row) => row.releaseUrl === release.url && row.versions?.nvidia,
+  )?.versions?.nvidia;
+  return nvidia ? { ...release.versions, nvidia } : release.versions;
+}
 function formatBytes(bytes?: number | null): string {
   if (!bytes || Number.isNaN(bytes)) return "";
   const units = ["B", "KiB", "MiB", "GiB"];
@@ -245,6 +273,8 @@ export function ProductDownloadsAndVersions({
   const imageReleases = (data?.releases ?? []).filter((r) => r.versions);
   const latestRelease = imageReleases[0] ?? null;
   const prevRelease = imageReleases[1] ?? null;
+  const latestVersions = withCompanionNvidia(latestRelease);
+  const prevVersions = withCompanionNvidia(prevRelease);
 
   // Separate stable and testing downloads
   const stableDownloads = downloads.filter((d) => d.stream === "stable");
@@ -281,14 +311,6 @@ export function ProductDownloadsAndVersions({
         <Heading as="h2" id="downloads-and-versions">
           Downloads &amp; Image Versions
         </Heading>
-      )}
-      {/* Major component version boxes */}
-      {latestRelease?.versions && (
-        <ComponentVersionBoxes
-          versions={latestRelease.versions}
-          previousVersions={prevRelease?.versions}
-          title={`Major components in latest ${product} release (${latestRelease.tag})`}
-        />
       )}
 
       {/* ISO installation cards for stable and testing */}
@@ -443,6 +465,15 @@ export function ProductDownloadsAndVersions({
           No standalone ISO installers are published for this image yet. Use
           container switch commands from the release section below.
         </p>
+      )}
+
+      {/* Major component version boxes */}
+      {latestRelease && latestVersions && (
+        <ComponentVersionBoxes
+          versions={latestVersions}
+          previousVersions={prevVersions}
+          title={`Major components in latest ${product} release (${latestRelease.tag})`}
+        />
       )}
     </section>
   );

@@ -138,6 +138,35 @@ test("versions never borrow an unrelated channel or companion release", async ()
   assert.equal(sbomVersionsForStream(cache, spec, "next"), null);
 });
 
+test("companion versions follow the release the base entry links to", () => {
+  const spec = PRODUCT_SPECS[1];
+  const cache = {
+    streams: {
+      "dakota-stable": {
+        org: "projectbluefin",
+        package: "dakota",
+        releases: {
+          "stable-20261022": {
+            releaseUrl:
+              "https://github.com/projectbluefin/dakota/releases/tag/stable-20261023",
+            packageVersions: { kernel: "7.2.11" },
+          },
+        },
+      },
+      "dakota-nvidia-stable": {
+        org: "projectbluefin",
+        package: "dakota-nvidia",
+        releases: {
+          "stable-20261023": { packageVersions: { nvidia: "615.71.09" } },
+        },
+      },
+    },
+  };
+  assert.deepEqual(companionVersionsForStream(cache, spec, "stable"), {
+    nvidia: "615.71.09",
+  });
+});
+
 test("buildStreamVersionInfo extracts nvidia and packages strictly from SBOM", async () => {
   const spec = {
     id: "ublue-bluefin",
