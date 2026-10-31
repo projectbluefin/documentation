@@ -23,9 +23,12 @@ We had a great 30+ minute discussion with Godot developers. Kyle spent a good de
 
 We had some great sushi too:
 
-{/* Insert sushi photos here. */}
+<img width="1660" height="799" alt="image" src="https://github.com/user-attachments/assets/561091d1-5c9b-4373-9c31-d9175d1dd886" />
 
 Overall we had a great show, and it was awesome. I was inspired by the Home Assistant and AutoGPT developers as well, we have lots of experts to learn from! This was a bucket list event for me, we had to get nominated before even being submitted, it's very hard to get a talk here so it was great to be able to present your work in front of these developers!
 
 A huge shoutout to GitHub for their direct support to Bluefin,
 [it's not the first time](https://docs.projectbluefin.io/blog/2025/08/29/github-oss-fund/)!
+
+<img width="1075" height="1001" alt="image" src="https://github.com/user-attachments/assets/1565daca-9e39-4207-b239-3b67fcfdba5a" />
+
