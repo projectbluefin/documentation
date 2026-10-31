@@ -1,7 +1,9 @@
 ---
-title: Bluefin
+title: Bluefin Dakota
+hide_title: true
 description: Bluefin built on GNOME OS, assembled entirely from source.
 slug: /dakota
+custom_edit_url: https://github.com/projectbluefin/dakota/edit/testing/README.md
 ---
 
 import ImageIdentity from "@site/src/components/ImageIdentity";
@@ -11,10 +13,11 @@ import {
   ProductReleaseAssets,
 } from "@site/src/components/ImageProductSection";
 import { PerImageUsage } from "@site/src/components/analytics/CountmeAnalyticsCharts";
+import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
 
-<ImageIdentity product="dakota" />
-
-<DakotaReadme />
+<ImageIdentity product="dakota" showScreenshot>
+  <DakotaReadme />
+</ImageIdentity>
 
 ### Gaming streams
 
@@ -34,6 +37,10 @@ The game mode images add the [Open Gaming Collective kernel](https://github.com/
 ## Usage
 
 <PerImageUsage family="dakota" hideHeading />
+
+## Latest release
+
+<LatestOsReleaseCard stream="dakota" />
 
 ## Release Assets & Attestations
 

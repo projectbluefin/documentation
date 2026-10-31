@@ -59,6 +59,11 @@ SBOM versions, and falls back to the `dakota-stable` SBOM stream directly.
 This mirrors `getDakotaOsEvent()` in `src/components/FirehoseFeed.tsx` — the PNG
 and the pinned card on `/changelogs` agree, so keep both pipelines aligned.
 
+`/dakota` renders the same card inline as the React component
+(`<LatestOsReleaseCard stream="dakota" />`), refreshed on every Pages build;
+the Dakota README no longer needs to hotlink the PNG, and
+`scripts/fetch-readmes.mjs` strips it if it does.
+
 Two traps in the SBOM cache:
 
 - **The newest entry is often empty.** `packageVersions: {}` shows up for recent

@@ -78,6 +78,29 @@ test("server product README strips scale comparison silhouette image", async () 
   assert.doesNotMatch(result, /Dicraeosauridae_Scale\.svg/);
 });
 
+test("dakota product README strips the hotlinked release card and scale silhouette", async () => {
+  const input =
+    "Bluefin built on GNOME OS.\n\n" +
+    '<a href="https://docs.projectbluefin.io/changelogs">\n' +
+    "  <picture>\n" +
+    '    <source media="(prefers-color-scheme: dark)" srcset="https://docs.projectbluefin.io/img/cards/dakota-dark.png">\n' +
+    '    <img src="https://docs.projectbluefin.io/img/cards/dakota-light.png" alt="Bluefin Dakota" width="800">\n' +
+    "  </picture>\n" +
+    "</a>\n\n" +
+    "## Contributing\n\n" +
+    "![Dakotaraptor](https://github.com/user-attachments/assets/ee92291d-a617-496e-abb6-9045a4c665ce)\n";
+  const result = await prepareReadme(input, {
+    product: "dakota",
+    repo: "projectbluefin/dakota",
+    ref: "testing",
+    readmePath: "README.md",
+  });
+  assert.doesNotMatch(result, /img\/cards\/dakota/);
+  assert.doesNotMatch(result, /changelogs/);
+  assert.doesNotMatch(result, /ee92291d/);
+  assert.match(result, /## Contributing/);
+});
+
 test("a failed refresh preserves the offline seed rather than publishing an empty README", async () => {
   const directory = await mkdtemp(join(tmpdir(), "readme-import-"));
   const output = join(directory, "server-readme.md");
