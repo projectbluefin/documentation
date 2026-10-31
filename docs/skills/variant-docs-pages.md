@@ -1,8 +1,8 @@
 ---
 name: variant-docs-pages
 title: Variant docs pages
-version: "1.1"
-last_updated: "2026-09-06"
+version: "1.2"
+last_updated: "2026-10-31"
 id: variant-docs-pages
 one_line_purpose: Author and maintain top-level docs pages for image variants.
 entry_point: docs/skills/variant-docs-pages.md
@@ -110,9 +110,12 @@ a unified 5-part composition:
    silhouette and hotlinked `/img/cards/dakota-*.png`) live in the `artwork`
    set there, each with a `fetch-readmes.test.js` case.
 3. `## Downloads & Image Versions`: `<ProductDownloadsAndVersions />` displays
-   major component cards with bump badges, plus available ISO cards (Stable
-   and/or Testing depending on image type) or versioned installer/DDI/netboot cards
-   for Bluefin Server.
+   available ISO cards (Stable and/or Testing depending on image type) or
+   versioned installer/DDI/netboot cards for Bluefin Server, then the major
+   component cards with bump badges. Release SBOMs describe only the base
+   image, so the NVIDIA card comes from the `driver-versions.json` row whose
+   `releaseUrl` matches the release. Every published image × stream switch
+   command belongs in this section (`/dakota` keeps its table here).
    Installer publication channel differs from embedded payload channel (e.g.
    Dakota stable payload served from the testing CDN).
 4. `## Usage`: `<PerImageUsage />` embeds first-party daily active systems with
@@ -181,6 +184,18 @@ card entry from `IMAGES` in `ImageCards.tsx`.
   package-installed launcher may enter a container before its recipe starts.
   Keep public operator procedures here and link from upstream agent skills
   instead of mirroring their internal implementation notes.
+- **NVIDIA companion pairing**: the base and NVIDIA images of one release can
+  be cached a day apart (`dakota-stable` `stable-20261022` links to release
+  `stable-20261023`, cached for `dakota-nvidia-stable` as `stable-20261023`).
+  Pair through `companionReleaseKeys()` in `scripts/lib/sbom-versions.js`: the
+  cache key, then the date of the release tag the base entry links to. Never
+  a neighbouring date. Every companion lookup (driver versions, firehose,
+  image catalog, release card) uses it.
+- **Stale testsuite capture**: `testsuiteScreenshot` points at the Pages copy
+  of `dakota-testing-smoke-latest`. Testsuite runs against digest-pinned refs
+  push `dakota-sha256-<digest>-smoke-latest`, which `publish-to-pages.yml`
+  does not pull, so the Pages capture only refreshes when Dakota's own e2e
+  runs. Compare the PNG digest against GHCR before trusting it as current.
 
 ## Common Rationalizations
 

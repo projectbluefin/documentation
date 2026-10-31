@@ -19,20 +19,26 @@ import LatestOsReleaseCard from "@site/src/components/LatestOsReleaseCard";
   <DakotaReadme />
 </ImageIdentity>
 
-### Gaming streams
+## Downloads & Image Versions
 
-The game mode images add the [Open Gaming Collective kernel](https://github.com/OpenGamingCollective/linux) (sched_ext, ntsync), Steam with 32-bit compatibility libraries and controller udev rules, gamescope and the Steam Big Picture gamescope session, GameMode / MangoHud / vkBasalt, InputPlumber, and first-boot Flathub installs of Lutris, Heroic, Bottles, ProtonPlus, Protontricks, and GOverlay. The `dakota:btw` alias is also offered for the gaming kernel stream.
+<ProductDownloadsAndVersions product="dakota" hideHeading />
+
+### Image streams
 
 | Image         | Stream  | Command                                                                 |
 | ------------- | ------- | ----------------------------------------------------------------------- |
+| Dakota        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota:stable`                |
+| Dakota        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota:testing`               |
+| NVIDIA        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:stable`         |
+| NVIDIA        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia:testing`        |
 | Gaming        | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:stable`         |
 | Gaming        | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-gaming:testing`        |
 | NVIDIA Gaming | Stable  | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:stable`  |
 | NVIDIA Gaming | Testing | `sudo bootc switch ghcr.io/projectbluefin/dakota-nvidia-gaming:testing` |
 
-## Downloads & Image Versions
+### Gaming streams
 
-<ProductDownloadsAndVersions product="dakota" hideHeading />
+The game mode images add the [Open Gaming Collective kernel](https://github.com/OpenGamingCollective/linux) (sched_ext, ntsync), Steam with 32-bit compatibility libraries and controller udev rules, gamescope and the Steam Big Picture gamescope session, GameMode / MangoHud / vkBasalt, InputPlumber, and first-boot Flathub installs of Lutris, Heroic, Bottles, ProtonPlus, Protontricks, and GOverlay. The `dakota:btw` alias is also offered for the gaming kernel stream.
 
 ## Usage
 

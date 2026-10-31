@@ -3,6 +3,7 @@ const path = require("path");
 const {
   readSbomCache,
   lookupVersionsForRelease,
+  companionReleaseKeys,
 } = require("./lib/sbom-versions");
 
 const OUTPUT_DIR = path.join(__dirname, "..", "static", "data");
@@ -189,9 +190,15 @@ function rowFromSbomRelease(streamId, cacheKey, releaseEntry, nvidiaVersion) {
   };
 }
 
-/** A companion version is valid only for the same stream release key. */
-function resolveCompanionNvidia(nvidiaByTag, cacheKey) {
-  return nvidiaByTag?.[cacheKey] || null;
+/**
+ * A companion version is valid only for the same release: the companion entry
+ * under this cache key, or under the release tag the base entry links to.
+ */
+function resolveCompanionNvidia(nvidiaByTag, cacheKey, releaseUrl = null) {
+  for (const key of companionReleaseKeys(cacheKey, releaseUrl)) {
+    if (nvidiaByTag?.[key]) return nvidiaByTag[key];
+  }
+  return null;
 }
 
 function buildStreamFromSbom(
@@ -215,7 +222,7 @@ function buildStreamFromSbom(
         pkg.kernel || pkg.mesa || pkg.gnome || pkg.nvidia,
       );
       const companionNvidia = hasPackageVersions
-        ? resolveCompanionNvidia(nvidiaByTag, cacheKey)
+        ? resolveCompanionNvidia(nvidiaByTag, cacheKey, entry?.releaseUrl)
         : null;
       const nvidiaVersion = pkg.nvidia || companionNvidia;
       return rowFromSbomRelease(streamId, cacheKey, entry, nvidiaVersion);

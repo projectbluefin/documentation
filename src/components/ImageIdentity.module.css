@@ -144,9 +144,9 @@
 
 .heroTop {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 1rem 1.5rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
   margin-bottom: 1.5rem;
 }
 
@@ -217,6 +217,13 @@
 
 .heroProse p {
   margin-bottom: 1rem;
+}
+
+/* Upstream READMEs put the DeepWiki badge on the tagline's soft-wrapped line;
+ * the seed is refetched every build, so break it onto its own line here. */
+.heroProse a[href^="https://deepwiki.com/"] {
+  display: block;
+  width: fit-content;
 }
 
 .heroScreenshot {
