@@ -506,6 +506,16 @@ export function ProductReleaseAssets({
                   )
                 : null;
 
+              // Dakota's card renders inline on /dakota from docs data; the
+              // release-attached PNGs are not offered as downloads.
+              const assets =
+                product === "dakota"
+                  ? release.assets.filter(
+                      (asset) =>
+                        !/^release-card(-dark)?\.png$/.test(asset.name),
+                    )
+                  : release.assets;
+
               return (
                 <React.Fragment key={release.tag}>
                   {product === "server" && index > 0 && (
@@ -594,7 +604,7 @@ export function ProductReleaseAssets({
                     )}
 
                     {/* Downloadable assets table */}
-                    {release.assets.length > 0 && (
+                    {assets.length > 0 && (
                       <div className={styles.assetsWrapper}>
                         <table className={styles.assetsTable}>
                           <thead>
@@ -605,7 +615,7 @@ export function ProductReleaseAssets({
                             </tr>
                           </thead>
                           <tbody>
-                            {release.assets.map((asset) => (
+                            {assets.map((asset) => (
                               <tr key={asset.name}>
                                 <td>
                                   <code>{asset.name}</code>
