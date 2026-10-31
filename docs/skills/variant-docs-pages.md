@@ -99,8 +99,16 @@ a unified 5-part composition:
    `-latest` capture), and `testsuiteRun`. Keep every key on every product:
    `ImageProduct` is a union of the entries, so a missing key fails typecheck.
    Caption captures as what they are; no pass/fail claim without status data.
+   Hero mode (`<ImageIdentity product="…">{readme}</ImageIdentity>`, used by
+   `/server` and `/dakota`) shows only the wordmark and `images[0]` floated
+   beside the README; add `showScreenshot` to place the testsuite capture
+   below it. Image families without their own logo use the Bluefin wordmark
+   (`/img/bluefin-wordmark-{light,dark}.svg`).
 2. Upstream README import (`src/content/*-readme.md`): Stripped of duplicate
    identity headers and leading `# Title` by `scripts/fetch-readmes.mjs`.
+   Per-product extra strip URLs (server's scale silhouette; Dakota's
+   silhouette and hotlinked `/img/cards/dakota-*.png`) live in the `artwork`
+   set there, each with a `fetch-readmes.test.js` case.
 3. `## Downloads & Image Versions`: `<ProductDownloadsAndVersions />` displays
    major component cards with bump badges, plus available ISO cards (Stable
    and/or Testing depending on image type) or versioned installer/DDI/netboot cards
@@ -112,6 +120,9 @@ a unified 5-part composition:
 5. `## Release Assets & Attestations`: `<ProductReleaseAssets />` renders
    downloadable release artifacts, bootc/DDI switches, and provenance verification,
    with a left-rail timeline of the latest releases for Server.
+   `/dakota` renders its release card inline with
+   `<LatestOsReleaseCard stream="dakota" />` under `## Latest release`, and
+   `ProductReleaseAssets` hides `release-card*.png` download rows for Dakota.
 
 Keep headings as Markdown `##` in the `.mdx` file so Docusaurus's build-time AST
 populates the right-hand Table of Contents.

@@ -6,9 +6,11 @@ export type ImageProduct = keyof typeof identities;
 
 export default function ImageIdentity({
   product,
+  showScreenshot = false,
   children,
 }: {
   product: ImageProduct;
+  showScreenshot?: boolean;
   children?: React.ReactNode;
 }) {
   const identity = identities[product];
@@ -63,6 +65,21 @@ export default function ImageIdentity({
           )}
           <div className={styles.heroProse}>{children}</div>
         </div>
+        {showScreenshot && identity.testsuiteScreenshot && (
+          <figure className={styles.heroScreenshot}>
+            <a href={identity.testsuiteScreenshot}>
+              <img
+                src={identity.testsuiteScreenshot}
+                alt={`${identity.name} desktop captured by the latest testsuite smoke run`}
+                loading="lazy"
+                decoding="async"
+              />
+            </a>
+            <figcaption>
+              <a href={identity.testsuiteRun}>Latest testsuite smoke capture</a>
+            </figcaption>
+          </figure>
+        )}
         <p className={styles.sources}>
           <a href={readme}>Upstream README</a>
           {" · "}

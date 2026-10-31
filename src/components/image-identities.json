@@ -56,26 +56,19 @@
     "ref": "testing",
     "species": "Dakotaraptor steini",
     "wikipedia": "https://en.wikipedia.org/wiki/Dakotaraptor",
-    "logoLight": "",
-    "logoDark": "",
+    "logoLight": "/img/bluefin-wordmark-light.svg",
+    "logoDark": "/img/bluefin-wordmark-dark.svg",
     "image": "ghcr.io/projectbluefin/dakota",
     "headless": false,
     "testsuiteScreenshot": "https://projectbluefin.github.io/testsuite/screenshots/dakota-testing-smoke-latest.png",
     "testsuiteRun": "https://projectbluefin.github.io/testsuite/",
     "images": [
       {
-        "src": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/dinos/jacob-schnurr/bluefin-look/bluefin-look-dakota/optimized/bluefin-look-dakota-optimized.svg",
+        "src": "/img/dakota-look-optimized.svg",
         "alt": "Bluefin Dakota feathered raptor character artwork",
-        "source": "https://github.com/projectbluefin/artwork/tree/main/assets/vector/dinos/jacob-schnurr/bluefin-look/bluefin-look-dakota",
+        "source": "https://github.com/projectbluefin/artwork/tree/main/assets/vector/dinos/jacob-schnurr/dakota-look",
         "attribution": "Jacob Schnurr · Project Bluefin artwork",
         "diagram": false
-      },
-      {
-        "src": "https://github.com/user-attachments/assets/ee92291d-a617-496e-abb6-9045a4c665ce",
-        "alt": "Brown Dakotaraptor silhouette beside a human figure on a scale grid, as used in the upstream README",
-        "source": "https://github.com/projectbluefin/dakota/blob/testing/README.md",
-        "attribution": "Dakota README · Original silhouette",
-        "diagram": true
       }
     ]
   },

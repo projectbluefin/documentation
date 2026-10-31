@@ -219,6 +219,23 @@
   margin-bottom: 1rem;
 }
 
+.heroScreenshot {
+  margin: 1.5rem 0 0.75rem;
+}
+
+.heroScreenshot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+}
+
+.heroScreenshot figcaption {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 768px) {
   .heroTop {
     gap: 0.5rem 1rem;

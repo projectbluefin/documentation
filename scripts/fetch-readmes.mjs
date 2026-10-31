@@ -273,6 +273,15 @@ export async function prepareReadme(
               "https://upload.wikimedia.org/wikipedia/commons/d/d8/Dicraeosauridae_Scale.svg",
             ]
           : []),
+        // /dakota renders the release card inline and omits the scale
+        // silhouette; drop both from the synced README.
+        ...(product === "dakota"
+          ? [
+              "https://docs.projectbluefin.io/img/cards/dakota-light.png",
+              "https://docs.projectbluefin.io/img/cards/dakota-dark.png",
+              "https://github.com/user-attachments/assets/ee92291d-a617-496e-abb6-9045a4c665ce",
+            ]
+          : []),
       ].filter(Boolean),
     );
     const matchesArtwork = (url) => artwork.has(resolve(url, true));
@@ -287,20 +296,22 @@ export async function prepareReadme(
       return null;
     };
     const stripHtmlArtwork = (value) =>
-      value.replace(
-        /<picture\b[^>]*>[\s\S]*?<\/picture>|<img\b[^>]*>/gi,
-        (image) => {
-          const sources = [
-            ...image.matchAll(/\s(?:src|srcset)=(['"])(.*?)\1/g),
-          ];
-          const text = image.replace(/<[^>]*>/g, "").trim();
-          return sources.length &&
-            !text &&
-            sources.every((match) => matchesArtwork(match[2]))
-            ? ""
-            : image;
-        },
-      );
+      value
+        .replace(
+          /<picture\b[^>]*>[\s\S]*?<\/picture>|<img\b[^>]*>/gi,
+          (image) => {
+            const sources = [
+              ...image.matchAll(/\s(?:src|srcset)=(['"])(.*?)\1/g),
+            ];
+            const text = image.replace(/<[^>]*>/g, "").trim();
+            return sources.length &&
+              !text &&
+              sources.every((match) => matchesArtwork(match[2]))
+              ? ""
+              : image;
+          },
+        )
+        .replace(/<a\b[^>]*>\s*<\/a>/gi, "");
     const stripIdentity = (node) => {
       if (!node.children) return;
       node.children = node.children.filter((child) => {
