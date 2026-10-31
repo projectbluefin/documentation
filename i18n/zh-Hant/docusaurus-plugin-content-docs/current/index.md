@@ -49,7 +49,7 @@ Bluefin 是「建立在 Fedora 技術上的 Ubuntu 精神的詮釋」——這�
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - 在右上角顯示系統匣圖示
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - 將你的行動裝置整合進桌面
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([捐款](https://github.com/sponsors/aunetx)) - 打造華麗效果
-  - [Search Light](https://github.com/icedman/search-light) - 提供搜尋功能，並預設以 <kbd>Super</kbd>-<kbd>Space</kbd> 綁定類似 macOS Spotlight 的操作流程
+  - [Compass](https://github.com/tuna-os/compass) - 快速、可擴充的命令面板與啟動器，以 Flatpak 形式預先安裝，預設綁定至 <kbd>Super</kbd>-<kbd>Space</kbd>
 - **[開發者模式](/bluefin-dx)** - 專屬開發工具將 Bluefin 變成強大的雲端原生工作站
 - **[Ptyxis 終端機](https://devsuite.app/ptyxis/)** 用於以容器為核心的工作流程
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([捐款](https://github.com/sponsors/ranfdev)) 用於容器管理

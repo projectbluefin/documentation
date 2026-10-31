@@ -49,7 +49,7 @@ Bluefin adalah "Sebuah tafsir dari semangat Ubuntu yang dibangun atas teknologi 
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - untuk ikon mirip tray di pojok kanan atas
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - integrasikan perangkat mobile Anda dengan desktop
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Donasi](https://github.com/sponsors/aunetx)) - untuk kilauan
-  - [Search Light](https://github.com/icedman/search-light) - menyediakan fungsionalitas pencarian dan alur kerja mirip macOS Spotlight yang terikat pada <kbd>Super</kbd>-<kbd>Space</kbd> secara default
+  - [Compass](https://github.com/tuna-os/compass) - palet perintah dan peluncur yang cepat dan dapat diperluas, terpasang sebagai Flatpak dan terikat pada <kbd>Super</kbd>-<kbd>Space</kbd> secara bawaan
 - **[Developer Mode](/bluefin-dx)** - alat pengembang khusus yang mengubah Bluefin menjadi workstation cloud-native yang kuat
 - **[Ptyxis terminal](https://devsuite.app/ptyxis/)** untuk alur kerja berfokus kontainer
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Donasi](https://github.com/sponsors/ranfdev)) untuk manajemen kontainer

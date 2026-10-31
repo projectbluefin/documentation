@@ -49,7 +49,7 @@ Bluefin je "interpretace duše Ubuntu postavená na technologii Fedory" — odka
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator/) - pro ikony podobné trayi v pravém horním rohu
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - integrujte mobilní zařízení s vaší pracovní stanicí
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Přispět](https://github.com/sponsors/aunetx)) - pro tenhle šmrnc
-  - [Search Light](https://github.com/icedman/search-light) - poskytuje vyhledávací funkcionalitu a workflow podobné macOS Spotlightu vázané na <kbd>Super</kbd>-<kbd>Space</kbd> ve výchozím nastavení
+  - [Compass](https://github.com/tuna-os/compass) - rychlá a rozšiřitelná paleta příkazů a spouštěč, předinstalovaný jako Flatpak a ve výchozím nastavení vázaný na <kbd>Super</kbd>-<kbd>Space</kbd>
 - **[Vývojový režim](/bluefin-dx)** - specializovaný vývojářský nástroj, který mění Bluefin ve výkonnou cloud-native pracovní stanici
 - **[Ptyxis terminál](https://devsuite.app/ptyxis/)** pro workflow zaměřené na kontejnery
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Přispět](https://github.com/sponsors/ranfdev)) pro správu kontejnerů

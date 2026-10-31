@@ -49,7 +49,7 @@ Bluefin — это «переосмысление духа Ubuntu на базе 
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) — значки в системном трее в правом верхнем углу
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) — интеграция смартфона с рабочим столом
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Пожертвовать](https://github.com/sponsors/aunetx)) — визуальные эффекты размытия
-  - [Search Light](https://github.com/icedman/search-light) — быстрый поиск в стиле macOS Spotlight по нажатию <kbd>Super</kbd>-<kbd>Space</kbd> по умолчанию
+  - [Compass](https://github.com/tuna-os/compass) — быстрая расширяемая палитра команд и лаунчер, предустановленный как Flatpak и по умолчанию вызываемый сочетанием <kbd>Super</kbd>-<kbd>Space</kbd>
 - **[Режим разработчика](/bluefin-dx)** — набор специализированных инструментов, превращающий Bluefin в мощную рабочую станцию для cloud-native разработки
 - **[Терминал Ptyxis](https://devsuite.app/ptyxis/)** для работы с контейнерами
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Пожертвовать](https://github.com/sponsors/ranfdev)) для управления контейнерами

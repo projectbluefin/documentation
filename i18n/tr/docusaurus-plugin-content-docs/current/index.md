@@ -49,7 +49,7 @@ Bluefin, "Fedora teknolojisi üzerine kurulu Ubuntu ruhunun bir yorumu"dur — b
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - sağ üst köşede tepsi benzeri simgeler için
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - mobil cihazınızı masaüstünüzle bütünleştirin
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Bağış Yapın](https://github.com/sponsors/aunetx)) - o şıklık katıyor
-  - [Search Light](https://github.com/icedman/search-light) - varsayılan olarak <kbd>Super</kbd>-<kbd>Space</kbd> tuşlarına bağlı, macOS Spotlight'a benzer bir arama ve iş akışı sunar
+  - [Compass](https://github.com/tuna-os/compass) - varsayılan olarak <kbd>Super</kbd>-<kbd>Space</kbd> tuşlarına bağlı, Flatpak olarak önceden yüklenmiş hızlı ve genişletilebilir bir komut paleti ve başlatıcı
 - **[Geliştirici Modu](/bluefin-dx)** - Bluefin'i güçlü bir cloud-native iş istasyonuna dönüştüren özel geliştirici araçları
 - **[Ptyxis terminali](https://devsuite.app/ptyxis/)** container odaklı iş akışları için
   - Container yönetimi için [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Bağış Yapın](https://github.com/sponsors/ranfdev))
