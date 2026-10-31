@@ -42,9 +42,28 @@ function lookupVersionsForRelease(cache, streamId, cacheKey) {
     cache?.streams?.[streamId]?.releases?.[cacheKey]?.packageVersions ?? null
   );
 }
+/**
+ * Cache keys under which the companion (NVIDIA) image of the same release is
+ * stored. A base and companion image of one release can be cached under
+ * different dates (dakota-stable "stable-20261022" links to release
+ * stable-20261023, cached for dakota-nvidia as "stable-20261023"), so the
+ * release tag's date is tried after the cache key. Never a neighbouring date.
+ */
+function companionReleaseKeys(cacheKey, releaseUrl = null) {
+  const keys = cacheKey ? [cacheKey] : [];
+  const releaseDate = String(releaseUrl || "").match(
+    /\/releases\/tag\/[^/]*?(\d{8})$/,
+  )?.[1];
+  if (cacheKey && releaseDate && /\d{8}$/.test(cacheKey)) {
+    const releaseKey = cacheKey.replace(/\d{8}$/, releaseDate);
+    if (releaseKey !== cacheKey) keys.push(releaseKey);
+  }
+  return keys;
+}
 
 module.exports = {
   readSbomCache,
   lookupVersionsForStream,
   lookupVersionsForRelease,
+  companionReleaseKeys,
 };
