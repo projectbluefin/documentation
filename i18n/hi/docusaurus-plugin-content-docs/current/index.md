@@ -49,7 +49,7 @@ Bluefin है "Fedora तकनीक पर बना Ubuntu स्पirit क
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - ऊपरी दाएं कोने में ट्रे जैसे आइकन के लिए
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - अपने मोबाइल डिवाइस को अपने डेस्कटॉप के साथ एकीकृत करें
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([दान करें](https://github.com/sponsors/aunetx)) - उस ब्लिंग के लिए
-  - [Search Light](https://github.com/icedman/search-light) - सर्च फंक्शनैलिटी और macOS Spotlight जैसा वर्कफ़्लो प्रदान करता है जो डिफ़ॉल्ट रूप से <kbd>Super</kbd>-<kbd>Space</kbd> से बंधा है
+  - [Compass](https://github.com/tuna-os/compass) - एक तेज़, विस्तार योग्य कमांड पैलेट और लॉन्चर, Flatpak के रूप में पहले से इंस्टॉल और डिफ़ॉल्ट रूप से <kbd>Super</kbd>-<kbd>Space</kbd> से जुड़ा हुआ
 - **[डेवलपर मोड](/bluefin-dx)** - समर्पित डेवलपर टूलिंग जो Bluefin को शक्तिशाली क्लाउड-नेटिव वर्कस्टेशन में बदल देती है
 - **[Ptyxis टर्मिनल](https://devsuite.app/ptyxis/)** कंटेनर-केंद्रित वर्कफ़्लो के लिए
   - कंटेनर प्रबंधन के लिए [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([दान करें](https://github.com/sponsors/ranfdev))

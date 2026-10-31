@@ -49,7 +49,7 @@ Bluefin은 "Fedora 기술 위에 구축된 Ubuntu 정신의 해석"입니다 —
   - 오른쪽 위 모서리에 트레이 형태의 아이콘을 위한 [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator)
   - 모바일 기기를 데스크톱과 연결하기 위한 [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect)
   - 화려한 연출을 위한 [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([후원](https://github.com/sponsors/aunetx))
-  - 기본적으로 <kbd>Super</kbd>-<kbd>Space</kbd>에 연결된 macOS Spotlight 유사 작업 흐름과 검색 기능을 제공하는 [Search Light](https://github.com/icedman/search-light)
+  - Flatpak으로 사전 설치되어 기본적으로 <kbd>Super</kbd>-<kbd>Space</kbd>에 연결된 빠르고 확장 가능한 명령 팔레트 및 런처인 [Compass](https://github.com/tuna-os/compass)
 - **[개발자 모드](/bluefin-dx)** - Bluefin을 강력한 클라우드 네이티브 워크스테이션으로 바꾸는 전용 개발 도구
 - 컨테이너 중심 작업 흐름을 위한 **[Ptyxis 터미널](https://devsuite.app/ptyxis/)**
   - 컨테이너 관리를 위한 [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([후원](https://github.com/sponsors/ranfdev))

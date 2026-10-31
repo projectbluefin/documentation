@@ -49,7 +49,7 @@ Bluefin là "Sự diễn giải của tinh thần Ubuntu được xây dựng tr
   - [Appindicator](https://github.com/ubuntu/gnome-shell-extension-appindicator) - cho các biểu tượng kiểu khay ở góc trên bên phải
   - [GSConnect](https://github.com/GSConnect/gnome-shell-extension-gsconnect) - kết nối thiết bị di động với desktop
   - [Blur my Shell](https://github.com/aunetx/blur-my-shell) ([Quyên góp](https://github.com/sponsors/aunetx)) - cho chút lấp lánh
-  - [Search Light](https://github.com/icedman/search-light) - cung cấp chức năng tìm kiếm và quy trình kiểu macOS Spotlight, gắn với <kbd>Super</kbd>-<kbd>Space</kbd> theo mặc định
+  - [Compass](https://github.com/tuna-os/compass) - bảng lệnh và trình khởi chạy nhanh, có thể mở rộng, được cài sẵn dưới dạng Flatpak và gắn với <kbd>Super</kbd>-<kbd>Space</kbd> theo mặc định
 - **[Chế độ Nhà phát triển](/bluefin-dx)** - công cụ chuyên dụng cho nhà phát triển biến Bluefin thành workstation cloud-native mạnh mẽ
 - **[Terminal Ptyxis](https://devsuite.app/ptyxis/)** cho tác vụ tập trung container
   - [Distroshelf](https://flathub.org/apps/com.ranfdev.DistroShelf) ([Quyên góp](https://github.com/sponsors/ranfdev)) để quản lý container

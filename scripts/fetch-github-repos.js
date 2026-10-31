@@ -22,7 +22,7 @@ const GITHUB_REPOS = [
   "micheleg/dash-to-dock",
   "GSConnect/gnome-shell-extension-gsconnect",
   "Aryan20/Logomenu",
-  "icedman/search-light",
+  "tuna-os/compass",
   "ubuntu/gnome-shell-extension-appindicator",
 
   // Flatpak Applications
