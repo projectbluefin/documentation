@@ -6,6 +6,7 @@ const {
   diffReleaseLayers,
   calculateReleaseChurn,
   appendReleaseChurn,
+  publishedTail,
   extractDateFromTag,
   datedTagKey,
   compareTagsByDate,
@@ -99,6 +100,49 @@ test("appendReleaseChurn: initial collection has exactly one baseline", async ()
   assert.equal(result[0].isBaseline, true);
   assert.equal(result[1].isBaseline, false);
   assert.equal(result[1].previousTag, "a");
+});
+
+test("appendReleaseChurn: first new point diffs against the last published tag", async () => {
+  // Published tags outside the discovery window carry no build time, so they
+  // can sort after the last published one; the new point must still pair
+  // with the last published release, not the mis-sorted neighbour.
+  const published = [
+    { tag: "testing-20261028-f2f3040" },
+    { tag: "testing-20261028-441655c" },
+    { tag: "testing-20261028-5c63207" },
+    { tag: "testing-20261028-88d9478" },
+  ];
+  const tags = [
+    "testing-20261028-441655c",
+    "testing-20261028-5c63207",
+    "testing-20261028-88d9478",
+    "testing-20261028-f2f3040",
+    "testing-20261030-45d3371",
+    "testing-20261030-47ac542",
+  ];
+  const result = await appendReleaseChurn(tags, published, async (tag) => [
+    { digest: tag, size: 1048576 },
+  ]);
+  assert.equal(result.length, 6);
+  assert.equal(result[4].tag, "testing-20261030-45d3371");
+  assert.equal(result[4].previousTag, "testing-20261028-88d9478");
+  assert.equal(result[5].previousTag, "testing-20261030-45d3371");
+});
+
+test("publishedTail: returns the last published tag and its same-day peers", () => {
+  assert.deepEqual(publishedTail(), []);
+  assert.deepEqual(publishedTail([{ tag: null }]), []);
+  assert.deepEqual(
+    publishedTail([
+      { tag: "testing-20261027-aaaaaaa" },
+      { tag: "testing-20261028-f2f3040" },
+      { tag: "testing-20261028-88d9478" },
+    ]),
+    ["testing-20261028-f2f3040", "testing-20261028-88d9478"],
+  );
+  assert.deepEqual(publishedTail([{ tag: "a" }, { tag: "stable" }]), [
+    "stable",
+  ]);
 });
 
 test("analyzeManifestLayers: handles empty or invalid layers safely", () => {
