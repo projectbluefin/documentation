@@ -4,6 +4,11 @@ on:
     - cron: "50 5 * * 0" # 5:50 UTC Weekly on Sundays
   workflow_dispatch:
 
+# Serialize runs so two releases never compute the same version.
+concurrency:
+  group: docs-pdf-release
+  cancel-in-progress: false
+
 jobs:
   pdf:
     permissions:
@@ -69,9 +74,23 @@ jobs:
           if-no-files-found: error
           overwrite: true
 
-      - name: Upload Release Artifact
+      # Each build gets an immutable YY.MM.N release (N restarts at 1 every
+      # month), so consumers can pin a checksum. The 0.1 asset is still
+      # overwritten for consumers that fetch that fixed URL.
+      - name: Publish release
         if: github.event_name != 'pull_request'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
+          set -euo pipefail
+          # Refresh the legacy fixed URL first so a versioning failure never
+          # leaves its consumers on a stale PDF.
           gh release upload --clobber 0.1 pdf/bluefin.pdf
+          prefix="$(date -u +%y.%m)"
+          last=$(gh api --paginate "repos/$GH_REPO/tags" --jq '.[].name' \
+            | sed -n "s/^${prefix//./\\.}\.\([0-9][0-9]*\)$/\1/p" | sort -n | tail -n 1)
+          tag="${prefix}.$(( ${last:-0} + 1 ))"
+          gh release create "$tag" pdf/bluefin.pdf --target "$GITHUB_SHA" --latest \
+            --title "Documentation PDF $tag" \
+            --notes "Bluefin documentation PDF built from https://docs.projectbluefin.io at ${GITHUB_SHA}."
