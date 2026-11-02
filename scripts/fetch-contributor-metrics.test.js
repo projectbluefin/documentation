@@ -363,6 +363,7 @@ function collect(fixture, extra = {}) {
     fetchImpl: fixture.fetchImpl,
     token: "fixture-token",
     asOf: AS_OF,
+    waitImpl: async () => {},
     ...extra,
   });
 }
@@ -929,6 +930,62 @@ test("persistent throttling is bounded and retains the last verified snapshot", 
   assert.equal(data.unavailable, true);
   assert.equal(data.generatedAt, previous.generatedAt);
   assert.deepEqual(data.contributors, previous.contributors);
+});
+
+test("a transient server error is retried instead of discarding the whole scan", async () => {
+  const expected = await collect(apiFixture());
+  const fixture = apiFixture();
+  const waits = [];
+  let failed = 0;
+  const data = await collectContributorMetrics({
+    token: "fixture-token",
+    asOf: AS_OF,
+    waitImpl: async (milliseconds) => {
+      waits.push(milliseconds);
+    },
+    fetchImpl: async (url, init) => {
+      if (failed < 2 && String(url).includes("/pulls/comments")) {
+        failed++;
+        return {
+          ok: false,
+          status: failed === 1 ? 500 : 503,
+          headers: { get: () => null },
+        };
+      }
+      return fixture.fetchImpl(url, init);
+    },
+  });
+  assert.deepEqual(waits, [5_000, 10_000]);
+  assert.equal(data.unavailable, false);
+  assert.equal(JSON.stringify(data), JSON.stringify(expected));
+});
+
+test("a persistent server error is bounded and retains the last verified snapshot", async () => {
+  const previous = await collect(apiFixture());
+  const waits = [];
+  let calls = 0;
+  let stats;
+  const data = await collectContributorMetrics({
+    token: "fixture-token",
+    previous,
+    asOf: AS_OF,
+    waitImpl: async (milliseconds) => {
+      waits.push(milliseconds);
+    },
+    onStats: (value) => {
+      stats = value;
+    },
+    fetchImpl: async () => {
+      calls++;
+      return { ok: false, status: 500, headers: { get: () => null } };
+    },
+  });
+  assert.equal(calls, 3);
+  assert.deepEqual(waits, [5_000, 10_000]);
+  assert.equal(data.unavailable, true);
+  assert.equal(data.generatedAt, previous.generatedAt);
+  assert.deepEqual(data.contributors, previous.contributors);
+  assert.equal(stats.failures[0].code, "http_500");
 });
 
 test("scheduled refresh status rejects retained, incomplete, stale or future snapshots", async () => {
