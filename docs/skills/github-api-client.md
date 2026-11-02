@@ -145,7 +145,8 @@ instead of restating a token read or a header object.
     multiplying large parent/comment/review connections. A live full scan hit
     GitHub's secondary limit despite unused primary quota. Respect the server's
     `Retry-After` through a shared worker cooldown; stop further requests after an
-    unrecoverable HTTP failure. Offline tests must cover both recovery and bounded
+    unrecoverable HTTP failure. Retry transient 5xx (500/502/503/504) with
+    bounded backoff before treating the failure as unrecoverable. Offline tests must cover both recovery and bounded
     failure retaining the last-good snapshot.
 
     Run `node scripts/fetch-contributor-metrics.js` with `GITHUB_TOKEN` or

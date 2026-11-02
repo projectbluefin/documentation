@@ -22,6 +22,8 @@ const FAILURE_REASON =
   "A complete public GitHub contribution scan could not be verified. Previous verified data is retained when available.";
 const AUTH_REASON =
   "GitHub authentication is unavailable. Previous verified data is retained when available.";
+const TRANSIENT_STATUSES = new Set([500, 502, 503, 504]);
+const TRANSIENT_BACKOFF_MS = 5_000;
 const PAGE = "totalCount pageInfo { hasNextPage endCursor }";
 const AUTHOR =
   "author { __typename login ... on User { id } ... on Bot { id } }";
@@ -278,6 +280,11 @@ function createClient(fetchImpl, token, stats, waitImpl) {
           cooldown = null;
         });
         await cooldown;
+        continue;
+      }
+      // A transient GitHub 5xx must not discard every other repository's scan.
+      if (TRANSIENT_STATUSES.has(response.status) && attempt < 2) {
+        await waitImpl(TRANSIENT_BACKOFF_MS * 2 ** attempt);
         continue;
       }
       stopped = true;
