@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T10:02:51.406Z",
+  "generatedAt": "2026-11-02T10:17:09.068Z",
   "source": "https://data-analysis.fedoraproject.org/csv-reports/countme/totals.csv",
   "method": "upstream-peers-v2",
   "unit": "estimated weekly active systems",
@@ -208,6 +208,6 @@
       "aurora": 2957
     }
   ],
-  "unavailable": true,
-  "stateReason": "Countme data could not be fetched: terminated"
+  "unavailable": false,
+  "stateReason": null
 }
