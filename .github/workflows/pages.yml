@@ -42,9 +42,20 @@ jobs:
         with:
           egress-policy: audit
 
+      # static/img is 113 MiB of PNG/JXL bytes and 90% of this checkout. No
+      # bundler runs in this job: it only writes static/data and static/feeds,
+      # and the fetch scripts create static/img/extensions and
+      # static/img/playlists themselves, so no tracked image is ever read. A
+      # sparse checkout also sets `--filter=blob:none`, so those blobs are
+      # never fetched either. (The build parts cannot drop all of static/img —
+      # see the shard checkout below.)
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/static/img
+          sparse-checkout-cone-mode: false
 
       # Same key as the cron workflows, so main already holds this entry.
       # No restore-keys: a partial hit still runs `npm ci`, which deletes
@@ -211,12 +222,52 @@ jobs:
         with:
           egress-policy: audit
 
-      # Full history: `future.faster` enables gitEagerVcs, which dates any
-      # undated doc/blog file from git; a shallow clone would give it HEAD's.
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      # English carries every static asset and the generated cards, so it
+      # checks the whole tree out; only its history fetch is narrowed.
+      - name: Checkout (English)
+        if: matrix.part == 'en'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fetch-depth: 0
           persist-credentials: false
+
+      # A translated shard emits no static asset: `build-site.mjs` moves only
+      # `.locale-build/<locale>` into `build/`, so a locale build's copy of
+      # `static/` is discarded, and its HTML links to the site root (`/img/...`,
+      # served once by the English part). Three trees exist only as article
+      # media referenced by URL — static/img/user-attachments (72 MiB),
+      # static/img/blog (32 MiB), static/img/artwork (6 MiB) — so a shard skips
+      # them. The bundler resolves exactly five image URLs in the whole site,
+      # all under static/img/characters and static/img/portal, and those stay
+      # checked out: a CSS `url()` or JS import into an excluded tree fails the
+      # shard build loudly, so add its pattern here if that ever happens.
+      # A sparse checkout also sets `--filter=blob:none`, so the skipped blobs
+      # are never fetched either.
+      - name: Checkout (translated shard)
+        if: matrix.part != 'en'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/static/img/user-attachments
+            !/static/img/blog
+            !/static/img/artwork
+          sparse-checkout-cone-mode: false
+
+      # `future.faster` enables gitEagerVcs, which dates every file with one
+      # `git log --format=t:%ct,a:%an --name-status`, so the built commit needs
+      # its full ancestry present: on a shallow checkout every file dates
+      # HEAD's. That is what the report pages render when their plugin sets
+      # `showLastUpdateTime` — nothing on today's main does (a main-tip build
+      # carries zero lastUpdatedAt pages, and blog dates come from filenames),
+      # so this ancestry is deliberate headroom, verified byte-identical to a
+      # full-history clone's. fetch-depth: 0 buys the same ancestry through
+      # checkout's wildcard refspec, dragging in all 71 branches and the tags
+      # (~200 MiB) for every part; naming the checked-out commit fetches its
+      # ancestry alone, and under a sparse checkout it inherits the blob
+      # filter, so only commits and trees come down.
+      - name: Fetch the built commit's history
+        run: git fetch --no-tags --unshallow origin "$(git rev-parse HEAD)"
 
       - name: Restore node_modules
         id: cache-node-modules
