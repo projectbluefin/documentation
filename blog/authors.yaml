@@ -106,7 +106,7 @@ jeefy:
   page: true
   title: Bluefin Server Maintainer
   url: https://github.com/jeefy
-  image_url: https://github.com/jeefy
+  image_url: https://github.com/jeefy.png
   socials:
     github: "jeefy"
     linkedin: "jeefy"
