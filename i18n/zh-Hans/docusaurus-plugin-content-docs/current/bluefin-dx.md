@@ -38,7 +38,7 @@ Bluefin 在云原生开发上"all in"，其使用方式与传统发行版（如 
 
 :::
 
-![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.png)
+![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.webp)
 
 `bluefin-dx`（以及 `aurora-dx`）中的模式围绕 [devcontainers](https://containers.dev) 展开。由于 devcontainers 存在于项目的 git 仓库中，它们可以部署在任何操作系统上：Linux、macOS 或 Windows（通过 WSL）。这促进了"默认分布式"开发，并避免 Linux 用户在与使用其他操作系统的同事协作时成为"异类"。
 
@@ -58,7 +58,7 @@ Mise 是一个让你为项目安装应用特定版本的工具（例如一个项
 
 运行 `ujust devmode` 来启用或禁用 dx 模式，然后重启：
 
-![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.png)
+![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.webp)
 
 ## 步骤 2：把自己加入正确的组
 
@@ -100,7 +100,7 @@ Dev Containers 扩展默认使用 Docker。要切换到 Podman，在 VS Code 中
 
 ## Podman 与 Podman Desktop
 
-![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.png)
+![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.webp)
 
 [Podman Desktop](https://podman-desktop.io/) 包含在内以提供容器管理。查看 Podman Desktop 的[documentation](https://podman-desktop.io/docs/intro) 了解更多信息。所有上游 `podman` 工具都包含在内。这是默认的系统容器运行时，也是为新用户推荐的开发者配置。
 
@@ -122,15 +122,15 @@ Dev Containers 扩展默认使用 Docker。要切换到 Podman，在 VS Code 中
 
 Pet container 可通过 [distrobox](https://distrobox.it/) 以交互式终端的形式提供。通过附带的 [DistroShelf](https://github.com/ranfdev/DistroShelf) 应用管理它们，该应用可在桌面左上角的 logomenu 的"Containers"下找到：
 
-![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.png)
+![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.webp)
 
 使用 DistroShelf 的界面，从列表中的任何发行版创建你自己的 pet container：
 
-![image](/img/user-attachments/2daf276d-2aed-47b9-9792-923d674ef226.png)
+![image](/img/user-attachments/2daf276d-2aed-47b9-9792-923d674ef226.webp)
 
 对于命令行战士，你可以使用终端内置的容器支持来管理容器：
 
-![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.png)
+![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.webp)
 
 附带的 [Terminal](https://gitlab.gnome.org/GNOME/ptyxis) 包含一个宿主机终端，你可以快速在容器和宿主机之间切换。
 

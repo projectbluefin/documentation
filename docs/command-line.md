@@ -36,17 +36,17 @@ Generally speaking, if you need a CLI tool or utility, use Homebrew. If you need
 
 The project prefers to have functional bling that is slick but also serves a purpose. New terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) display a message of the day with system information:
 
-![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
+![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.webp)
 
 The `bluefin-dx:beta` line is the name of the OS image, reminding you if you are on a pinned image, with quick reference to common commands. Toggle it on and off with `ujust toggle-user-motd`.
 
 We love to flex our machines. Run `fastfetch`:
 
-![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
+![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.webp)
 
 This screen shows hardware information, username, machine name, and kernel version. Each Bluefin image has a "Forged On" date commemorating the initial installation of the machine:
 
-![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
+![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.webp)
 
 ## Terminal Configuration
 
@@ -56,14 +56,14 @@ Bluefin uses [bash](https://www.gnu.org/software/bash/) by default but also ship
 
 Bluefin ships [Ptyxis](https://devsuite.app/ptyxis/) as the default terminal (named `Terminal` in the app launcher). It is **strongly recommended** that you [change your shell via the terminal emulator instead of system-wide](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). First install the shell you want with `brew install zsh` or `brew install fish`. Click on the Terminal settings and edit your profile:
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.webp)
 
 Select "Use Custom Command" and add your shell:
 
 - zsh: `/home/linuxbrew/.linuxbrew/bin/zsh`
 - fish: `/home/linuxbrew/.linuxbrew/bin/fish`
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.webp)
 
 ## Fonts
 

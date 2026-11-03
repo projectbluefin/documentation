@@ -17,7 +17,7 @@ I want that "defaults lifestyle".
 
 :::
 
-![Bluefin-Desktop-Umgebung-Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.png)
+![Bluefin-Desktop-Umgebung-Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.webp)
 
 ## Anwendungen installieren
 
@@ -36,13 +36,13 @@ Updates werden beim Neustart des Systems angewendet. Daher wird empfohlen, dein 
 
 Maschinen-Firmware-Updates werden über die Firmware-Anwendung bereitgestellt.
 
-![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.png)
+![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.webp)
 
 ### Updates verwalten
 
 Gehe in **Einstellungen** → **Netzwerk** → einer Netzwerkeinstellung und setze **Metered Connection: has data limits or can incur charges**, um Bluefin-Updates zu pausieren:
 
-![Einstellungen → Netzwerk → einer Netzwerkeinstellung - `Metered Connection: has data limits or can incur charges` Hervorhebung](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
+![Einstellungen → Netzwerk → einer Netzwerkeinstellung - `Metered Connection: has data limits or can incur charges` Hervorhebung](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.webp)
 
 ## Streams und Drosselungseinstellungen
 
@@ -85,11 +85,11 @@ Bluefins Komponenten werden über alle Images geteilt; betrachte es nicht als se
 
 Verwende den Befehl `ujust rebase-helper`, um ein Rebase auszuwählen und einen bestimmten Stream zu wählen:
 
-![`ujust rebase-helper` - Kanal](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.png)
+![`ujust rebase-helper` - Kanal](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.webp)
 
 Oder wähle `date` und ein älteres Image.
 
-![`ujust rebase-helper` - Datum](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.png)
+![`ujust rebase-helper` - Datum](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.webp)
 
 #### Manuell zwischen Streams wechseln
 
@@ -290,11 +290,11 @@ Generell versucht Bluefin, die System-Justfiles fein abzugrenzen; die meisten da
 
 Bluefin verwendet den [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) von Matthew Jakeman zur Verwaltung der Desktop-Erweiterungen. Die Anwendung ist standardmäßig enthalten. Du kannst sie über das [Logo-Menü](https://github.com/Aryan20/Logomenu) aufrufen (danke Aryan Kaushik!)
 
-![GNOME-Erweiterungsmenü-Option (öffnet Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.png)
+![GNOME-Erweiterungsmenü-Option (öffnet Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.webp)
 
 Dies ist nützlich, wenn du entscheidest, dass du einige der mit Bluefin gebündelten Erweiterungen nicht verwenden möchtest.
 
-![Extension Manager - Systemerweiterungen Hervorhebung](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.png)
+![Extension Manager - Systemerweiterungen Hervorhebung](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.webp)
 
 :::note
 

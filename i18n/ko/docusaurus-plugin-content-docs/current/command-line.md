@@ -36,17 +36,17 @@ Homebrew Cask 기능은 macOS 전용이며 Bluefin에서는 동작하지 않는�
 
 프로젝트는 세련되었으면서도 목적을 수행하는 기능성 장식을 선호합니다. 새 터미널(<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>)은 시스템 정보와 함께 오늘의 메시지를 표시합니다:
 
-![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
+![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.webp)
 
 `bluefin-dx:beta` 줄은 OS 이미지의 이름으로, 고정된 이미지를 사용 중인지 알려주고 일반적인 명령을 빠르게 참조할 수 있게 해줍니다. `ujust toggle-user-motd`로 켜고 끌 수 있습니다.
 
 우리는 기기를 자랑하기 좋아합니다. `fastfetch`를 실행하세요:
 
-![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
+![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.webp)
 
 이 화면은 하드웨어 정보, 사용자 이름, 머신 이름, 커널 버전을 보여줍니다. 각 Bluefin 이미지에는 해당 머신의 최초 설치를 기념하는 "Forged On" 날짜가 있습니다:
 
-![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
+![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.webp)
 
 ## 터미널 구성
 
@@ -56,14 +56,14 @@ Bluefin은 기본적으로 [bash](https://www.gnu.org/software/bash/)를 사용�
 
 Bluefin은 기본 터미널로 [Ptyxis](https://devsuite.app/ptyxis/)(앱 런처에서는 `Terminal`)를 제공합니다. 시스템 전체가 아니라 [터미널 에뮬레이터를 통해 셸을 변경하는 것](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/)을 **강력히 권장**합니다. 먼저 원하는 셸을 `brew install zsh` 또는 `brew install fish`로 설치하세요. 터미널 설정을 클릭하고 프로필을 편집하세요:
 
-![Ptyxis → 기본 설정 → 프로필 → 프로필 설정 → 편집...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
+![Ptyxis → 기본 설정 → 프로필 → 프로필 설정 → 편집...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.webp)
 
 "사용자 지정 명령 사용"을 선택하고 셸을 추가하세요:
 
 - zsh: `/home/linuxbrew/.linuxbrew/bin/zsh`
 - fish: `/home/linuxbrew/.linuxbrew/bin/fish`
 
-![Ptyxis → 기본 설정 → 프로필 → 프로필 설정 → 편집... → 셸 → 사용자 지정 명령](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
+![Ptyxis → 기본 설정 → 프로필 → 프로필 설정 → 편집... → 셸 → 사용자 지정 명령](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.webp)
 
 ## 유지관리자 권장 GNOME 확장
 

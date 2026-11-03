@@ -36,17 +36,17 @@ Im Allgemeinen gilt: Brauchst du ein CLI-Tool oder eine Utility, verwende Homebr
 
 Das Projekt mag funktionale Spielereien, die schick aussehen und trotzdem einen Zweck erfüllen. Neue Terminals (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) zeigen eine Message of the Day mit Systeminformationen an:
 
-![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
+![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.webp)
 
 Die `bluefin-dx:beta`-Zeile ist der Name des OS-Images und erinnert dich daran, ob du auf einem gepinnten Image bist, mit Schnellzugriff auf gängige Befehle. Ein- und ausschalten mit `ujust toggle-user-motd`.
 
 Wir zeigen gerne unsere Maschinen. Führe `fastfetch` aus:
 
-![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
+![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.webp)
 
 Dieser Screen zeigt Hardware-Informationen, Benutzernamen, Maschinenname und Kernel-Version. Jedes Bluefin-Image hat ein „Forged On“-Datum, das an die Erstinstallation der Maschine erinnert:
 
-![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
+![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.webp)
 
 ## Terminal-Konfiguration
 
@@ -56,14 +56,14 @@ Bluefin verwendet standardmäßig [bash](https://www.gnu.org/software/bash/) und
 
 Bluefin liefert [Ptyxis](https://devsuite.app/ptyxis/) als Standard-Terminal (`Terminal` im App-Launcher). Es wird **dringend empfohlen**, die Shell über den Terminal-Emulator statt systemweit zu ändern ([Warum nicht systemweit](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/)). Installiere zuerst die gewünschte Shell mit `brew install zsh` oder `brew install fish`. Klicke auf die Terminal-Einstellungen und bearbeite dein Profil:
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.webp)
 
 Wähle „Use Custom Command“ und trage deine Shell hinzu:
 
 - zsh: `/home/linuxbrew/.linuxbrew/bin/zsh`
 - fish: `/home/linuxbrew/.linuxbrew/bin/fish`
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.webp)
 
 ## Maintainer-empfohlene GNOME-Erweiterungen
 

@@ -55,30 +55,30 @@ stops firing, or a cache entry that carries corrupt build state.
    shard out sparse for the same reason: the trees that only ever appear as
    article media — `static/img/user-attachments`, `static/img/blog`,
    `static/img/artwork` — are skipped by URL and never bundled, so excluding
-   them drops 110 MiB per shard (`sparse-checkout` also implies
+   them drops 32 MiB per shard (`sparse-checkout` also implies
    `--filter=blob:none`, so their blobs are never fetched). The handful of
    images the bundler _does_ resolve (`url("/img/…")` in CSS modules, under
    `static/img/characters` and `static/img/portal`) must stay checked out.
 
-   History is a separate axis. `future.faster` enables gitEagerVcs, which dates
-   every file with one `git log --format=t:%ct,a:%an --name-status`, so a
-   shallow checkout dates them all HEAD's. Nothing on today's `main` renders
-   one — no plugin sets `showLastUpdateTime`, and a main-tip build carries zero
-   `lastUpdatedAt` pages — yet every part still fetches the built commit's
-   ancestry, because that is the surface the report pages read when it comes
-   back. Do that without `fetch-depth: 0`, whose wildcard refspec also drags in
-   all 71 branches and the tags (206 MiB of `.git` for ~187 MiB of ancestry):
+   History is deliberately shallow. `future.faster` enables gitEagerVcs, which
+   dates every file with one `git log --format=t:%ct,a:%an --name-status`, so a
+   shallow checkout dates them all HEAD's — but nothing on today's `main`
+   renders a git date: no plugin sets `showLastUpdateTime`, blog dates come from
+   filenames, and a main-tip build carries zero `lastUpdatedAt` pages.
+   `fetch-depth: 0` spent ~117 MiB per run on that headroom (all 71 branches and
+   the tags, again in each of the six parts). When a date surface returns, add
+   the ancestry fetch after the checkout:
 
    ```yaml
    - name: Fetch the built commit's history
      run: git fetch --no-tags --unshallow origin "$(git rev-parse HEAD)"
    ```
 
-   The fetch names the commit the build checked out, so it is correct for a
-   push, a PR head, or a merge-queue ref, and it inherits a sparse checkout's
-   blob filter (commits and trees only). Verified by diffing its output against
-   a full-history clone's: byte-identical. Dropping the step altogether would
-   save a further ~117 MiB per run while nothing renders a date.
+   That names the commit the build checked out, so it is right for a push, a PR
+   head, or a merge-queue ref, and it inherits a sparse checkout's blob filter
+   (commits and trees only). Verified byte-identical to a full-history clone's
+   `git log` output; a shallow shard build is byte-identical to a full-history
+   one, dates and all, which is what makes dropping it safe.
 
    Anything a job uploads for another must be named by `needs`: `deploy` needs
    `assemble`, not `build`, or it races the artifact. `upload-artifact` skips

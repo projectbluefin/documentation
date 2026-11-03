@@ -4,7 +4,7 @@ slug: the-future-of-bluefin-time-to-be-honest
 authors: castrojo
 tags: [community, video]
 date: 2026-08-27T01:13:56-04:00
-image: /img/blog/2026-08-27-the-future-of-bluefin-time-to-be-honest/youtube-thumbnail.jpg
+image: /img/blog/2026-08-27-the-future-of-bluefin-time-to-be-honest/youtube-thumbnail.webp
 ---
 
 Alright everyone we've heard the feedback. You'd like to press X to pay your respects and get to work. Start the Q+A please!

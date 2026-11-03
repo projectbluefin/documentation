@@ -8,8 +8,8 @@ tags: [announcements, artwork, lts]
 This month [Jacob Schnurr](https://www.etsy.com/shop/JSchnurrCommissions) takes us back to the Cretaceous. A herd of _Dreadnoughtus schrani_ lumber on their way to their nesting grounds as three _Nyctosaurus gracilis_ lazily fly overhead.
 You will receive these in your next update over the weekend.
 
-![August Day](/img/user-attachments/e9536e77-0415-47c4-bc8b-6acf593ed305.png)
-![August Night](/img/user-attachments/2a51a132-585c-4863-b65e-40287b33a3dc.png)
+![August Day](/img/user-attachments/e9536e77-0415-47c4-bc8b-6acf593ed305.webp)
+![August Night](/img/user-attachments/2a51a132-585c-4863-b65e-40287b33a3dc.webp)
 
 ## Other Raptor News
 

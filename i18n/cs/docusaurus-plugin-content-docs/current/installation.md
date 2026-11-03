@@ -119,7 +119,7 @@ _Tyto požadavky zajišťují hladký chod integrovaného vývojového workflow 
 
 Bluefin můžete nainstalovat na externí disk a získat tak přenosnou instalaci Bluefin:
 
-![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.webp)
 
 **Nezapomeňte během instalace zvolit šifrování celého disku!**
 
@@ -225,7 +225,7 @@ Bluefin se snaží udělat údržbu co nejjednodušší, přesto lze mnoho autom
 
 A ještě jedna rada: čím víc investujete do dne 0, tím hladší bude váš den 1, a díky tomu bude den 2 ještě hladší. Potom už jde jen o chlubení. Příkaz `fastfetch` ([Přispějte](https://github.com/sponsors/LinusDierheimer)) vám bude váš milník připomínat:
 
-![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
+![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.webp)
 
 ## Secure Boot
 
@@ -252,7 +252,7 @@ sudo mokutil --import path/to/public_key.der
 
 Pomocí `mokutil --list-enrolled` můžete ověřit, že je uveden klíč „ublue kernel“:
 
-![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
+![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.webp)
 
 :::note
 Pokud vidíte uvedený `ublue akmods`, jde o dřívější klíč, který bude brzy odstraněn. Aktuálním klíčem je `ublue kernel`.

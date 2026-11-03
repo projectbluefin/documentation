@@ -4,7 +4,7 @@ slug: how-we-built-ubuntus-65m-community
 authors: castrojo
 tags: [community, video]
 date: 2026-09-30T12:00:00-04:00
-image: /img/blog/2026-09-30-how-we-built-ubuntus-65m-community/youtube-thumbnail.jpg
+image: /img/blog/2026-09-30-how-we-built-ubuntus-65m-community/youtube-thumbnail.webp
 
 ---
 

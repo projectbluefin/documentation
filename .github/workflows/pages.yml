@@ -42,7 +42,7 @@ jobs:
         with:
           egress-policy: audit
 
-      # static/img is 113 MiB of PNG/JXL bytes and 90% of this checkout. No
+      # static/img is 60 MiB of images and the bulk of this checkout. No
       # bundler runs in this job: it only writes static/data and static/feeds,
       # and the fetch scripts create static/img/extensions and
       # static/img/playlists themselves, so no tracked image is ever read. A
@@ -222,8 +222,7 @@ jobs:
         with:
           egress-policy: audit
 
-      # English carries every static asset and the generated cards, so it
-      # checks the whole tree out; only its history fetch is narrowed.
+      # English carries every static asset and the generated cards.
       - name: Checkout (English)
         if: matrix.part == 'en'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -234,8 +233,8 @@ jobs:
       # `.locale-build/<locale>` into `build/`, so a locale build's copy of
       # `static/` is discarded, and its HTML links to the site root (`/img/...`,
       # served once by the English part). Three trees exist only as article
-      # media referenced by URL — static/img/user-attachments (72 MiB),
-      # static/img/blog (32 MiB), static/img/artwork (6 MiB) — so a shard skips
+      # media referenced by URL — static/img/user-attachments (15 MiB),
+      # static/img/blog (11 MiB), static/img/artwork (6 MiB) — so a shard skips
       # them. The bundler resolves exactly five image URLs in the whole site,
       # all under static/img/characters and static/img/portal, and those stay
       # checked out: a CSS `url()` or JS import into an excluded tree fails the
@@ -254,21 +253,18 @@ jobs:
             !/static/img/artwork
           sparse-checkout-cone-mode: false
 
-      # `future.faster` enables gitEagerVcs, which dates every file with one
-      # `git log --format=t:%ct,a:%an --name-status`, so the built commit needs
-      # its full ancestry present: on a shallow checkout every file dates
-      # HEAD's. That is what the report pages render when their plugin sets
-      # `showLastUpdateTime` — nothing on today's main does (a main-tip build
-      # carries zero lastUpdatedAt pages, and blog dates come from filenames),
-      # so this ancestry is deliberate headroom, verified byte-identical to a
-      # full-history clone's. fetch-depth: 0 buys the same ancestry through
-      # checkout's wildcard refspec, dragging in all 71 branches and the tags
-      # (~200 MiB) for every part; naming the checked-out commit fetches its
-      # ancestry alone, and under a sparse checkout it inherits the blob
-      # filter, so only commits and trees come down.
-      - name: Fetch the built commit's history
-        run: git fetch --no-tags --unshallow origin "$(git rev-parse HEAD)"
-
+      # Shallow on purpose. `future.faster` enables gitEagerVcs, which dates
+      # every file with one `git log --format=t:%ct,a:%an --name-status`, so a
+      # shallow checkout dates them all HEAD's — and nothing on today's main
+      # renders a git date (no plugin sets `showLastUpdateTime`, blog dates come
+      # from filenames, and a main-tip build carries zero lastUpdatedAt pages).
+      # fetch-depth: 0 spent ~117 MiB per run on that headroom, fetching all 71
+      # branches and the tags again in each of the six parts. When a date
+      # surface returns, fetch the checked-out commit's ancestry after the
+      # checkout instead:
+      #   git fetch --no-tags --unshallow origin "$(git rev-parse HEAD)"
+      # (verified byte-identical output to a full-history clone, and correct for
+      # a push, a PR head, and a merge-queue ref).
       - name: Restore node_modules
         id: cache-node-modules
         uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5
