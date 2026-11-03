@@ -206,8 +206,10 @@ git branch -D <branch>
 
 ## Sources
 
-- `.github/workflows/pages.yml` — deploys on every push to `main`; skips on
-  pull requests.
+- `.github/workflows/pages.yml` — deploys on every push to `main` and on
+  `repository_dispatch` (types: `[dakota-release]`); skips deploy on pull requests.
+- `projectbluefin/dakota:.github/workflows/execute-release.yml` — dispatches
+  `dakota-release` via Mergeraptor App token (`contents: write`) on stable promotion.
 - `gh api repos/projectbluefin/documentation/rules/branches/main` — the
   ruleset; merge queue requires PRs to land through the queue rather than direct pushes.
 - [`AGENTS.md`](https://github.com/projectbluefin/documentation/blob/main/AGENTS.md)
