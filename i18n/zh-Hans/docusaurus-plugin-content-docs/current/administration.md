@@ -17,7 +17,7 @@ Bluefin 设计为在硬件的整个生命周期中安装而无需重新安装。
 
 :::
 
-![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.png)
+![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.webp)
 
 ## 安装应用
 
@@ -36,13 +36,13 @@ Bluefin 设计为"放手不管"。系统每六（6）小时检查一次更新。
 
 机器固件更新通过 Firmware 应用提供。
 
-![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.png)
+![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.webp)
 
 ### 管理更新
 
 在 **Settings** → **Network** → 某个 network setting 中，将 **Metered Connection: has data limits or can incur charges** 设置为暂停 Bluefin 更新：
 
-![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
+![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.webp)
 
 ## 流与节流设置
 
@@ -85,11 +85,11 @@ Bluefin 的组件在所有镜像间共享，不要把它当作一个单独的"Ed
 
 使用 `ujust rebase-helper` 命令来选择 rebase 并选择特定流：
 
-![`ujust rebase-helper` - channel](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.png)
+![`ujust rebase-helper` - channel](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.webp)
 
 或选择 `date` 并选择一个较旧的镜像。
 
-![`ujust rebase-helper` - date](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.png)
+![`ujust rebase-helper` - date](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.webp)
 
 #### 手动在流之间切换
 
@@ -290,11 +290,11 @@ Bluefin 包含精选的 CLI 工具集合。这些命令通过 Homebrew 安装精
 
 Bluefin 使用 Matthew Jakeman 的 [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) 来管理桌面扩展。该应用默认包含在内。你可以通过 [Logo Menu](https://github.com/Aryan20/Logomenu)（感谢 Aryan Kaushik！）访问它。
 
-![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.png)
+![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.webp)
 
 如果你决定不想使用一些随 Bluefin 捆绑的扩展，这很有用。
 
-![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.png)
+![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.webp)
 
 :::note
 

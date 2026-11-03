@@ -36,17 +36,17 @@ Obecně platí: pokud potřebujete nástroj nebo utilitu pro příkazovou řádk
 
 Projekt má rád funkční parádičky, které vypadají skvěle, ale zároveň mají svůj účel. Nové terminály (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>) zobrazí zprávu dne s informacemi o systému:
 
-![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
+![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.webp)
 
 Řádek `bluefin-dx:beta` je název obrazu OS; připomíná vám, zda používáte připnutý obraz, a nabízí rychlý přehled běžných příkazů. Zapnout a vypnout ji můžete pomocí `ujust toggle-user-motd`.
 
 Rádi se chlubíme svými stroji. Spusťte `fastfetch`:
 
-![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
+![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.webp)
 
 Tato obrazovka ukazuje informace o hardwaru, uživatelské jméno, název stroje a verzi jádra. Každý obraz Bluefin má datum „Forged On“ připomínající první instalaci stroje:
 
-![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
+![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.webp)
 
 ## Nastavení terminálu
 
@@ -56,14 +56,14 @@ Bluefin ve výchozím stavu používá [bash](https://www.gnu.org/software/bash/
 
 Bluefin dodává jako výchozí terminál [Ptyxis](https://devsuite.app/ptyxis/) (ve spouštěči aplikací pojmenovaný `Terminal`). **Důrazně doporučujeme** [změnit shell v emulátoru terminálu místo celosystémové změny](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/). Nejprve nainstalujte požadovaný shell pomocí `brew install zsh` nebo `brew install fish`. Otevřete nastavení terminálu a upravte svůj profil:
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.webp)
 
 Zvolte „Use Custom Command“ a zadejte svůj shell:
 
 - zsh: `/home/linuxbrew/.linuxbrew/bin/zsh`
 - fish: `/home/linuxbrew/.linuxbrew/bin/fish`
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.webp)
 
 ## Rozšíření GNOME doporučená správci
 

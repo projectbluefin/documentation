@@ -4,7 +4,7 @@ slug: welcome-to-the-jungle
 authors: castrojo
 tags: [community, video]
 date: 2026-08-27T18:45:00-04:00
-image: /img/blog/2026-08-27-welcome-to-the-jungle/youtube-thumbnail.jpg
+image: /img/blog/2026-08-27-welcome-to-the-jungle/youtube-thumbnail.webp
 ---
 
 ## [wolves.projectbluefin.io](https://wolves.projectbluefin.io)

@@ -38,7 +38,7 @@ Bluefin은 클라우드 네이티브 개발에 "모든 것을 투입"하며, Ubu
 
 :::
 
-![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.png)
+![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.webp)
 
 `bluefin-dx`(및 `aurora-dx`)의 패턴은 [devcontainers](https://containers.dev)를 중심으로 합니다. devcontainers는 프로젝트의 git 저장소에 있기 때문에 모든 운영체제에 배포할 수 있습니다: Linux, macOS, 또는 Windows(WSL을 통해). 이는 "기본적으로 분산된" 개발을 촉진하고, 다른 운영체제의 팀원과 작업할 때 Linux 사용자가 "배타적인 존재"가 되는 것을 방지합니다.
 
@@ -58,7 +58,7 @@ Mise는 프로젝트별로 특정 버전의 애플리케이션을 설치할 수 
 
 `ujust devmode`를 통해 dx 모드를 활성화하거나 비활성화한 후 재부팅하세요:
 
-![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.png)
+![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.webp)
 
 ### 2단계: 올바른 그룹에 본인 추가
 
@@ -100,7 +100,7 @@ Dev Containers 확장은 기본적으로 Docker를 사용합니다. Podman으로
 
 ### Podman과 Podman Desktop
 
-![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.png)
+![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.webp)
 
 [Podman Desktop](https://podman-desktop.io/)는 컨테이너 관리를 제공하기 위해 포함되어 있습니다. 자세한 내용은 Podman Desktop [문서](https://podman-desktop.io/docs/intro)를 참고하세요. 모든 업스트림 `podman` 도구가 포함되어 있습니다. 이것이 기본 시스템 컨테이너 런타임이며 새 사용자를 위한 권장 개발자 설정입니다.
 
@@ -122,15 +122,15 @@ Ubuntu와 Canonical의 [세부 규격](https://discourse.ubuntu.com/t/spec-inclu
 
 펫 컨테이너는 [distrobox](https://distrobox.it/)를 통해 인터랙티브 터미널로 제공됩니다. 이를 포함된 [DistroShelf](https://github.com/ranfdev/DistroShelf) 애플리케이션을 통해 관리하세요. 데스크톱 왼쪽 상단의 "Containers" 아래 logomenu에서 사용할 수 있습니다:
 
-![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.png)
+![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.webp)
 
 DistroShelf의 인터페이스를 사용해 목록에 있는 배포관에서 자신의 pet container를 만드세요:
 
-![image](/img/user-attachments/2daf276d-2aed-47b9-9792-923d674ef226.png)
+![image](/img/user-attachments/2daf276d-2aed-47b9-9792-923d674ef226.webp)
 
 명줄 전사들을 위해 터미널의 내장 컨테이너 지원으로 컨테이너를 관리할 수 있습니다:
 
-![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.png)
+![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.webp)
 
 포함된 [Terminal](https://gitlab.gnome.org/GNOME/ptyxis)에는 호스트 터미널이 있어 컨테이너와 호스트 간에 빠르게 전환할 수 있습니다.
 

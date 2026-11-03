@@ -34,7 +34,7 @@ Wir arbeiten eng mit dem [RHEL-Lightspeed-Team](https://github.com/rhel-lightspe
 
 Die [AI-Lab-Erweiterung](https://developers.redhat.com/products/podman-desktop/podman-ai-lab) kann im enthaltenen Podman Desktop installiert werden, um eine grafische Oberfläche zur Verwaltung lokaler Modelle bereitzustellen:
 
-![image](/img/user-attachments/e5557952-3e62-499e-93a9-934c4d452be0.png)
+![image](/img/user-attachments/e5557952-3e62-499e-93a9-934c4d452be0.webp)
 
 ## KI-Befehlszeilen-Tools
 
@@ -84,7 +84,7 @@ Gehe dann in deinem Browser zu `http://127.0.0.1:17434`.
 
 `llmman serve` stellt einen OpenAI-kompatiblen Endpunkt unter `http://127.0.0.1:17434` bereit; du kannst dies verwenden, um Werkzeuge zu konfigurieren, die llmman nicht direkt unterstützen:
 
-![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.png)
+![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.webp)
 
 ### KI-Agenten in VS Code ausführen
 
@@ -140,9 +140,9 @@ Bluefin bindet `Ctrl`-`Alt`-`Backspace` als Schnellstart für Alpaca, nachdem du
 
 ### Konfiguration
 
-![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.png)
+![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.webp)
 
-![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
+![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.webp)
 
 [^1]: Für vollständige AMD-Unterstützung muss zusätzlich die Flatpak-Erweiterung `com.jeffser.Alpaca.Plugins.AMD` installiert werden.
 

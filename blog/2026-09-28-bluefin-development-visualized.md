@@ -4,14 +4,14 @@ slug: bluefin-development-visualized
 authors: castrojo
 tags: [community, video]
 date: 2026-09-28
-image: /img/blog/2026-09-28-bluefin-development-visualized/Kx2UTqHPR9s.jpg
+image: /img/blog/2026-09-28-bluefin-development-visualized/Kx2UTqHPR9s.webp
 ---
 
 ### Endless Forms most Beautiful
 
 I wanted to capture the recent swarm of activity in the project lately, so I turned to a trusted tool: [gource](https://github.com/acaudwell/gource). This is a visualization tool that makes git activity look cool. We needed something that showed how Bluefin _used_ to be, to how Bluefin is _now_. Here's the past few months:
 
-[![Bluefin Development Visualized](/img/blog/2026-09-28-bluefin-development-visualized/Kx2UTqHPR9s.jpg)](https://www.youtube.com/watch?v=Kx2UTqHPR9s)
+[![Bluefin Development Visualized](/img/blog/2026-09-28-bluefin-development-visualized/Kx2UTqHPR9s.webp)](https://www.youtube.com/watch?v=Kx2UTqHPR9s)
 
 Some high points: 
 
@@ -25,7 +25,7 @@ For me the reviewer role has changed significantly. We have testing branches and
 Here's two more, both on manual mode: 
 
 ### Bazzite
-[![Bazzite Development Visualized](/img/blog/2026-09-28-bluefin-development-visualized/9J6Xp_ocdA8.jpg)](https://www.youtube.com/watch?v=9J6Xp_ocdA8)
+[![Bazzite Development Visualized](/img/blog/2026-09-28-bluefin-development-visualized/9J6Xp_ocdA8.webp)](https://www.youtube.com/watch?v=9J6Xp_ocdA8)
 
 ### Aurora
-[![Aurora development visualized](/img/blog/2026-09-28-bluefin-development-visualized/ClRSi_Msahc.jpg)](https://www.youtube.com/watch?v=ClRSi_Msahc)
+[![Aurora development visualized](/img/blog/2026-09-28-bluefin-development-visualized/ClRSi_Msahc.webp)](https://www.youtube.com/watch?v=ClRSi_Msahc)

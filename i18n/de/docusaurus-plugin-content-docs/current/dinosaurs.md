@@ -7,7 +7,7 @@ Bluefin hat Dinosaurier und andere prähistorische Tiere in seinem Kunstwerk. Bl
 
 Hier ist die Besetzung der Figuren! Jede repräsentiert etwas Wichtiges für dieses Ökosystem.
 
-![Bluefin](/img/user-attachments/9b054c6a-5146-40b2-b4d6-bf97abd01429.png)
+![Bluefin](/img/user-attachments/9b054c6a-5146-40b2-b4d6-bf97abd01429.webp)
 
 Illustration von Delphic Melody (M. Gopal)
 
@@ -17,7 +17,7 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: Der Anführer der Herde, der Erste unter Gleichen, der Beweglichste
 - Art: [Deinonychus antirrhopus](https://en.wikipedia.org/wiki/Deinonychus)
 
-![Bluefin](/img/user-attachments/97324a75-e6c6-409e-b9ee-18f69d3715d0.png)
+![Bluefin](/img/user-attachments/97324a75-e6c6-409e-b9ee-18f69d3715d0.webp)
 
 ## Bluefin LTS und GDX
 
@@ -25,7 +25,7 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: Einer der größten Raptoren, repräsentiert die Trägheit des Unternehmens
 - Art: [Achillobator giganticus](https://en.wikipedia.org/wiki/Achillobator)
 
-![Achillobator](/img/user-attachments/eb94b207-c29b-4410-96b5-8c0ac8ef238f.png)
+![Achillobator](/img/user-attachments/eb94b207-c29b-4410-96b5-8c0ac8ef238f.webp)
 
 ## Kubernetes
 
@@ -33,7 +33,7 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: Kubernetes ungezügelt, unser Leitstern - repräsentiert unsere Developer Experience
 - Art: [Amargasaurus cazaui](https://en.wikipedia.org/wiki/Amargasaurus)
 
-![Karl](/img/user-attachments/79ceae5e-f48b-4d87-aadd-c7f46294378e.png)
+![Karl](/img/user-attachments/79ceae5e-f48b-4d87-aadd-c7f46294378e.webp)
 
 ## Homebrew
 
@@ -41,7 +41,7 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: Ein unerwarteter Verbündeter
 - Art: [Kentrosaurus aethiopicus](https://en.wikipedia.org/wiki/Kentrosaurus)
 
-![Kate](/img/user-attachments/c1f9851a-1116-4bd5-8355-71acef25689d.png)
+![Kate](/img/user-attachments/c1f9851a-1116-4bd5-8355-71acef25689d.webp)
 
 ## Flathub
 
@@ -49,7 +49,7 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: Unser App-Store, die Segel sind auch cool
 - Art: [Dimetrodon limbatus](https://en.wikipedia.org/wiki/Dimetrodon)
 
-![Dolly](/img/user-attachments/f8094307-eba1-44f1-beed-5d6328350f41.png)
+![Dolly](/img/user-attachments/f8094307-eba1-44f1-beed-5d6328350f41.webp)
 
 ## OhKei!
 
@@ -57,7 +57,7 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: Transport und schwere Industrie-Produktion
 - Art: [Concavenator corcovatus](https://en.wikipedia.org/wiki/Concavenator)
 
-![tai](/img/user-attachments/936552bf-28ef-42a1-82ce-ae8b9a370ac1.png)
+![tai](/img/user-attachments/936552bf-28ef-42a1-82ce-ae8b9a370ac1.webp)
 
 ## [ Redacted ]
 
@@ -65,7 +65,7 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: [ Redacted ]
 - Art: [Dakotaraptor steini](https://en.wikipedia.org/wiki/Dakotaraptor)
 
-![Dakotaraptor](/img/user-attachments/01b99cdf-2b10-4be4-88bf-23da3a945be8.png)
+![Dakotaraptor](/img/user-attachments/01b99cdf-2b10-4be4-88bf-23da3a945be8.webp)
 
 ## [ Redacted ]
 
@@ -73,4 +73,4 @@ Illustration von Delphic Melody (M. Gopal)
 - Rolle: [ Redacted ]
 - Art: [Utahraptor ostrommaysi](https://en.wikipedia.org/wiki/Utahraptor)
 
-![Utahraptor](/img/user-attachments/1a9aad73-9a9b-470d-b9e7-53969fbc7b80.png)
+![Utahraptor](/img/user-attachments/1a9aad73-9a9b-470d-b9e7-53969fbc7b80.webp)

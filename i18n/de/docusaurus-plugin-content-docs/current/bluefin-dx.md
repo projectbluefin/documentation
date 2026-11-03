@@ -38,7 +38,7 @@ Wir haben das Cloud-Native-Muster gewählt, weil lokale Entwicklung in Container
 
 :::
 
-![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.png)
+![image](/img/user-attachments/51415b6c-b7fe-45e9-af74-c01694b26fbe.webp)
 
 Das Muster in `bluefin-dx` (und `aurora-dx`) dreht sich um [Devcontainer](https://containers.dev). Da Devcontainer im Git-Repository des Projekts leben, können sie auf jedem Betriebssystem bereitgestellt werden: Linux, macOS oder Windows (via WSL). Dies ermöglicht „von Natur aus verteilte“ Entwicklung und vermeidet, dass Linux-Nutzer „die Außenseiter“ sind, wenn sie mit Teamkollegen auf anderen Betriebssystemen arbeiten.
 
@@ -58,7 +58,7 @@ Das Aktivieren des Entwicklermodus ist ein zweistufiger Prozess:
 
 `ujust devmode` zum Aktivieren oder Deaktivieren des dx-Modus, dann neu starten:
 
-![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.png)
+![image](/img/user-attachments/76df5201-da02-42d0-bec9-fad259df9b0d.webp)
 
 ### Schritt 2: Füge dich den richtigen Gruppen hinzu
 
@@ -100,7 +100,7 @@ Führe `systemctl --user status podman.socket` aus, um den Socket-Pfad für dein
 
 ### Podman und Podman Desktop
 
-![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.png)
+![Podman Desktop](/img/user-attachments/69f64ed1-7fcc-4040-9a3d-12b71308da1b.webp)
 
 [Podman Desktop](https://podman-desktop.io/) ist enthalten, um Container-Verwaltung bereitzustellen. Sieh in die [Podman Desktop-Dokumentation](https://podman-desktop.io/docs/intro) für weitere Informationen. Alle Upstream-`podman`-Tools sind enthalten. Dies ist die Standard-System-Container-Runtime und ist die empfohlene Entwicklerkonfiguration für neue Nutzer.
 
@@ -122,15 +122,15 @@ Dank an Ubuntu und Canonical für die [detaillierte Spezifikation](https://disco
 
 Pet-Container sind als interaktive Terminals via [Distrobox](https://distrobox.it/) verfügbar. Verwalte diese über die enthaltene [DistroShelf](https://github.com/ranfdev/DistroShelf)-Anwendung, verfügbar über das Logomenü oben links auf deinem Desktop unter „Container“:
 
-![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.png)
+![image](/img/user-attachments/bdab71b0-c04a-4562-a73d-396d4b907060.webp)
 
 Verwende die DistroShelf-Oberfläche, um deine eigenen Pet-Container aus der in der Liste enthaltenen Distribution zu erstellen:
 
-![image](/img/user-attachments/2daf276d-2aed-47b9-9792-923d674ef226.png)
+![image](/img/user-attachments/2daf276d-2aed-47b9-9792-923d674ef226.webp)
 
 Für CLI-Krieger kannst du deine Container mit der eingebauten Container-Unterstützung des Terminals verwalten:
 
-![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.png)
+![image](/img/user-attachments/2a4dc4b5-f1a8-4781-80a4-92ea4dfeeb97.webp)
 
 Das enthaltene [Terminal](https://gitlab.gnome.org/GNOME/ptyxis) enthält ein Host-Terminal, sodass du schnell zwischen Containern und dem Host wechseln kannst.
 

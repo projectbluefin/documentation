@@ -60,7 +60,7 @@ Each push to `main` publishes an immutable [GitHub Release](https://github.com/p
 | `bluefin-server-installer_<ver>.raw`   | Flash to USB for offline `systemd-sysinstall` to disk.                              |
 | `bluefin-server_<ver>.raw`             | OS DDI served by [Booty](https://github.com/jeefy/booty) for network boot at scale. |
 
-Verify downloads against the GPG-signed `SHA256SUMS` using [`files/os/sysupdate-keys/import-pubring.gpg`](https://github.com/projectbluefin/server/blob/main/files/os/sysupdate-keys/import-pubring.gpg); see [`docs/skills/systemd-sysupdate-verification.md`](/server/systemd-sysupdate-verification/).
+The full release set (UKIs, sysexts, Ignition templates, SBOM) is defined in [`elements/oci/bluefin-server-image.bst`](https://github.com/projectbluefin/server/blob/main/elements/oci/bluefin-server-image.bst); `SHA256SUMS` lists every published file. Verify downloads against the GPG-signed `SHA256SUMS` using [`files/os/sysupdate-keys/import-pubring.gpg`](https://github.com/projectbluefin/server/blob/main/files/os/sysupdate-keys/import-pubring.gpg); see [`docs/skills/systemd-sysupdate-verification.md`](/server/systemd-sysupdate-verification/).
 
 ### USB installation
 

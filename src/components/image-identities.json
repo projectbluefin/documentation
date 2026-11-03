@@ -13,7 +13,7 @@
     "testsuiteRun": "https://github.com/projectbluefin/server/actions/workflows/lima-e2e.yml",
     "images": [
       {
-        "src": "/img/user-attachments/79ceae5e-f48b-4d87-aadd-c7f46294378e.png",
+        "src": "/img/user-attachments/79ceae5e-f48b-4d87-aadd-c7f46294378e.webp",
         "alt": "Bluefin Server Amargasaurus artwork, with a long neck and paired neck spines",
         "source": "/dinosaurs#kubernetes",
         "attribution": "Jacob Schnurr · Project Bluefin artwork",

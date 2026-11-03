@@ -34,7 +34,7 @@ Reproducible 홈랩 및 멀티 노드 AI/관측 인프라를 배포하려면 [Bl
 
 [AI Lab extension](https://developers.redhat.com/products/podman-desktop/podman-ai-lab)를 포함된 Podman Desktop 안에 설치하여 로컬 모델을 관리하는 그래픽 인터페이스를 제공할 수 있습니다:
 
-![image](/img/user-attachments/e5557952-3e62-499e-93a9-934c4d452be0.png)
+![image](/img/user-attachments/e5557952-3e62-499e-93a9-934c4d452be0.webp)
 
 ## AI 명령줄 도구
 
@@ -84,7 +84,7 @@ llmman serve
 
 `llmman serve`는 `http://127.0.0.1:17434`에서 OpenAI 호환 엔드포인트를 제공하며, 이를 통해 llmman을 직접 지원하지 않는 도구를 구성할 수 있습니다:
 
-![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.png)
+![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.webp)
 
 ### VS Code에서 AI 에이전트 실행
 
@@ -140,9 +140,9 @@ Bluefin은 Alpaca를 설치한 후 `Ctrl`-`Alt`-`Backspace`를 Alpaca의 quickla
 
 ### 구성
 
-![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.png)
+![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.webp)
 
-![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
+![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.webp)
 
 ## 자동 문제 해결 (WIP)
 
