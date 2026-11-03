@@ -1,7 +1,7 @@
 ---
 name: ci-workflows
-version: "1.0"
-last_updated: "2026-09-29"
+version: "1.1"
+last_updated: "2026-11-03"
 id: ci-workflows
 one_line_purpose: Edit GitHub Actions workflows without breaking caches, gates, or data.
 entry_point: docs/skills/ci-workflows.md
@@ -13,6 +13,8 @@ description: >-
   a job, or a concurrency group — or when a pages.yml build is slow.
 metadata:
   type: procedure
+  context7-sources:
+    - /actions/checkout
 ---
 
 # CI workflows
@@ -49,7 +51,34 @@ stops firing, or a cache entry that carries corrupt build state.
    Build time grows with live locales: one Docusaurus process builds them in
    sequence, and one 4-vCPU runner is CPU-bound (parallel builds on it saved
    only ~24% at 14 locales). Spread locales over runners instead; keep each
-   shard's artifact small (translated builds drop `static/`).
+   shard's artifact small (translated builds drop `static/`), and check the
+   shard out sparse for the same reason: the trees that only ever appear as
+   article media — `static/img/user-attachments`, `static/img/blog`,
+   `static/img/artwork` — are skipped by URL and never bundled, so excluding
+   them drops 32 MiB per shard (`sparse-checkout` also implies
+   `--filter=blob:none`, so their blobs are never fetched). The handful of
+   images the bundler _does_ resolve (`url("/img/…")` in CSS modules, under
+   `static/img/characters` and `static/img/portal`) must stay checked out.
+
+   History is deliberately shallow. `future.faster` enables gitEagerVcs, which
+   dates every file with one `git log --format=t:%ct,a:%an --name-status`, so a
+   shallow checkout dates them all HEAD's — but nothing on today's `main`
+   renders a git date: no plugin sets `showLastUpdateTime`, blog dates come from
+   filenames, and a main-tip build carries zero `lastUpdatedAt` pages.
+   `fetch-depth: 0` spent ~117 MiB per run on that headroom (all 71 branches and
+   the tags, again in each of the six parts). When a date surface returns, add
+   the ancestry fetch after the checkout:
+
+   ```yaml
+   - name: Fetch the built commit's history
+     run: git fetch --no-tags --unshallow origin "$(git rev-parse HEAD)"
+   ```
+
+   That names the commit the build checked out, so it is right for a push, a PR
+   head, or a merge-queue ref, and it inherits a sparse checkout's blob filter
+   (commits and trees only). Verified byte-identical to a full-history clone's
+   `git log` output; a shallow shard build is byte-identical to a full-history
+   one, dates and all, which is what makes dropping it safe.
 
    Anything a job uploads for another must be named by `needs`: `deploy` needs
    `assemble`, not `build`, or it races the artifact. `upload-artifact` skips
@@ -120,3 +149,6 @@ stops firing, or a cache entry that carries corrupt build state.
 - `.github/workflows/pages.yml` — build/verify/deploy split, cache layout.
 - `Justfile` — `clear` / `dev-safe` document rspack cache corruption.
 - actions/cache README — branch scoping, 10 GB LRU, restore/save split.
+- `actions/checkout` at the pinned commit, `src/git-source-provider.ts` — a
+  sparse checkout sets `filter: blob:none` for you, and `fetch-tags` is only
+  read on the `fetch-depth > 0` branch (library id `/actions/checkout`).

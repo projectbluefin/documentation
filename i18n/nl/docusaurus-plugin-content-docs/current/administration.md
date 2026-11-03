@@ -17,7 +17,7 @@ Ik wil dat “defaults-lifestyle”.
 
 :::
 
-![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.png)
+![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.webp)
 
 ## Apps installeren
 
@@ -36,13 +36,13 @@ Updates worden toegepast wanneer het systeem herstart. Daarom wordt aanbevolen o
 
 Machinefirmware-updates worden geboden via de Firmware-toepassing.
 
-![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.png)
+![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.webp)
 
 ### Updates beheren
 
 Selecteer in **Instellingen** → **Netwerk** → een netwerkinstelling **Metered Connection: has data limits or can incur charges** om Bluefin-updates te pauzeren:
 
-![Instellingen → Netwerk → Een netwerkinstelling - `Metered Connection: has data limits or can incur charges` Gemarkeerd](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
+![Instellingen → Netwerk → Een netwerkinstelling - `Metered Connection: has data limits or can incur charges` Gemarkeerd](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.webp)
 
 ## Stromen en throttle-instellingen
 
@@ -85,11 +85,11 @@ De componenten van Bluefin worden gedeeld over alle images; denk er niet aan als
 
 Gebruik het commando `ujust rebase-helper` om rebase te selecteren en een specifieke stream te kiezen:
 
-![`ujust rebase-helper` - kanaal](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.png)
+![`ujust rebase-helper` - kanaal](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.webp)
 
 Of selecteer `date` en kies een oudere image.
 
-![`ujust rebase-helper` - datum](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.png)
+![`ujust rebase-helper` - datum](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.webp)
 
 #### Tussen stromen wisselen (handmatig)
 
@@ -290,11 +290,11 @@ Merk op dat Bluefin doorgaans probeert de systeem-Justfiles smal af te bakenen; 
 
 Bluefin gebruikt de [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager) van Matthew Jakeman om de desktopextensies te beheren. De toepassing is standaard meegeleverd. Je kan er toegang toe via het [Logo Menu](https://github.com/Aryan20/Logomenu) (bedankt Aryan Kaushik!)
 
-![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.png)
+![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.webp)
 
 Dit is nuttig als je besluit dat je sommige van de met Bluefin meegeleverde niet wilt gebruiken.
 
-![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.png)
+![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.webp)
 
 :::note
 

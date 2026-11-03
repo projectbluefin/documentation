@@ -119,7 +119,7 @@ _이러한 요구 사항은 Bluefin의 통합 개발 워크플로와 컨테이�
 
 외부 드라이브에 Bluefin을 설치하여 휴대 가능한 Bluefin 설치를 만들 수 있습니다:
 
-![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.webp)
 
 **설치 중 전체 디스크 암호화를 선택하는 것을 잊지 마세요!**
 
@@ -225,7 +225,7 @@ Bluefin은 유지보수를 최대한 간단하게 만들고자 노력하지만, 
 
 그리고 한 가지 더: Day 0에 더 많이 투자할수록 Day 1이 더 순조로워지고, 결과적으로 Day 2는 더욱 순조로워집니다. 그 이후는 모두 자랑거리입니다. `fastfetch`([후원](https://github.com/sponsors/LinusDierheimer)) 명령이 여러분의 이정표를 상기시켜 줄 것입니다:
 
-![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
+![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.webp)
 
 ## Secure Boot
 
@@ -252,7 +252,7 @@ sudo mokutil --import path/to/public_key.der
 
 `mokutil --list-enrolled`를 사용하여 "ublue kernel" 키가 나열되어 있는지 확인할 수 있습니다:
 
-![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
+![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.webp)
 
 :::note
 `ublue akmods`가 나열되어 있다면 곧 제거될 예정인 이전 키입니다. `ublue kernel`이 현재 키입니다.

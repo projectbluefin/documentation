@@ -36,17 +36,17 @@ Bluefin 对桌面软件采取 **Flatpak 优先** 的 Approach。应用与宿主�
 
 项目偏好那种既炫酷又有实用价值的"装饰"。新终端（<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Enter</kbd>）会显示一条包含系统信息的每日消息（message of the day）：
 
-![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.png)
+![image](/img/user-attachments/0e0326ef-6640-41a2-bd24-dae1b1647cfd.webp)
 
 `bluefin-dx:beta` 这一行是操作系统镜像的名称，提醒你是否在使用固定镜像，并提供常用命令的快速参考。用 `ujust toggle-user-motd` 来开关它。
 
 我们喜欢炫耀自己的机器。运行 `fastfetch`：
 
-![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.png)
+![image](/img/user-attachments/f720f9d8-7c3c-4f3c-9112-c627686e0fb1.webp)
 
 这个界面显示硬件信息、用户名、机器名和内核版本。每个 Bluefin 镜像都有一个"Forged On"日期，纪念该机器初次安装的日期：
 
-![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.png)
+![image](/img/user-attachments/99522c15-1209-4fa5-a076-1b6289bdbc76.webp)
 
 ## 终端配置
 
@@ -56,14 +56,14 @@ Bluefin 默认使用 [bash](https://www.gnu.org/software/bash/)，同时镜像�
 
 Bluefin 将 [Ptyxis](https://devsuite.app/ptyxis/) 作为默认终端（在应用启动器中名为 `Terminal`）。我们**强烈建议**你[通过终端模拟器而非系统范围来更改 shell](https://tim.siosm.fr/blog/2023/12/22/dont-change-defaut-login-shell/)。先用 `brew install zsh` 或 `brew install fish` 安装你想要的 shell。点击终端设置并编辑你的配置文件：
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit...](/img/user-attachments/2c122205-dbd8-41e6-8b7b-4f536c3b69e9.webp)
 
 选择 "Use Custom Command" 并添加你的 shell：
 
 - zsh: `/home/linuxbrew/.linuxbrew/bin/zsh`
 - fish: `/home/linuxbrew/.linuxbrew/bin/fish`
 
-![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.png)
+![Ptyxis → Preferences → Profiles → A Profile Setting → Edit... → Shell → Custom Command](/img/user-attachments/8eb039db-7ec1-4847-b3d7-496d69fe9538.webp)
 
 ## 维护器推荐的 GNOME 扩展
 

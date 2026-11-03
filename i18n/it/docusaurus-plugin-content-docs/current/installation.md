@@ -119,7 +119,7 @@ _Questi requisiti garantiscono il buon funzionamento del flusso di sviluppo inte
 
 Puoi installare Bluefin su un'unità esterna per ottenere un'installazione portatile:
 
-![Unità Bluefin](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+![Unità Bluefin](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.webp)
 
 **Non dimenticare di selezionare la cifratura dell'intero disco durante l'installazione!**
 
@@ -225,7 +225,7 @@ Bluefin cerca di rendere la manutenzione il più semplice possibile; molte delle
 
 Un ultimo consiglio: più investi nel giorno 0, più semplice sarà il giorno 1 e, di conseguenza, ancora più semplice il giorno 2. Dopo, potrai vantartene. Il comando `fastfetch` ([Dona](https://github.com/sponsors/LinusDierheimer)) sarà lì a ricordarti il traguardo raggiunto:
 
-![Schermata di fastfetch](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
+![Schermata di fastfetch](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.webp)
 
 ## Secure Boot {#secure-boot}
 
@@ -252,7 +252,7 @@ sudo mokutil --import path/to/public_key.der
 
 Puoi usare `mokutil --list-enrolled` per verificare che la chiave "ublue kernel" sia presente nell'elenco:
 
-![Elenco delle chiavi registrate](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
+![Elenco delle chiavi registrate](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.webp)
 
 :::note
 Se vedi `ublue akmods` nell'elenco, è una vecchia chiave che verrà rimossa a breve. `ublue kernel` è la chiave attuale.

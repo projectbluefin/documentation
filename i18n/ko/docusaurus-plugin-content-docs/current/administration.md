@@ -17,7 +17,7 @@ Bluefin은 재설치 없이 하드웨어의 수명까지 설치하도록 설계�
 
 :::
 
-![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.png)
+![Bluefin Desktop Environment Illustration](/img/user-attachments/229f3763-c876-4402-8249-e631303e722b.webp)
 
 ## 애플리케이션 설치
 
@@ -36,13 +36,13 @@ Bluefin은 손댈 필요가 없도록("hands off") 설계되었습니다. 시스
 
 장치 펌웨어 업데이트는 Firmware 애플리케이션을 통해 제공됩니다.
 
-![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.png)
+![Firmware](/img/user-attachments/701d18b2-a40a-432a-ae22-0e3ac29fe191.webp)
 
 ### 업데이트 관리
 
 **Settings** → **Network** → 네트워크 설정에서 **Metered Connection: has data limits or can incur charges**를 설정하여 Bluefin 업데이트를 일시 중지하세요:
 
-![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.png)
+![Settings → Network → A network setting - `Metered Connection: has data limits or can incur charges` Highlight](/img/user-attachments/00d04190-3a68-4fd1-8e03-7e97ef3193f2.webp)
 
 ## Stream 및 업데이트 속도 설정 {#streams-and-throttle-settings}
 
@@ -85,11 +85,11 @@ Bluefin의 구성 요소는 모든 이미지에서 공유되므로, 별도의 "�
 
 `ujust rebase-helper` 명령에서 rebase를 선택한 다음 원하는 stream을 고르세요:
 
-![`ujust rebase-helper` - channel](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.png)
+![`ujust rebase-helper` - channel](/img/user-attachments/5ac60808-1e15-4c80-9592-e41fd2b52917.webp)
 
 또는 `date`를 선택해 이전 이미지를 고를 수도 있습니다.
 
-![`ujust rebase-helper` - date](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.png)
+![`ujust rebase-helper` - date](/img/user-attachments/567061da-036d-4779-873e-154a5a833e67.webp)
 
 #### 수동으로 stream 전환하기
 
@@ -290,11 +290,11 @@ Bluefin에는 엄선된 CLI 도구 모음이 포함되어 있습니다. 다음 �
 
 Bluefin은 Matthew Jakeman의 [Extension Manager](https://flathub.org/apps/com.mattjakeman.ExtensionManager)로 데스크톱 확장 기능을 관리합니다. 이 애플리케이션은 기본으로 포함되어 있으며, [Logo Menu](https://github.com/Aryan20/Logomenu)에서 열 수 있습니다(Aryan Kaushik에게 감사드립니다!).
 
-![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.png)
+![GNOME Extension Menu Option (opens Extension Manager)](/img/user-attachments/c5ad1637-95c9-4692-8b25-e8ca6248e575.webp)
 
 Bluefin에 기본으로 포함된 확장 기능 중 일부를 쓰고 싶지 않을 때 유용합니다.
 
-![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.png)
+![Extension Manager - System Extensions Highlight](/img/user-attachments/31255d26-580e-4179-a748-635bfa540e9a.webp)
 
 :::note
 

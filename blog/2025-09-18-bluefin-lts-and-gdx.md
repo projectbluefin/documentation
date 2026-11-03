@@ -7,7 +7,7 @@ tags: [lts, homebrew, community, video]
 
 _Achillobator giganticus_
 
-![achillosmall](/img/user-attachments/b6945e80-34e4-44bb-8518-91ad31fed56d.png)
+![achillosmall](/img/user-attachments/b6945e80-34e4-44bb-8518-91ad31fed56d.webp)
 
 After nine months of development Bluefin LTS and Bluefin GDX are now Generally Available(GA). The reign of Achillobator has begun. Find the download links [on the website](https://projectbluefin.io), or snag them below.
 
@@ -15,7 +15,7 @@ After nine months of development Bluefin LTS and Bluefin GDX are now Generally A
 
 Bluefin LTS is a workstation designed for people who prefer Long Term Support but desire a modern desktop. This species of raptor is for users who prefer a slower release cadence, about a three-to-five year lifespan on a single release. Like other Bluefins it features first-class support for Flathub via [Bazaar](https://github.com/kolunmi/bazaar), Homebrew, ZFS, and all the [other goodies](https://docs.projectbluefin.io/introduction).
 
-![Pasted image](/img/user-attachments/52fc8986-c244-4ed6-bcc2-20f4b2de1843.png)
+![Pasted image](/img/user-attachments/52fc8986-c244-4ed6-bcc2-20f4b2de1843.webp)
 
 Bluefin LTS is composed of:
 
@@ -52,8 +52,8 @@ Installation is via a [live session](https://github.com/ublue-os/titanoboa) with
 
 Secure boot and all those goodies are available:
 
-![live session](/img/user-attachments/20d54c0e-cd05-4047-871e-ab1965483902.png)
-![live session installation](/img/user-attachments/370fba9b-7c20-4ad3-8ec7-4efd0330e5fb.png)
+![live session](/img/user-attachments/20d54c0e-cd05-4047-871e-ab1965483902.webp)
+![live session installation](/img/user-attachments/370fba9b-7c20-4ad3-8ec7-4efd0330e5fb.webp)
 
 ## Update Cadence
 
@@ -91,7 +91,7 @@ This will be the lab that will keep Bluefin on the leading edge of open source A
 - ... and more! Check the [AI and Machine Learning](/ai) section for more!
 - We are looking for AI/ML enthusiasts with strong opinions who want to be involved! Inquire within!
 
-![Bluefin GDX at KubeCon + CloudNativeCon EU](/img/user-attachments/2c2f9d50-a704-49cb-9b0b-f139014a8bc0.png)
+![Bluefin GDX at KubeCon + CloudNativeCon EU](/img/user-attachments/2c2f9d50-a704-49cb-9b0b-f139014a8bc0.webp)
 
 You can find Bluefin GDX on the conference circuit!
 
@@ -105,7 +105,7 @@ It's also much more advantageous for us to derive off of a base image that ends 
 
 As it turns out, Bluefin LTS HWE is in the exact same ecological niche as GTS. They will end up being competitors. There's no death knell or anything like that, once development moves on it doesn't cost us much to keep it running. And we do love our pets. Check out the awesome brand new image by Delphic Melody and ahmedadan:
 
-![image chooser](/img/user-attachments/118d6702-8001-4215-9d8f-6fab78f4860c.png)
+![image chooser](/img/user-attachments/118d6702-8001-4215-9d8f-6fab78f4860c.webp)
 
 As you can see, it's getting a bit crowded. We'll see how people react to LTS, and I expect we'd hide the GTS option from the website but continue to offer it.
 
@@ -127,14 +127,14 @@ Now let's get on to the good stuff. [store.projectbluefin.io](https://store.proj
 
 We celebrate this release with this T-shirt, the "Reign of Achillobator", signifying Bluefin LTS's role in this ecosystem as a top predator, along with some other goodies:
 
-![Reign of Achillobator](/img/user-attachments/0eed0cad-741a-4a0a-b70e-f31c18de5aad.png)
-![Rawr!](/img/user-attachments/de297710-c611-4c58-ab22-633f0c5431c8.png)
+![Reign of Achillobator](/img/user-attachments/0eed0cad-741a-4a0a-b70e-f31c18de5aad.webp)
+![Rawr!](/img/user-attachments/de297710-c611-4c58-ab22-633f0c5431c8.webp)
 
 And of course we've got stuff for the kids, and some other weird things! Currently this store is US only for now.
 
-![kids](/img/user-attachments/7893d480-fdf0-4e99-b025-5f51b9fd81bb.png)
-![soap!](/img/user-attachments/006d05a5-52fc-45fe-8881-c478d5b35650.png)
-![backpack](/img/user-attachments/11abeba0-0616-4957-bf82-618b45a989e1.png)
+![kids](/img/user-attachments/7893d480-fdf0-4e99-b025-5f51b9fd81bb.webp)
+![soap!](/img/user-attachments/006d05a5-52fc-45fe-8881-c478d5b35650.webp)
+![backpack](/img/user-attachments/11abeba0-0616-4957-bf82-618b45a989e1.webp)
 
 Proceeds from the store items will go towards paying for more paleoartwork. I think this is a fair deal, Bluefin would have never gotten this far without the work of these fine artists. Having a way for the community to sponsor the artwork in return for the awesome comfort of an _Achillobator giganticus_ hoodie? Peak Linux.
 

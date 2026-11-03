@@ -3,7 +3,7 @@ title: "Still Roaring: Bluefin Classic and LTS"
 slug: still-roaring-bluefin-classic-and-lts
 authors: [juanresendiz813]
 tags: [classic, lts, announcements]
-image: /img/blog/2026-10-22-still-roaring/first-day-dino.png
+image: /img/blog/2026-10-22-still-roaring/first-day-dino.webp
 ---
 
 I want to start this by clearing the air: the Bluefin you know and love is going nowhere! It's still here, just with a new look and a few new raptor wranglers at the helm. Let me start by introducing myself. I'm Juan Resendiz, I'm from Florida and I do nerd stuff over at Concept To Cloud during the day. I heard Jorge's call and he had me sold at dinosaurs. Linux was the cherry on top.
@@ -11,7 +11,7 @@ I want to start this by clearing the air: the Bluefin you know and love is going
 <!-- truncate -->
 
 <figure style={{textAlign: "center"}}>
-  <img src="/img/blog/2026-10-22-still-roaring/first-day-dino.png" alt="A dinosaur statue looking like it's about to eat Juan" width="280" style={{display: "block", margin: "0 auto"}} />
+  <img src="/img/blog/2026-10-22-still-roaring/first-day-dino.webp" alt="A dinosaur statue looking like it's about to eat Juan" width="280" style={{display: "block", margin: "0 auto"}} />
   <figcaption>first day on the Bluefin Discord</figcaption>
 </figure>
 
@@ -50,7 +50,7 @@ Run Classic or LTS? You're already helping! If something breaks, tell us: open a
 None of this is a one person job. Huge thanks to Jorge for the ZFS fix and for keeping the merges moving, murphym18 for jumping into reviews, testing images on his own machine and building a tool that makes testing every Classic image way less painful, James (hanthor) for the ARM fix and for getting us the access we needed, Robin for the LTS reviews and merges, bsherman for keeping the CentOS builds around so the move has room to breathe, and Danathar and Kyle Rankin for the testsuite reviews. You all made a new guy feel right at home.
 
 <figure style={{textAlign: "center"}}>
-  <img src="/img/blog/2026-10-22-still-roaring/dino-facepaint.png" alt="Benjamin with green T-rex face paint" width="280" style={{display: "block", margin: "0 auto"}} />
+  <img src="/img/blog/2026-10-22-still-roaring/dino-facepaint.webp" alt="Benjamin with green T-rex face paint" width="280" style={{display: "block", margin: "0 auto"}} />
   <figcaption>My son Benjamin is all in on Bluefin as well</figcaption>
 </figure>
 

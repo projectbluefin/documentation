@@ -3,6 +3,8 @@ mdx:
   format: md
 ---
 
+# NOTE THIS IS STAYING IN UBLUE
+
 [![Build Bluefin LTS](https://github.com/projectbluefin/bluefin-lts/actions/workflows/build-regular.yml/badge.svg)](https://github.com/projectbluefin/bluefin-lts/actions/workflows/build-regular.yml) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10098/badge)](https://www.bestpractices.dev/projects/10098) [![Bluefin LTS on ArtifactHub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/bluefin)](https://artifacthub.io/packages/container/bluefin/bluefin) [![Installs](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/ublue-os/countme/main/badge-endpoints/bluefin-lts.json\&label=Installs)](https://github.com/projectbluefin/bluefin-lts) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/projectbluefin/bluefin-lts)
 
 Larger, more lethal [Bluefin](https://projectbluefin.io). Built on CentOS Stream 10 for longer support windows, conservative upgrades, and production-focused workstations.
@@ -74,3 +76,10 @@ Report security vulnerabilities via [SECURITY.md](https://github.com/projectblue
 Apache License 2.0 — see [LICENSE](https://github.com/projectbluefin/bluefin-lts/blob/main/LICENSE).
 
 Bluefin LTS incorporates [CentOS Stream](https://www.centos.org/centos-stream/), [GNOME](https://www.gnome.org/), [Universal Blue](https://universal-blue.org/), and various CNCF projects, each under their respective licenses.
+Report security vulnerabilities via [SECURITY.md](https://github.com/projectbluefin/bluefin-lts/blob/main/SECURITY.md).
+
+## License
+
+Apache License 2.0 — see [LICENSE](https://github.com/projectbluefin/bluefin-lts/blob/main/LICENSE).
+
+Uranium incorporates [CentOS Stream](https://www.centos.org/centos-stream/), [GNOME](https://www.gnome.org/), [Universal Blue](https://universal-blue.org/), and various CNCF projects, each under their respective licenses.

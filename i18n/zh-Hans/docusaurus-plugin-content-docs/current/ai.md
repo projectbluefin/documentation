@@ -34,7 +34,7 @@ Bluefin 为操作系统的 AI 工作流提供开放、用户可控的 API 端点
 
 [AI Lab extension](https://developers.redhat.com/products/podman-desktop/podman-ai-lab) 可以安装在附带的 Podman Desktop 中，为管理本地模型提供图形界面：
 
-![image](/img/user-attachments/e5557952-3e62-499e-93a9-934c4d452be0.png)
+![image](/img/user-attachments/e5557952-3e62-499e-93a9-934c4d452be0.webp)
 
 ## AI 命令行工具
 
@@ -84,7 +84,7 @@ llmman serve
 
 `llmman serve` 会在 `http://127.0.0.1:17434` 提供一个兼容 OpenAI 的端点，你可以用它来配置那些不支持直接接入 llmman 的工具：
 
-![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.png)
+![Newelle](/img/user-attachments/ff079ed5-43af-48fb-8e7b-e5b9446b3bfe.webp)
 
 ### 在 VS Code 中运行 AI Agent
 
@@ -140,9 +140,9 @@ Docker Model Runner 在 `http://localhost:12434` 提供一个兼容 OpenAI 的�
 
 ### 配置
 
-![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.png)
+![Alpaca](/img/user-attachments/104c5263-5d34-497a-b986-93bb0a41c23e.webp)
 
-![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.png)
+![image](/img/user-attachments/9fd38164-e2a9-4da1-9bcd-29e0e7add071.webp)
 
 [^1]: 要获得完整的 AMD 支持，还需要安装 Flatpak 扩展 `com.jeffser.Alpaca.Plugins.AMD`。
 

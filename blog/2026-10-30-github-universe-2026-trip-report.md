@@ -4,16 +4,16 @@ slug: github-universe-2026-trip-report
 authors: castrojo
 tags: [community, video]
 date: 2026-10-30
-image: /img/blog/2026-10-30-github-universe-2026-trip-report/ship-and-tell.jpg
+image: /img/blog/2026-10-30-github-universe-2026-trip-report/ship-and-tell.webp
 ---
 
 Bluefin was fortunate to get nominated for a "Ship and Tell" session at GitHub Universe.
 
-[![Watch: What open source can teach us about agents in CI/CD](/img/blog/2026-10-30-github-universe-2026-trip-report/ship-and-tell.jpg)](https://www.youtube.com/watch?v=J75hdXqKEv8)
+[![Watch: What open source can teach us about agents in CI/CD](/img/blog/2026-10-30-github-universe-2026-trip-report/ship-and-tell.webp)](https://www.youtube.com/watch?v=J75hdXqKEv8)
 
 A little while ago [we had a thread](https://github.com/ublue-os/bluefin/discussions/4949) in our discussions about the nightmare that is printing on Linux. What started as a joke turned into an actual thing that we built. It was such a cool story that Martin Woodward mentioned us in his closing keynote at Universe!
 
-[![Watch: GitHub Universe 2026 closing keynote, starting at 15:43](/img/blog/2026-10-30-github-universe-2026-trip-report/closing-keynote.jpg)](https://www.youtube.com/watch?v=Gh-hg7lwA0o&t=943s)
+[![Watch: GitHub Universe 2026 closing keynote, starting at 15:43](/img/blog/2026-10-30-github-universe-2026-trip-report/closing-keynote.webp)](https://www.youtube.com/watch?v=Gh-hg7lwA0o&t=943s)
 
 I've gotten feedback in the Discord from multiple people who have these working. We could really use more data/feedback/reports from those of you who have printers that need these drivers.
 
