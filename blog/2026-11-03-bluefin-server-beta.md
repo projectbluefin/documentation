@@ -53,15 +53,6 @@ This mode is more useful for people who are coming from legacy setups and want t
 
 All modes use the systemd installer, which takes about 2 minutes to complete: 
 
-![installer](https://github.com/user-attachments/assets/756eb6b5-810c-4357-9a3b-f077fb8fca3a)---
-title: "Still Roaring: Bluefin Classic and LTS"
-slug: still-roaring-bluefin-classic-and-lts
-authors: [juanresendiz813]
-tags: [classic, lts, announcements]
-image: /img/blog/2026-10-22-still-roaring/first-day-dino.png
----
-
-
 ## Example Commands
 
 Check out [the documentation](https://docs.projectbluefin.io/server/) for instructions on how to use Bluefin Server. You can use the `updatectl` commands to browse around and enable what you want. 
