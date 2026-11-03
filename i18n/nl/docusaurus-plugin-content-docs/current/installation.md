@@ -119,7 +119,7 @@ _Deze vereisten zorgen voor een vlotte werking van Bluefin's geïntegreerde ontw
 
 Je kan Bluefin op een externe schijf installeren om een draagbare Bluefin-installatie te krijgen:
 
-![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.webp)
 
 **Vergeet niet om volledige schijfversleuteling te selecteren tijdens de installatie!**
 
@@ -225,7 +225,7 @@ Bluefin streeft naar onderhoud zo eenvoudig mogelijk maken, echter veel van de g
 
 En nog meer advies: hoe meer je investeert in dag 0, hoe soepeler je dag 1 zal zijn, wat resulteert in een nog soepelere dag 2. Na dat, is het alles opschepperij. Het `fastfetch`-commando ([Donate](https://github.com/sponsors/LinusDierheimer)) zal er zijn om je mijlpaal te herinneren:
 
-![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
+![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.webp)
 
 ## Secure Boot
 
@@ -252,7 +252,7 @@ sudo mokutil --import path/to/public_key.der
 
 Je kan `mokutil --list-enrolled` gebruiken om te bevestigen dat de “ublue kernel”-key wordt vermeld:
 
-![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
+![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.webp)
 
 :::note
 Als je `ublue akmods` ziet vermeld, is het een vroegere key die snel zal worden verwijderd. `ublue kernel` is de huidige key.

@@ -119,7 +119,7 @@ _这些要求确保 Bluefin 集成开发工作和容器优先架构顺畅运行�
 
 你可以把 Bluefin 安装在外部驱动器上，得到一个便携的 Bluefin 安装：
 
-![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.webp)
 
 **别忘了在安装时选择全盘加密！**
 
@@ -225,7 +225,7 @@ Bluefin 力求让维护尽可能简单，然而许多自动化任务可以手动
 
 还有一条建议：你在第 0 天投入越多，第 1 天就越顺畅，从而第 2 天更加顺畅。之后，就都是炫耀的资本了。`fastfetch`（[捐赠](https://github.com/sponsors/LinusDierheimer）命令会在那里提醒你你的里程碑：
 
-![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
+![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.webp)
 
 ## Secure Boot
 
@@ -252,7 +252,7 @@ sudo mokutil --import path/to/public_key.der
 
 你可以使用 `mokutil --list-enrolled` 来确认 “ublue kernel” 密钥已列出：
 
-![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
+![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.webp)
 
 :::note
 如果你看到 `ublue akmods` 列出，它是即将被移除的旧密钥。`ublue kernel` 是当前密钥。

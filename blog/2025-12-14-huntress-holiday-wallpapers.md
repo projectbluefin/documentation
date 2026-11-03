@@ -3,7 +3,7 @@ title: "New Huntress and Holiday Artwork"
 slug: huntress-holiday-wallpapers
 authors: castrojo
 tags: [announcements, artwork, homebrew]
-image: /img/blog/2025-12-14-huntress-holiday-wallpapers/huntress.png
+image: /img/blog/2025-12-14-huntress-holiday-wallpapers/huntress.webp
 ---
 
 Working with artists can be fun because they all move at different schedules so sometimes when it rains it pours.
@@ -14,7 +14,7 @@ We're excited to announce two beautiful new wallpapers: Andy Frazer's latest cre
 
 Original Bluefin artist [Andy Frazer](https://www.etsy.com/uk/shop/dragonsofwales) returns with _Huntress_, a stunning new addition to our wallpaper collection. Following his previous work on _Dusk_, Andy continues to bring his distinctive paleoart style to Bluefin. We were going for a more weathered Bluefin this time around. No longer the ideal one perched on a rock ... this one has been through some things.
 
-<a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/huntress"><img src="/img/blog/2025-12-14-huntress-holiday-wallpapers/huntress.png" alt="Huntress wallpaper" /></a>
+<a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/huntress"><img src="/img/blog/2025-12-14-huntress-holiday-wallpapers/huntress.webp" alt="Huntress wallpaper" /></a>
 
 Andy's books make excellent gifts for dinosaur enthusiasts of all ages. Check out his [Etsy shop](https://www.etsy.com/uk/shop/dragonsofwales) for his full collection of paleoart books and prints.
 
@@ -22,7 +22,7 @@ Andy's books make excellent gifts for dinosaur enthusiasts of all ages. Check ou
 
 This next one is by [Chandeleer](https://ko-fi.com/chandeleer) and captures all of the mascots from Aurora, Bazzite, and Bluefin playing in the snow.
 
-<a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/aurora/aurora-wallpaper-8"><img src="/img/blog/2025-12-14-huntress-holiday-wallpapers/aurora-holiday.png" alt="Holiday Blues wallpaper" /></a>
+<a href="https://github.com/ublue-os/artwork/tree/main/wallpapers/aurora/aurora-wallpaper-8"><img src="/img/blog/2025-12-14-huntress-holiday-wallpapers/aurora-holiday.webp" alt="Holiday Blues wallpaper" /></a>
 
 If you enjoy Chandeleer's work, please consider supporting them through their [Ko-fi](https://ko-fi.com/chandeleer) page.
 

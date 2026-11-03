@@ -11,6 +11,6 @@ authors: [renner0e, castrojo]
 
 Expect it to land in next week's build, enjoy!
 
-![flex](/img/user-attachments/7f376819-d9f1-49d3-a8a1-00941cf0ab1b.png)
+![flex](/img/user-attachments/7f376819-d9f1-49d3-a8a1-00941cf0ab1b.webp)
 
 #### [Discussion](https://github.com/ublue-os/bluefin/discussions/3550)

@@ -118,7 +118,7 @@ _Diese Anforderungen stellen einen reibungslosen Betrieb von Bluefins integriert
 
 Du kannst Bluefin auf einem externen Laufwerk installieren, um eine tragbare Bluefin-Installation zu erhalten:
 
-![Bluefin auf einem externen Laufwerk](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+![Bluefin auf einem externen Laufwerk](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.webp)
 
 **Vergiss nicht, während der Installation eine Vollverschlüsselung auszuwählen!**
 
@@ -224,7 +224,7 @@ Bluefin bemüht sich, die Wartung so einfach wie möglich zu machen, viele autom
 
 Und noch ein Rat: Je mehr du in Tag 0 investierst, desto glatter läuft dein Tag 1, was wiederum einen noch glatteren Tag 2 ergibt. Danach ist alles ein Statussymbol. Der Befehl `fastfetch` ([Spenden](https://github.com/sponsors/LinusDierheimer)) wird da sein, um dich an deinen Meilenstein zu erinnern:
 
-![Bild](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
+![Bild](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.webp)
 
 ## Secure Boot {#secure-boot}
 
@@ -251,7 +251,7 @@ sudo mokutil --import path/to/public_key.der
 
 Mit `mokutil --list-enrolled` kannst du bestätigen, dass der „ublue kernel"-Schlüssel aufgelistet ist:
 
-![Bild](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
+![Bild](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.webp)
 
 :::note
 Wenn du `ublue akmods` aufgelistet siehst, ist dies ein ehemaliger Schlüssel, der bald entfernt wird. `ublue kernel` ist der aktuelle Schlüssel.

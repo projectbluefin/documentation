@@ -1,7 +1,7 @@
 ---
 name: blog-posts
-version: "1.5"
-last_updated: "2026-09-23"
+version: "1.6"
+last_updated: "2026-11-03"
 id: blog-posts
 one_line_purpose: Format, embed, and validate Bluefin blog posts under blog/.
 entry_point: docs/skills/blog-posts.md
@@ -66,6 +66,17 @@ A design skill saying "come up with copy" refers to mockups, not authorship.
 2. **Copy assets in.** Put images in
    `static/img/blog/<YYYY-MM-DD-slug>/`. Never hotlink a CDN — the post has to
    survive the source account, the CDN, and the link rotting.
+
+   Commit them as WebP, not PNG. A 9 MB screenshot becomes under 1 MB, and
+   every clone of the repository pays those bytes again:
+
+   ```bash
+   cwebp -metadata icc -q 90 in.png -o out.webp
+   ```
+
+   Fall back to `cwebp -lossless -z 9` when q90 cannot hold a screenshot's text
+   together, and keep the original format when WebP comes out larger — which
+   happens for small icons and already-optimised JPEGs.
 
    For a requested website screenshot, capture a fully rendered viewport, not
    its Open Graph image or loading state. For a YouTube-only stub, fetch the

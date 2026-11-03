@@ -119,7 +119,7 @@ _These requirements ensure smooth operation of Bluefin's integrated development 
 
 You can install Bluefin on an external drive to get a portable Bluefin installation:
 
-![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.png)
+![bluefin-drive](/img/user-attachments/f3ea0252-b0ba-4c68-8566-68cfbdbfc6b2.webp)
 
 **Don't forget to select full disk encryption during installation!**
 
@@ -225,7 +225,7 @@ Bluefin strives to make maintenance as straightforward as possible, however many
 
 And one more piece of advice: The more you invest into day 0, the smoother your day 1 will be, which results in an even smoother day 2. After that, it's all bragging rights. The `fastfetch` ([Donate](https://github.com/sponsors/LinusDierheimer)) command will be there to remind you of your milestone:
 
-![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.png)
+![image](/img/user-attachments/e1b77128-6aaf-4a95-a9fc-cb1409a176fc.webp)
 
 ## Secure Boot
 
@@ -252,7 +252,7 @@ sudo mokutil --import path/to/public_key.der
 
 You can use `mokutil --list-enrolled` to confirm that the "ublue kernel" key is listed:
 
-![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.png)
+![image](/img/user-attachments/259a9bb2-2198-4744-924d-df457e26c7f4.webp)
 
 :::note
 If you see `ublue akmods` listed, it is a former key that is soon to be removed. `ublue kernel` is the current key.
