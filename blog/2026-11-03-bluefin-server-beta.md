@@ -5,6 +5,8 @@ authors: [jeefy]
 tags: [server, announcements]
 ---
 
+![banner](https://github.com/user-attachments/assets/f42ef8f7-7ec8-43b0-982d-c294dda7244b)
+
 We'll be announcing the fall releases of Bluefin over the next coming weeks, first up is Bluefin Server! 
 
 Bluefin Server is built from the bottom up to be the premier cloud native OS built on Freedesktop SDK libraries. It is built using the same tools as Dakota, giving us an entire holistic set of Bluefins for server and cloud use cases. The idea is simple, bring the best of cloud native to the home. That starts with Kubernetes: 
