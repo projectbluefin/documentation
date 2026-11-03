@@ -16,7 +16,7 @@ castrojo:
 daegalus:
   name: Yulian Kuncheff
   page: true
-  title: Bluefin Contributor
+  title: Bluefin Maintainer
   url: https://github.com/daegalus
   image_url: https://github.com/daegalus.png
   socials:
@@ -100,3 +100,13 @@ juanresendiz813:
     x: "jrz813"
     youtube: "concepttocloud"
     blog: "https://concepttocloud.com"
+
+jeefy:
+  name: Jeffrey Sica
+  page: true
+  title: Bluefin Server Maintainer
+  url: https://github.com/jeefy
+  image_url: https://github.com/jeefy
+  socials:
+    github: "jeefy"
+    linkedin: "jeefy"
