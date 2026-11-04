@@ -55,6 +55,9 @@ This mode is more useful for people who are coming from legacy setups and want t
 
 All modes use the systemd installer, which takes about 2 minutes to complete: 
 
+![installer](https://github.com/user-attachments/assets/5711f1f2-4926-4ca4-85fb-bf0516e103a6)
+
+
 ## Example Commands
 
 Check out [the documentation](https://docs.projectbluefin.io/server/) for instructions on how to use Bluefin Server. You can use the `updatectl` commands to browse around and enable what you want. 
