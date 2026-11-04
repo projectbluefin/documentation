@@ -9,13 +9,13 @@ tags: [server, announcements]
 
 We'll be announcing the fall releases of Bluefin over the next coming weeks, first up is Bluefin Server! 
 
-Bluefin Server is built from the bottom up to be the premier cloud native OS built on Freedesktop SDK libraries. It is built using the same tools as Dakota, giving us an entire holistic set of Bluefins for server and cloud use cases. The idea is simple, bring the best of cloud native to the home. That starts with Kubernetes: 
+Bluefin Server is built from the bottom up to be the premier cloud native OS built on Freedesktop SDK libraries. It is built using the same tools as Dakota, giving us an entire holistic set of Bluefins for server and cloud use cases. The idea is simple, bring the best of cloud native to the home. We take inspiration from CoreOS and Flatcar Linux. Then we move on up to Kubernetes:
 
 - [Homepage](https://github.com/projectbluefin/server/)
 - [Download it here](https://github.com/projectbluefin/server/releases)
 - [Documentation](https://docs.projectbluefin.io/server/)
 
-In this case we're skipping bootc entirely and going pure DDI - this is buildstream's real super power for us, the ability to have either bootc or DDI artifacts from the same source of truth. Everything is in the infrastructure and fully automated. Bluefin Server is essentially complete, including Nvidia and ZFS support. If you need a good foundation to a homelab it's basically finished. It covers two use cases, and options in the install menu:
+In this case we're skipping bootc entirely and going pure DDI - this is [buildstream's real super power](https://buildstream.apache.org/) for us, the ability to have either bootc or DDI artifacts from the same source of truth. Everything is in the infrastructure and fully automated. We feel that is a good representation of the [UAPI Group's](https://uapi-group.org/) intent for a modern Linux. Bluefin Server is essentially complete, including Nvidia and ZFS support. If you need a good foundation to a homelab it's basically finished. It covers two use cases, and options in the install menu:
 
 - Fully automated declarative Kubernetes deployments
 - Home server "pet" deployments
