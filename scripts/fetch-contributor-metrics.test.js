@@ -1022,3 +1022,52 @@ test("a verified zero-contributor refresh is still a successful scheduled collec
   assert.equal(empty.summary.totalContributors, 0);
   assert.equal(isVerifiedRefresh(empty, stamp - 1000, stamp + 1000), true);
 });
+
+test("each bare requireValue on the repository_activity REST path records its own guard code", async () => {
+  const cases = [
+    {
+      code: "rest_page_not_array",
+      mutate: (key, body) =>
+        key.endsWith("/commits:1") ? { not: "an array" } : body,
+    },
+    {
+      code: "rest_empty_page",
+      mutate: (key, body) => (key.endsWith("/commits:2") ? [] : body),
+    },
+    {
+      code: "rest_duplicate_id",
+      mutate: (key, body) =>
+        key.endsWith("/commits:1")
+          ? [body[0], { ...body[1], sha: body[0].sha }]
+          : body,
+    },
+    {
+      code: "rest_commit_no_parents",
+      mutate: (key, body) =>
+        key.endsWith("/commits:1")
+          ? [{ ...body[0], parents: null }, body[1]]
+          : body,
+    },
+  ];
+  for (const { code, mutate } of cases) {
+    let stats;
+    const data = await collect(apiFixture({ mutate }), {
+      onStats: (value) => {
+        stats = value;
+      },
+    });
+    assert.equal(data.unavailable, true, code);
+    assert.equal(data.summary.totalContributors, null, code);
+    assert.equal(data.stateReason, FAILURE_REASON, code);
+    const failure = (stats.failures || []).find(
+      (entry) => entry.repository === "main",
+    );
+    assert.ok(failure, `${code}: no failure recorded for the main repository`);
+    assert.equal(failure.stage, "repository_activity", code);
+    assert.equal(failure.code, code, code);
+    assert.doesNotMatch(
+      JSON.stringify(stats.failures),
+      /private URL|secret|https:|token=/,
+    );
+  }
+});
