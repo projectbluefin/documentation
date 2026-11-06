@@ -328,12 +328,18 @@ function createClient(fetchImpl, token, stats, waitImpl) {
           `https://api.github.com${route}&per_page=100&page=${page}`,
         );
         const nodes = await response.json();
-        requireValue(Array.isArray(nodes));
+        requireValue(Array.isArray(nodes), "rest_page_not_array");
         const next = /rel="next"/.test(response.headers.get("link") || "");
-        requireValue((!next && page === 1) || nodes.length > 0);
+        requireValue(
+          (!next && page === 1) || nodes.length > 0,
+          "rest_empty_page",
+        );
         for (const node of nodes) {
           const id = node?.node_id || node?.sha;
-          requireValue(typeof id === "string" && id && !seen.has(id));
+          requireValue(
+            typeof id === "string" && id && !seen.has(id),
+            "rest_duplicate_id",
+          );
           seen.add(id);
           visit(node);
         }
@@ -493,7 +499,7 @@ async function collectRepository(repo, client, asOf) {
     await client.restPages(
       `${route}/commits?sha=${encodeURIComponent(repo.defaultBranch)}&until=${encodeURIComponent(asOf)}`,
       (commit) => {
-        requireValue(Array.isArray(commit.parents));
+        requireValue(Array.isArray(commit.parents), "rest_commit_no_parents");
         if (commit.parents.length > 1) return;
         record(
           { author: restAuthor(commit.author) },
