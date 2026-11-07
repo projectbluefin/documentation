@@ -437,6 +437,20 @@ test("a Utah day with no reports stays on the axis as a gap", () => {
   assert.deepEqual(days, ["2026-09-20", "2026-09-21", "2026-09-22"]);
   assert.deepEqual(streams.stable, [4, null, 5]);
 });
+test("daily aggregation excludes the ongoing UTC day to chart full days only", () => {
+  const rows = [
+    { day: "2026-11-05", image: "dakota/main:stable", n: 10 },
+    { day: "2026-11-06", image: "dakota/main:stable", n: 12 },
+    { day: "2026-11-07", image: "dakota/main:stable", n: 2 },
+  ];
+  const asOfNov7 = familyDaily(
+    rows,
+    "dakota",
+    new Date("2026-11-07T14:30:00Z"),
+  );
+  assert.deepEqual(asOfNov7.days, ["2026-11-05", "2026-11-06"]);
+  assert.deepEqual(asOfNov7.streams.stable, [10, 12]);
+});
 
 function renderDaily(daily, classic = null, history = CLASSIC_HISTORY) {
   return renderToStaticMarkup(

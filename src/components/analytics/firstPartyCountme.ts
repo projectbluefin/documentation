@@ -47,21 +47,23 @@ export const DAILY_STREAMS = ["stable", "testing", "unknown"] as const;
 
 /**
  * One image family's daily actives per stream (`utah` matches `utah/…` and
- * `utah-nvidia/…`). The axis is every UTC day from the first report to the
- * last, so a day nobody reported stays on the axis as a null gap.
+ * `utah-nvidia/…`). Only completed UTC days are eligible. The axis is every
+ * UTC day from the first eligible report to the last, so a day nobody reported
+ * stays on the axis as a null gap.
  */
 export function familyDaily(
   rows: DailyRow[],
   family?: string,
+  now: Date = new Date(),
 ): { days: string[]; streams: Record<string, Array<number | null>> } {
-  const mine =
-    family === undefined
-      ? rows
-      : rows.filter(
-          (r) =>
-            r.image.startsWith(`${family}/`) ||
-            r.image.startsWith(`${family}-`),
-        );
+  const today = now.toISOString().slice(0, 10);
+  const mine = rows.filter(
+    (r) =>
+      r.day < today &&
+      (family === undefined ||
+        r.image.startsWith(`${family}/`) ||
+        r.image.startsWith(`${family}-`)),
+  );
   const reported = mine.map((r) => r.day).sort();
   const days: string[] = [];
   if (reported.length) {
