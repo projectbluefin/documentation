@@ -214,7 +214,9 @@ counter from `ublue-os/countme`. Fedora's `totals.csv` and the tracked
   **Bluefin Utah** (`utah…`), then **Bluefin Classic**. All use `CountPanel`;
   its visible current number comes from the plotted data.
 - First-party cards use `familyDaily(rows, family)` and plot daily stream
-  counts on a zero-anchored domain. An unreported day is a null gap, not zero.
+  counts on a zero-anchored domain. Daily buckets include only completed UTC
+  days; in-progress partial UTC days are omitted so partial readings never
+  distort the chart. An unreported day is a null gap, not zero.
 - `fetch-classic-countme-history.mjs` collects real revisions of the permitted
   Bluefin badge, never other upstream counters. `classicPopulation` supplies
   the same weekly-publication series to Classic and `sumBluefinHistories`.
