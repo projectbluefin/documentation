@@ -268,10 +268,20 @@ for (const script of GITHUB_SCRIPTS) {
       const run = runOffline(fixture, script, mode);
 
       assertControlledExit(script, run);
-      assert.ok(
-        run.calls.some((c) => c.startsWith("FETCH ")),
-        `${script} must reach the stubbed request path on a cold cache:\n${run.output}`,
-      );
+      if (script === "fetch-github-profiles.js") {
+        assert.equal(run.status, 0, run.output);
+        assert.deepEqual(
+          run.calls.filter((c) => c.startsWith("FETCH ")),
+          [],
+          `${script} must skip requests without credentials`,
+        );
+        assert.match(run.output, /Skipping fetch/);
+      } else {
+        assert.ok(
+          run.calls.some((c) => c.startsWith("FETCH ")),
+          `${script} must reach the stubbed request path on a cold cache:\n${run.output}`,
+        );
+      }
       assert.match(
         run.output,
         /token|error|fail|unavailable|503/i,
