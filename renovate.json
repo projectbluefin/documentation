@@ -5,10 +5,15 @@
   "rebaseWhen": "conflicted",
   "packageRules": [
     {
-      "description": "Automerge non-major updates",
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "description": "Automerge only pin/pinDigest updates: they lock the version already in use and bring in no new upstream code",
+      "matchUpdateTypes": ["pin", "pinDigest"],
       "automerge": true,
       "platformAutomerge": true
+    },
+    {
+      "description": "Code-changing updates (minor, patch, digest) run third-party code in workflows holding deploy and write credentials, so a human reviews them",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": false
     },
     {
       "description": "Group all non-major updates together",
@@ -31,11 +36,11 @@
   ],
   "vulnerabilityAlerts": {
     "enabled": true,
-    "automerge": true
+    "automerge": false
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true,
+    "automerge": false,
     "schedule": ["before 6am on Monday"]
   },
   "customManagers": [
