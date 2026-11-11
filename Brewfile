@@ -1,4 +1,4 @@
-# task runnner
+# task runner
 brew "just"
 # runtime
 brew "node"
