@@ -2,7 +2,7 @@ default: dev
 
 deps:
     brew bundle
-    npm install
+    npm ci
 
 build:
     npm run build
