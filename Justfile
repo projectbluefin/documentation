@@ -1,5 +1,9 @@
 default: dev
 
+deps:
+    brew bundle
+    npm install
+
 build:
     npm run build
 
