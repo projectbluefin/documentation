@@ -4,6 +4,8 @@ slug: still-roaring-bluefin-classic-and-lts
 authors: [juanresendiz813]
 tags: [classic, lts, announcements]
 image: /img/blog/2026-10-22-still-roaring/first-day-dino.webp
+description: "What's changing between Bluefin Classic and Bluefin LTS, with no action required in the short term."
+
 ---
 
 I want to start this by clearing the air: the Bluefin you know and love is going nowhere! It's still here, just with a new look and a few new raptor wranglers at the helm. Let me start by introducing myself. I'm Juan Resendiz, I'm from Florida and I do nerd stuff over at Concept To Cloud during the day. I heard Jorge's call and he had me sold at dinosaurs. Linux was the cherry on top.
