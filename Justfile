@@ -1,5 +1,9 @@
 default: dev
 
+deps:
+    brew bundle
+    npm ci
+
 build:
     npm run build
 
