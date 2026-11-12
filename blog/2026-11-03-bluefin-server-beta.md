@@ -3,6 +3,8 @@ title: "Bluefin Server 26.11 (Beta)"
 slug: bluefin-server-beta
 authors: [jeefy]
 tags: [server, announcements]
+description: "Announcing the first beta Bluefin Server, the premier cloud native OS built on Freedesktop SDK libraries."
+
 ---
 
 ![banner](https://github.com/user-attachments/assets/f42ef8f7-7ec8-43b0-982d-c294dda7244b)
@@ -74,4 +76,4 @@ sudo systemd-sysext refresh         # merge the new image into /usr
 
 This Bluefin is specifically minimal and provided as is as a basic lego block. We look forward to seeing what you build with it! 
 
-The homeserver profile still doesn't do the magical KubeStellar setup we want, but we'll keep working on it. 
+The homeserver profile still doesn't do the magical KubeStellar setup we want, but we'll keep working on it.
