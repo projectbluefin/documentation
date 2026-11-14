@@ -1,7 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+  "dependencyDashboard": {
+    "title": "Renovate Dashboard 🤖"
+  },
   "rebaseWhen": "conflicted",
   "packageRules": [
     {
