@@ -6,7 +6,14 @@
 // The image allowlist rejects anything that is not a known Bluefin image
 // shape. An anonymous endpoint cannot authenticate its callers.
 
-export const PING_IMAGE_FAMILIES = ["dakota", "utah"];
+export const PING_IMAGE_FAMILIES = [
+  "dakota",
+  "utah",
+  "ghostscript-printer-app",
+  "hplip-printer-app",
+  "gutenprint-printer-app",
+  "ps-printer-app",
+];
 const IMAGE_RE = new RegExp(
   `^(?:${PING_IMAGE_FAMILIES.join("|")})(?:-[a-z0-9]+){0,3}/[a-z0-9-]{1,32}:(?:stable|testing|unknown)$`,
   "u",

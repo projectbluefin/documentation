@@ -142,7 +142,7 @@ test("empty count cards say no raptors are reporting, naming no infrastructure",
       daily: { days: [] },
     }),
   );
-  for (const what of ["Bluefin", "Bluefin Utah"]) {
+  for (const what of ["Bluefin", "Bluefin Utah", "Printer Applications"]) {
     const panel = html.match(
       new RegExp(
         `data-what="${what} daily active systems"[^>]*data-reason="([^"]*)"`,
@@ -500,4 +500,44 @@ test("the day axis shortens its ticks but keeps the full date in the data", () =
   assert.equal(option.yAxis.min, 0, "the floor must not exaggerate readings");
   assert.equal(compactWeek("2026-08-17"), "Aug 17");
   assert.equal(compactWeek("not-a-date"), "not-a-date");
+});
+
+test("Printer Applications card plots reporting printer families on a common day axis", () => {
+  const PRINTER_DAILY_FIXTURE = {
+    days: [
+      {
+        day: "2026-09-01",
+        image: "ghostscript-printer-app/main:unknown",
+        n: 3,
+      },
+      {
+        day: "2026-09-02",
+        image: "ghostscript-printer-app/main:unknown",
+        n: 4,
+      },
+      { day: "2026-09-02", image: "hplip-printer-app/main:unknown", n: 5 },
+      { day: "2026-09-03", image: "gutenprint-printer-app/main:unknown", n: 2 },
+      { day: "2026-09-03", image: "dakota/main:stable", n: 100 },
+    ],
+  };
+  const option = chartOption(
+    renderDaily(PRINTER_DAILY_FIXTURE),
+    "Printer Applications daily active systems",
+  );
+  assert.deepEqual(option.xAxis.data, [
+    "2026-09-01",
+    "2026-09-02",
+    "2026-09-03",
+  ]);
+  const seriesNames = option.series.map((s) => s.name);
+  assert.deepEqual(seriesNames, [
+    "Ghostscript",
+    "HPLIP",
+    "Gutenprint",
+    "PostScript",
+  ]);
+  const ghostscript = option.series.find((s) => s.name === "Ghostscript");
+  assert.deepEqual(ghostscript.data, [3, 4, null]);
+  const hplip = option.series.find((s) => s.name === "HPLIP");
+  assert.deepEqual(hplip.data, [null, 5, null]);
 });
