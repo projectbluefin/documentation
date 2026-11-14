@@ -2,8 +2,8 @@
   "schemaVersion": 2,
   "org": "projectbluefin",
   "generatedAt": "2026-11-13T02:08:23.035Z",
-  "unavailable": false,
-  "stateReason": null,
+  "unavailable": true,
+  "stateReason": "A complete public GitHub contribution scan could not be verified. Previous verified data is retained when available.",
   "coverage": {
     "repositories": [
       {
