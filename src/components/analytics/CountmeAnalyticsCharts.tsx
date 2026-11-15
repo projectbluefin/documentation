@@ -719,6 +719,41 @@ export default function CountmeAnalyticsCharts({
     () => sumBluefinHistories(bluefin, utah, classicCurve),
     [bluefin, utah, classicCurve],
   );
+  const printerRows = useMemo(
+    () => (dailyData?.unavailable ? [] : (dailyData?.days ?? [])),
+    [dailyData],
+  );
+  const printerAppSeries = useMemo(() => {
+    const families = [
+      { id: "ghostscript-printer-app", name: "Ghostscript" },
+      { id: "hplip-printer-app", name: "HPLIP" },
+      { id: "gutenprint-printer-app", name: "Gutenprint" },
+      { id: "ps-printer-app", name: "PostScript" },
+    ] as const;
+    const familyDatasets = families.map((f) => ({
+      ...f,
+      daily: familyDaily(printerRows, f.id),
+    }));
+    const allDays = familyDaily(
+      printerRows.filter((row) =>
+        families.some((family) => row.image.startsWith(`${family.id}/`)),
+      ),
+    ).days;
+    const series = familyDatasets.map((f) => {
+      const dayMap = new Map<string, number | null>();
+      f.daily.days.forEach((day, i) => {
+        const vals = DAILY_STREAMS.map((s) => f.daily.streams[s][i]).filter(
+          (v): v is number => v !== null,
+        );
+        dayMap.set(day, vals.length ? vals.reduce((a, b) => a + b, 0) : null);
+      });
+      return {
+        name: f.name,
+        values: allDays.map((d) => dayMap.get(d) ?? null),
+      };
+    });
+    return { days: allDays, series };
+  }, [printerRows]);
 
   const ghcr = registry ?? fetchedRegistry;
 
@@ -895,6 +930,26 @@ export default function CountmeAnalyticsCharts({
           approximate
           step="end"
           reason={classicReason}
+          cat={cat}
+          theme={fxTheme}
+        />
+      </section>
+
+      {/* ── 4. Printer Applications: daily active installations ──────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            Printer Applications
+          </Heading>
+          <p className={styles.sectionSubtext}>
+            Active printer container instances per day.
+          </p>
+        </header>
+        <CountPanel
+          days={printerAppSeries.days}
+          series={printerAppSeries.series}
+          label="Printer Applications"
+          reason={emptyReason}
           cat={cat}
           theme={fxTheme}
         />

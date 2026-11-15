@@ -161,11 +161,17 @@ workloads:
    counter per UTC day and image in `daily_pings`, created with
    `CREATE TABLE IF NOT EXISTS` in the same `batch` as the upsert. No
    per-system rows, no IPs.
-   - `image` must match `PING_IMAGE_FAMILIES` (`dakota`, `utah`) and a stream
-     of `stable`, `testing`, or `unknown`; anything else is a 400 with no
-     write. This rejects non-Bluefin shapes; it cannot authenticate callers.
-   - The stream is the booted ref's tag (`bootc status`), never
-     `image-info.json`'s `image-tag`, which is fixed at build time.
+   - `image` must match `PING_IMAGE_FAMILIES` (`dakota`, `utah`,
+     `ghostscript-printer-app`, `hplip-printer-app`, `gutenprint-printer-app`,
+     `ps-printer-app`) and a stream of `stable`, `testing`, or `unknown`;
+     anything else is a 400 with no write. This rejects non-Bluefin shapes; it
+     cannot authenticate callers.
+   - For host OS images (`dakota`, `utah`), the stream is the booted ref's
+     tag (`bootc status`), never `image-info.json`'s `image-tag`, which is
+     fixed at build time. For printer containers, ChairLift pins immutable
+     digests, reporting the stream as `unknown`. Deduplication is enforced
+     client-side by a persistent `.countme_day` UTC date marker in the
+     container's bind-mounted volume (`/var/lib/<family>-printer-app`).
    - `{"success": true}` only after D1 confirms every statement; anything
      else is a 503, and the client retries on its next timer run.
    - `/v1/daily.json` returns `[{day, image, n}]` for 90 days. A day's `n` is

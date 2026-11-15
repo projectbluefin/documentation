@@ -1151,7 +1151,14 @@ function put(body, env) {
 
 test("a Bluefin image ping is counted per day and acknowledged", async () => {
   const db = stubDb([]);
-  for (const image of ["dakota-nvidia/nvidia:testing", "utah/main:unknown"]) {
+  for (const image of [
+    "dakota-nvidia/nvidia:testing",
+    "utah/main:unknown",
+    "ghostscript-printer-app/main:unknown",
+    "hplip-printer-app/main:unknown",
+    "gutenprint-printer-app/main:unknown",
+    "ps-printer-app/main:unknown",
+  ]) {
     const response = await put({ image }, db.env);
     assert.equal(response.status, 200, image);
     assert.deepEqual(await response.json(), { success: true });
@@ -1159,7 +1166,14 @@ test("a Bluefin image ping is counted per day and acknowledged", async () => {
   const upserts = db.statements.filter((s) => s.sql.includes("INSERT"));
   assert.deepEqual(
     upserts.map((s) => s.args[1]),
-    ["dakota-nvidia/nvidia:testing", "utah/main:unknown"],
+    [
+      "dakota-nvidia/nvidia:testing",
+      "utah/main:unknown",
+      "ghostscript-printer-app/main:unknown",
+      "hplip-printer-app/main:unknown",
+      "gutenprint-printer-app/main:unknown",
+      "ps-printer-app/main:unknown",
+    ],
   );
 });
 

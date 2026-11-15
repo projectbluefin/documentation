@@ -42,7 +42,7 @@ Other images do not send it.
 
 ### Opt-Out Instructions
 
-To stop Project Bluefin countme reporting now and across reboots, mask its systemd timer:
+To stop Project Bluefin host countme reporting now and across reboots, mask its systemd timer:
 
 ```bash
 sudo systemctl mask --now projectbluefin-countme.timer
@@ -50,6 +50,12 @@ sudo systemctl mask --now projectbluefin-countme.timer
 
 A mask of the previous `bluefin-countme.timer` or `bluefin-countme.service` units, and the
 `/etc/projectbluefin/countme/disabled` opt-out file, still stop reporting.
+
+To disable countme reporting for a printer container, create a `.countme_disabled` file in its state directory (for ChairLift, in `~/printer-workspaces/<family>/<instance>/.countme_disabled` on the host, which maps to `/var/lib/<family>-printer-app/.countme_disabled` inside the container):
+
+```bash
+touch ~/printer-workspaces/<family>/<instance>/.countme_disabled
+```
 
 To disable upstream Fedora countme:
 
