@@ -34,6 +34,11 @@
       "automerge": false,
       "groupName": "artwork wallpaper versions",
       "groupSlug": "artwork-versions"
+    },
+    {
+      "description": "Hold typescript on 6.0.x until @typescript-eslint supports TypeScript 7 (its peer range is >=4.8.4 <6.1.0)",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<6.1"
     }
   ],
   "vulnerabilityAlerts": {
