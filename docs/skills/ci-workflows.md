@@ -121,6 +121,14 @@ stops firing, or a cache entry that carries corrupt build state.
    `review-runtime` (Node 24) has no `sh` or `npm`, so it cannot host `run:`
    steps.
 
+9. **Exercise alert shell steps offline.** Run the checked-in shell with a
+   strict `gh` stub on `PATH` and a temporary `GITHUB_OUTPUT`. Reject unknown
+   flags and require an explicit GET method for requests using `-f` query
+   fields; otherwise the CLI defaults to POST. Include paginated newer eligible
+   runs, PR/merge-queue-only results, and no newer run. Verify both the output
+   and continuation into alert handling without cancelling a live deployment.
+   `node --test scripts/ci-alert.test.js` covers this pattern.
+
 ## Common Rationalizations
 
 - _"Caching all of `node_modules` is simpler."_ It archives rspack state that
@@ -146,6 +154,8 @@ stops firing, or a cache entry that carries corrupt build state.
 
 ## Sources
 
+- `gh api --help` — query fields select POST unless `--method GET` is explicit.
+- `scripts/ci-alert.test.js` — offline execution of cancellation and alert steps.
 - `.github/workflows/pages.yml` — build/verify/deploy split, cache layout.
 - `Justfile` — `clear` / `dev-safe` document rspack cache corruption.
 - actions/cache README — branch scoping, 10 GB LRU, restore/save split.
