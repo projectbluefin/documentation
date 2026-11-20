@@ -71,10 +71,10 @@ export function compactWeek(week: string): string {
   return Number.isNaN(d.getTime())
     ? week
     : d.toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        timeZone: "UTC",
-      });
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    });
 }
 
 /**
@@ -175,12 +175,12 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "dakota",
     name: "Bluefin",
-    edition: "Next-Gen BuildStream",
+    edition: "Flagship Workstation",
     base: "GNOME OS / BuildStream 2",
     cat: 2,
     link: "/dakota",
     status: "bootstrapping",
-    statusText: "Alpha · Collecting",
+    statusText: "Beta · Collecting",
     images: [
       "dakota",
       "dakota-nvidia",
@@ -192,7 +192,7 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "bluefin",
     name: "Bluefin Classic",
-    edition: "Flagship Workstation",
+    edition: "Legacy Workstation",
     base: "Fedora",
     cat: 0,
     link: "/downloads",
@@ -204,24 +204,24 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
     id: "utah",
     name: "Project Bluefin Utah",
-    edition: "Modular Hummingbird",
+    edition: "Modular Hummingbird Prototype",
     base: "Fedora Hummingbird",
     cat: 3,
     link: "/utah",
     status: "bootstrapping",
-    statusText: "Pre-alpha · Collecting",
+    statusText: "Alpha · Collecting",
     images: ["utah", "utah-nvidia", "utah-gaming", "utah-nvidia-gaming"],
     delivery: "oci",
   },
   {
     id: "server",
     name: "Bluefin Server",
-    edition: "Image-Based Server",
+    edition: "Kubernetes Platform",
     base: "freedesktop-sdk 26.08",
     cat: 4,
     link: "https://github.com/projectbluefin/server",
     status: "provisioning",
-    statusText: "Alpha · DDI delivery",
+    statusText: "Alpha · DDI",
     images: [],
     delivery: "ddi",
   },
@@ -590,7 +590,7 @@ export default function CountmeAnalyticsCharts({
       } catch (err) {
         setRegistryReason(
           `${REGISTRY_URL} could not be read (${(err as Error).message}). ` +
-            `It is generated at build time and may not exist in this environment.`,
+          `It is generated at build time and may not exist in this environment.`,
         );
       }
     })();
@@ -835,11 +835,10 @@ export default function CountmeAnalyticsCharts({
                   </span>
                 </div>
                 <span
-                  className={`${styles.statusPill} ${
-                    img.status === "active"
+                  className={`${styles.statusPill} ${img.status === "active"
                       ? styles.statusActive
                       : styles.statusPending
-                  }`}
+                    }`}
                 >
                   {img.statusText}
                 </span>
@@ -868,9 +867,8 @@ export default function CountmeAnalyticsCharts({
                               <span
                                 key={stream}
                                 className={styles.streamChip}
-                                title={`${name}:${stream} — ${sev[level].word}${
-                                  age === null ? "" : `, ${age} days old`
-                                }`}
+                                title={`${name}:${stream} — ${sev[level].word}${age === null ? "" : `, ${age} days old`
+                                  }`}
                               >
                                 <span
                                   aria-hidden="true"

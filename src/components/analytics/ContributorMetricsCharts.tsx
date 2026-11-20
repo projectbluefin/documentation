@@ -146,7 +146,7 @@ export default function ContributorMetricsCharts({
       <div ref={themeRef} className={`fxRoot ${styles.container}`}>
         <Unavailable
           what="Contributor metrics"
-          reason="The contributor dataset is missing or does not match schema version 2."
+          reason="The contributor dataset is missing"
         />
       </div>
     );
@@ -168,7 +168,7 @@ export default function ContributorMetricsCharts({
     [
       "Total contributors",
       summary.totalContributors,
-      "Distinct linked GitHub accounts in recorded public history",
+      "Distinct linked GitHub accounts",
     ],
     [
       "Active in last 90 days",
@@ -187,7 +187,7 @@ export default function ContributorMetricsCharts({
       {notice && (
         <Unavailable
           what="Current contributor metrics"
-          reason={`${notice} Values below are the retained snapshot, not a successful current refresh.`}
+          reason={`${notice} Values below are the retained snapshot.`}
         />
       )}
       <div className={styles.summaryCardsGrid}>
