@@ -26,10 +26,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: latest
+          node-version: 26
 
       - name: Install dependencies
-        run: npm install -g renovate@43.150.0
+        run: npm install -g renovate@44.255.2
 
       - name: Validate Renovate config
         run: renovate-config-validator

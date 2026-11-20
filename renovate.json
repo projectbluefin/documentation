@@ -1,31 +1,45 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "dependencyDashboard": true,
-  "dependencyDashboardTitle": "Renovate Dashboard 🤖",
+  "dependencyDashboard": {
+    "enabled": true,
+    "title": "Renovate Dashboard 🤖"
+  },
   "rebaseWhen": "conflicted",
+  "constraints": {
+    "npm": "^11.20.0"
+  },
   "packageRules": [
     {
-      "description": "Automerge only pin/pinDigest updates: they lock the version already in use and bring in no new upstream code",
+      "description": "Immutable-ref housekeeping (pin, pinDigest) automerges: it locks the version already in use and brings in no new upstream code.",
       "matchUpdateTypes": ["pin", "pinDigest"],
       "automerge": true,
       "platformAutomerge": true
     },
     {
-      "description": "Code-changing updates (minor, patch, digest) run third-party code in workflows holding deploy and write credentials, so a human reviews them",
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "automerge": false
-    },
-    {
-      "description": "Group all non-major updates together",
+      "description": "Group all non-major updates together. The hive merges this group itself once the required checks pass (it merges trusted-bot pull requests whatever automerge says here); only majors wait for a person.",
       "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
       "groupName": "all non-major dependencies",
       "groupSlug": "all-minor-patch"
     },
     {
-      "description": "Major updates require manual review",
-      "matchUpdateTypes": ["major"],
-      "automerge": false
+      "description": "Third-party GitHub Actions (everything except first-party projectbluefin/**) are offered only once their release is three days old, so a compromised release has time to be spotted and pulled upstream before it lands here. Same decision as finpilot#645 and testsuite.",
+      "matchManagers": ["github-actions"],
+      "matchPackageNames": ["!projectbluefin/**"],
+      "minimumReleaseAge": "3 days"
+    },
+    {
+      "description": "Give action bumps in the four publishing workflows their own pull request. The hive merges a pure pin bump to these files without a person (its pin-only exception), but only when every file in the pull request is one of them; grouped with other workflows, the bump always waits for a person.",
+      "matchManagers": ["github-actions"],
+      "matchFileNames": [
+        ".github/workflows/pages.yml",
+        ".github/workflows/pdf.yml",
+        ".github/workflows/deploy-countme-worker.yml",
+        ".github/workflows/open-discussion.yml"
+      ],
+      "matchUpdateTypes": ["digest", "pin", "pinDigest", "patch", "minor"],
+      "groupName": "publishing workflow action pins",
+      "groupSlug": "publishing-workflow-action-pins"
     },
     {
       "description": "Artwork version bumps — do not automerge, let the update workflow open a review PR",
@@ -38,15 +52,19 @@
       "description": "Hold typescript on 6.0.x until @typescript-eslint supports TypeScript 7 (its peer range is >=4.8.4 <6.1.0)",
       "matchPackageNames": ["typescript"],
       "allowedVersions": "<6.1"
+    },
+    {
+      "description": "A major update always waits for a person. automerge false only stops Renovate; the hive merges trusted-bot pull requests itself, so label the update needs-owner-merge (the hive's auto_merge.human_merge_labels default): the hive never merges a PR with it, and only a person's merge lands it. Never use hold, which merges as soon as someone removes it. Last matching rule wins, so keep this rule last.",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "addLabels": ["needs-owner-merge"]
     }
   ],
   "vulnerabilityAlerts": {
-    "enabled": true,
-    "automerge": false
+    "enabled": true
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": false,
     "schedule": ["before 6am on Monday"]
   },
   "customManagers": [
