@@ -49,7 +49,7 @@ jobs:
           set -euo pipefail
           # Any newer run that isn't a PR or queue run counts: a newer push, scheduled
           # or dispatched deploy can supersede a cancelled one.
-          newer=$(gh api --paginate --slurp -G \
+          newer=$(gh api --paginate --slurp -X GET \
             "repos/${REPO}/actions/workflows/${WORKFLOW_ID}/runs" \
             -f created=">=${CREATED}" -f per_page=100 |
             jq -r --argjson number "$RUN_NUMBER" \
