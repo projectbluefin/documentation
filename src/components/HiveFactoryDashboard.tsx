@@ -4883,6 +4883,22 @@ export function SeasonTabStrip({
         role="tablist"
         aria-label="Contribution seasons"
         className={`${styles.lbTabs} ${styles.seasonTabList}`}
+        onKeyDown={(e) => {
+          const i = Math.max(
+            0,
+            tabs.findIndex((t) => t.id === activeTabId),
+          );
+          let next = -1;
+          if (e.key === "ArrowRight") next = (i + 1) % tabs.length;
+          else if (e.key === "ArrowLeft")
+            next = (i - 1 + tabs.length) % tabs.length;
+          else if (e.key === "Home") next = 0;
+          else if (e.key === "End") next = tabs.length - 1;
+          if (next < 0) return;
+          e.preventDefault();
+          onSelect(tabs[next].id);
+          document.getElementById(`season-tab-${tabs[next].id}`)?.focus();
+        }}
       >
         {tabs.map((tab) => {
           const isSelected = tab.id === activeTabId;

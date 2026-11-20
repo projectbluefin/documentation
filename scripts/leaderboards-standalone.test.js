@@ -647,3 +647,67 @@ test("unavailable season data degrades gracefully with an explicit reason", () =
   assert.match(msHtml, /Season data unavailable/);
   assert.match(msHtml, /HTTP 503/);
 });
+
+test("a stale isCurrent flag in cached seasons never produces two Current tabs after a GNOME rollover", () => {
+  const stalePrevious = {
+    id: "gnome-51",
+    seasonNumber: 9,
+    version: 51,
+    name: "A Coruña",
+    title: "Season of A Coruña",
+    start: "2026-09-16T00:00:00.000Z",
+    end: null,
+    isCurrent: true, // stale flag from before GNOME 52 landed
+    source: "https://release.gnome.org/51/",
+    repos: ["common"],
+    byLogin: { dev: { commits: 5, repos: { common: 5 } } },
+    weekStarts: [],
+    weeklyCommits: [],
+    totalCommits: 5,
+    breadthUnlocks: [],
+  };
+  const freshCurrent = {
+    id: "gnome-52",
+    version: 52,
+    name: "Example",
+    start: "2027-03-17T00:00:00.000Z",
+    source: "https://release.gnome.org/52/",
+    repos: ["common"],
+    byLogin: {},
+    weekStarts: [],
+    weeklyCommits: [],
+    totalCommits: 0,
+    breadthUnlocks: [],
+  };
+
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: { dev: 5 },
+      contributorsByRepo: { common: { dev: 5 } },
+      hiveContributorTiers: { dev: { tier: "trusted", tasks: 5 } },
+      milestones: [],
+      season: freshCurrent,
+      seasons: [stalePrevious],
+    },
+    registry: {},
+  });
+
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  const currentBadges = html.match(/seasonCurrentBadge/g) || [];
+  assert.equal(
+    currentBadges.length,
+    1,
+    "only the authoritative history.season tab may carry the Current badge",
+  );
+  assert.match(
+    html,
+    /id="season-tab-gnome-52"[^>]*aria-selected="true"/,
+    "new GNOME 52 season must be selected by default",
+  );
+  assert.match(
+    html,
+    /id="season-tab-gnome-51"[^>]*aria-selected="false"/,
+    "stale GNOME 51 season must not be selected",
+  );
+});

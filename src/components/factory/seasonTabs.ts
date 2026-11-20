@@ -126,7 +126,9 @@ export function buildSeasonTabList(
       typeof season.seasonNumber === "number" && season.seasonNumber > 0
         ? season.seasonNumber
         : index + 1;
-    const isCurrent = Boolean(season.isCurrent) || id === currentId;
+    const isCurrent = history.season
+      ? id === currentId
+      : Boolean(season.isCurrent) || id === currentId;
     const title = formatSeasonDisplayTitle(season);
     const shortLabel = season.name
       ? `Season ${seasonNumber} · ${season.name}`
