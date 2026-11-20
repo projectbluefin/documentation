@@ -96,8 +96,8 @@
     "wrangler": "4.160.1"
   },
   "overrides": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "$react",
+    "react-dom": "$react-dom",
     "serialize-javascript": "^7.0.5",
     "tinypool": "^2.2.0",
     "postcss-selector-parser": "^7.1.6"
