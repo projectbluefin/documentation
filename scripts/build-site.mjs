@@ -177,9 +177,18 @@ function failIfAny(results) {
 
 async function main() {
   const argv = process.argv.slice(2);
+  // The page feed is generated from the hive history that fetch-data (or the
+  // tracked seed for build:ci) leaves in static/data/. `--matrix` and
+  // `--list-locales` are machine-read (GitHub Actions outputs), so they must
+  // return before this writes anything to stdout.
+  const writeFeed = () =>
+    createRequire(import.meta.url)(
+      "./generate-leaderboard-feed.js",
+    ).writeFeedFromFile();
   // An explicit `--locale` (e.g. `npm run build:ci -- --locale de` to preview
   // one translation) is a single ordinary build; hand it to Docusaurus as is.
   if (argv.includes("--locale")) {
+    writeFeed();
     failIfAny([await build("build", argv)]);
     return;
   }
@@ -192,6 +201,7 @@ async function main() {
     process.stdout.write(locales.join(" "));
     return;
   }
+  writeFeed();
   const part = argv[0] === "--part" ? argv[1] : null;
   const extraArgs = part === null ? argv : argv.slice(2);
   const concurrency = Math.max(

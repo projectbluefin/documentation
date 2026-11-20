@@ -56,8 +56,8 @@ function loadDashboard(datasets = {}) {
       if (id === "@docusaurus/Link") {
         return {
           __esModule: true,
-          default: ({ href, children, ...props }) =>
-            React.createElement("a", { href, ...props }, children),
+          default: ({ href, to, children, ...props }) =>
+            React.createElement("a", { href: href ?? to, ...props }, children),
         };
       }
       if (id === "@theme/Heading") {
@@ -269,7 +269,10 @@ test("the standalone page renders the Moments of Triumph leaderboard as a ledger
   });
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
   assert.match(html, /Moments of Triumph/);
-  assert.match(html, /Ledger of teamwork/);
+  assert.match(html, /ledger of teamwork/i);
+  assert.match(html, /href="\/contributing\/"/);
+  assert.match(html, /href="\/feeds\/moments-of-triumph\.xml"/);
+  assert.match(html, /Subscribe via RSS/);
   assert.match(html, /Reached Trusted Tier/);
   assert.match(html, /Reached Builder Tier/);
   assert.match(html, /champion/);
@@ -301,6 +304,67 @@ test("the standalone page renders the Moments of Triumph leaderboard as a ledger
     /id="factory-community"/,
     "Factory Community section must have an anchor id",
   );
+  assert.ok(
+    html.indexOf('id="moments-of-triumph"') <
+      html.indexOf('id="community-builders"'),
+    "the Moments of Triumph stream must lead the /leaderboards page",
+  );
+});
+
+test("Moments of Triumph keeps season Week 1 events beyond the newest 50", () => {
+  const newer = Array.from({ length: 50 }, (_, i) => ({
+    id: `task-newer-${i}`,
+    login: `newer-${i}`,
+    type: "task_landmark",
+    value: 10,
+    title: "10 tasks shipped",
+    detail: "Completed 10 tasks via Hive registry",
+    detectedAt: "2026-10-15T12:00:00Z",
+    badge: { label: "10 TASKS", color: "var(--fx-cat-2)" },
+  }));
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: {},
+      contributorsByRepo: {},
+      milestones: newer,
+      season: {
+        version: 51,
+        name: "A Coruña",
+        start: "2026-09-16T00:00:00.000Z",
+        source: "https://release.gnome.org/51/",
+        updatedAt: "2026-09-22T00:00:00Z",
+        repos: ["common"],
+        byLogin: {},
+        weekStarts: [],
+        weeklyCommits: [],
+        totalCommits: 1,
+        breadthUnlocks: [
+          {
+            id: "season-51-seasonfirst-breadth-2",
+            login: "seasonfirst",
+            type: "project_unlock",
+            value: 2,
+            repo: "common",
+            title: "Reached Contributor Breadth",
+            detail:
+              "Active across 2 projects in Season of A Coruña (unlocked by common)",
+            detectedAt: "2026-09-17T12:00:00Z",
+            badge: { label: "CONTRIBUTOR", color: "var(--fx-sev-ok)" },
+          },
+        ],
+      },
+    },
+    registry: {},
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+
+  assert.match(
+    html,
+    /seasonfirst/,
+    "the oldest season-week event must not be dropped by a newest-first cap",
+  );
+  assert.match(html, /Season of A Coruña · Week 1/);
 });
 
 test("Moments of Triumph highlights local contributors in gold with local label", () => {
@@ -378,6 +442,7 @@ test("missing milestone data is visible instead of disappearing", () => {
   });
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
   assert.match(html, /Milestone data unavailable/);
+  assert.match(html, /href="\/feeds\/moments-of-triumph\.xml"/);
 });
 
 test("Moments of Triumph renders an explicit error reason when refresh fails", () => {
