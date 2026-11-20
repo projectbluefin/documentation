@@ -96,13 +96,13 @@
   },
   "lts": {
     "name": "Bluefin LTS",
-    "repo": "projectbluefin/bluefin-lts",
+    "repo": "ublue-os/bluefin-lts",
     "ref": "main",
     "species": "Achillobator giganticus",
     "wikipedia": "https://en.wikipedia.org/wiki/Achillobator",
     "logoLight": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-lts/bluefin-lts-logo-light.svg",
     "logoDark": "https://raw.githubusercontent.com/projectbluefin/artwork/main/assets/vector/logos/bluefin-lts/bluefin-lts-logo-dark.svg",
-    "image": "ghcr.io/projectbluefin/bluefin-lts",
+    "image": "ghcr.io/ublue-os/bluefin",
     "headless": false,
     "testsuiteScreenshot": "https://projectbluefin.github.io/testsuite/screenshots/bluefin-lts-testing-smoke-latest.png",
     "testsuiteRun": "https://projectbluefin.github.io/testsuite/",
@@ -117,7 +117,7 @@
       {
         "src": "https://github.com/user-attachments/assets/2e160934-44e6-4aee-b2b8-accb3bcf0a41",
         "alt": "Gold Achillobator silhouette beside a human figure on a scale grid, as used in the upstream README",
-        "source": "https://github.com/projectbluefin/bluefin-lts/blob/main/README.md",
+        "source": "https://github.com/ublue-os/bluefin-lts/blob/main/README.md",
         "attribution": "Bluefin LTS README · Original silhouette",
         "diagram": true
       }

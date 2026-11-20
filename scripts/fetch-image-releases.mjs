@@ -29,7 +29,7 @@ export const PRODUCT_SOURCES = {
   classic: { repository: "ublue-os/bluefin", kind: "image" },
   dakota: { repository: "projectbluefin/dakota", kind: "image" },
   utah: { repository: "projectbluefin/utah", kind: "image" },
-  lts: { repository: "projectbluefin/bluefin-lts", kind: "image" },
+  lts: { repository: "ublue-os/bluefin-lts", kind: "image" },
 };
 
 export function releaseStream(release, source) {
@@ -49,6 +49,13 @@ export function releaseStream(release, source) {
       return "stable";
     return null;
   }
+  // ublue-os/bluefin-lts tags releases lts.YYYYMMDD and publishes the
+  // floating :lts tag rather than :stable/:testing.
+  if (
+    source.repository === PRODUCT_SOURCES.lts.repository &&
+    /^lts[.-]\d/.test(release.tag_name ?? "")
+  )
+    return "lts";
   return /^(stable|testing)[.-]\d/.exec(release.tag_name ?? "")?.[1] ?? null;
 }
 

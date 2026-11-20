@@ -27,6 +27,14 @@ test("releaseStream: image tags name their stream", () => {
     null,
   );
   assert.equal(releaseStream({}, PRODUCT_SOURCES.lts), null);
+  assert.equal(
+    releaseStream({ tag_name: "lts.20261120" }, PRODUCT_SOURCES.lts),
+    "lts",
+  );
+  assert.equal(
+    releaseStream({ tag_name: "lts.20261120" }, PRODUCT_SOURCES.classic),
+    null,
+  );
 });
 
 test("releaseStream: server releases never map to a bootc stream", () => {
@@ -298,7 +306,7 @@ function stubFetch(t) {
       return jsonResponse({ message: "boom" }, 500);
     if (path.startsWith("/repos/projectbluefin/utah/releases?"))
       return jsonResponse([]);
-    if (path.startsWith("/repos/projectbluefin/bluefin-lts/releases?"))
+    if (path.startsWith("/repos/ublue-os/bluefin-lts/releases?"))
       return jsonResponse({ message: "not a list" });
     if (path.startsWith("/repos/projectbluefin/iso/releases?"))
       return jsonResponse([isoRelease]);
@@ -392,7 +400,7 @@ test("fetchImageReleases: failed, empty and malformed release lists mark the pro
   );
   assert.equal(
     products.lts.stateReason,
-    "Releases unavailable for projectbluefin/bluefin-lts: Unexpected releases response",
+    "Releases unavailable for ublue-os/bluefin-lts: Unexpected releases response",
   );
 });
 
