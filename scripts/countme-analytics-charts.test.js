@@ -130,7 +130,16 @@ test("parseCount distinguishes 0 from null/undefined", () => {
 
 test("the catalogue names every family common ships into", () => {
   const ids = BLUEFIN_FAMILY_IMAGES.map((img) => img.id);
-  assert.deepEqual(ids, ["bluefin", "dakota", "utah", "server"]);
+  assert.deepEqual(ids, ["dakota", "bluefin", "utah", "server"]);
+
+  // Display names are the user-facing contract and are not derived from `id`.
+  const names = BLUEFIN_FAMILY_IMAGES.map((img) => img.name);
+  assert.deepEqual(names, [
+    "Bluefin",
+    "Bluefin Classic",
+    "Project Bluefin Utah",
+    "Bluefin Server",
+  ]);
 });
 
 test("empty count cards say no raptors are reporting, naming no infrastructure", () => {
@@ -155,12 +164,12 @@ test("empty count cards say no raptors are reporting, naming no infrastructure",
 });
 
 const PROMOTED = [
-  "bluefin",
-  "bluefin-nvidia",
   "dakota",
   "dakota-nvidia",
   "dakota-gaming",
   "dakota-nvidia-gaming",
+  "bluefin",
+  "bluefin-nvidia",
   "utah",
   "utah-nvidia",
   "utah-gaming",
@@ -302,6 +311,20 @@ test("the top plotted history is Bluefin plus Utah plus the displayed Classic hi
     "end",
     "Classic is held from its actual publication date",
   );
+});
+
+test("the panels read Total, Bluefin, Bluefin Classic, then Utah", () => {
+  const html = renderDaily(DAILY_FIXTURE);
+  const headings = [...html.matchAll(/<h3[^>]*>([^<]*)<\/h3>/g)].map(
+    (m) => m[1],
+  );
+  assert.deepEqual(headings.slice(0, 5), [
+    "All Bluefins (Total)",
+    "Bluefin",
+    "Bluefin Classic (ublue-os/bluefin)",
+    "Bluefin Utah",
+    "Printer Applications",
+  ]);
 });
 
 test("zero in all three charts remains a plotted total", () => {

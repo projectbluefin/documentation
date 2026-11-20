@@ -211,7 +211,7 @@ counter from `ublue-os/countme`. Fedora's `totals.csv` and the tracked
 `countme-history.json` are not sources for a Project Bluefin image count.
 
 - The cards read **All Bluefins**, **Bluefin** (`dakota…` images),
-  **Bluefin Utah** (`utah…`), then **Bluefin Classic**. All use `CountPanel`;
+  **Bluefin Classic**, then **Bluefin Utah** (`utah…`). All use `CountPanel`;
   its visible current number comes from the plotted data.
 - First-party cards use `familyDaily(rows, family)` and plot daily stream
   counts on a zero-anchored domain. Daily buckets include only completed UTC

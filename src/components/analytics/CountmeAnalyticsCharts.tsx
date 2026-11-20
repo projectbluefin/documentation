@@ -173,20 +173,8 @@ export interface ProjectBluefinImageSpec {
  */
 export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
   {
-    id: "bluefin",
-    name: "Bluefin",
-    edition: "Flagship Workstation",
-    base: "Fedora",
-    cat: 0,
-    link: "/downloads",
-    status: "active",
-    statusText: "Active Tracking",
-    images: ["bluefin", "bluefin-nvidia"],
-    delivery: "oci",
-  },
-  {
     id: "dakota",
-    name: "Project Bluefin Dakota",
+    name: "Bluefin",
     edition: "Next-Gen BuildStream",
     base: "GNOME OS / BuildStream 2",
     cat: 2,
@@ -199,6 +187,18 @@ export const BLUEFIN_FAMILY_IMAGES: ProjectBluefinImageSpec[] = [
       "dakota-gaming",
       "dakota-nvidia-gaming",
     ],
+    delivery: "oci",
+  },
+  {
+    id: "bluefin",
+    name: "Bluefin Classic",
+    edition: "Flagship Workstation",
+    base: "Fedora",
+    cat: 0,
+    link: "/downloads",
+    status: "active",
+    statusText: "Active Tracking",
+    images: ["bluefin", "bluefin-nvidia"],
     delivery: "oci",
   },
   {
@@ -705,7 +705,7 @@ export default function CountmeAnalyticsCharts({
             All Bluefins (Total)
           </Heading>
           <p className={styles.sectionSubtext}>
-            Bluefin + Bluefin Utah + Classic.
+            Bluefin + Bluefin Classic + Bluefin Utah.
           </p>
         </header>
         <CountPanel
@@ -742,24 +742,7 @@ export default function CountmeAnalyticsCharts({
         />
       </section>
 
-      {/* ── 2. Bluefin Utah: daily active systems ────────────────────────── */}
-      <section className={styles.panelCard}>
-        <header className={styles.sectionHeader}>
-          <Heading as="h3" className={styles.sectionTitle}>
-            Bluefin Utah
-          </Heading>
-          <p className={styles.sectionSubtext}>Systems active per day.</p>
-        </header>
-        <CountPanel
-          days={utah.days}
-          series={dailyChartSeries(utah)}
-          label="Bluefin Utah"
-          reason={emptyReason}
-          cat={cat}
-          theme={fxTheme}
-        />
-      </section>
-
+      {/* ── 2. Bluefin Classic: weekly active systems ────────────────────── */}
       <section className={styles.panelCard}>
         <header className={styles.sectionHeader}>
           <Heading as="h3" className={styles.sectionTitle}>
@@ -780,6 +763,24 @@ export default function CountmeAnalyticsCharts({
           approximate
           step="end"
           reason={classicReason}
+          cat={cat}
+          theme={fxTheme}
+        />
+      </section>
+
+      {/* ── 3. Bluefin Utah: daily active systems ────────────────────────── */}
+      <section className={styles.panelCard}>
+        <header className={styles.sectionHeader}>
+          <Heading as="h3" className={styles.sectionTitle}>
+            Bluefin Utah
+          </Heading>
+          <p className={styles.sectionSubtext}>Systems active per day.</p>
+        </header>
+        <CountPanel
+          days={utah.days}
+          series={dailyChartSeries(utah)}
+          label="Bluefin Utah"
+          reason={emptyReason}
           cat={cat}
           theme={fxTheme}
         />
