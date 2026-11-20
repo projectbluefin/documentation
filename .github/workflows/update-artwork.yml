@@ -17,8 +17,9 @@ concurrency:
   cancel-in-progress: false # never cancel artwork sync mid-run
 
 permissions:
-  contents: write
-  pull-requests: write
+  # Pushes and PRs use the mergeraptor app token (#1625), so the built-in
+  # token only reads.
+  contents: read
 
 jobs:
   sync-artwork:
@@ -78,11 +79,21 @@ jobs:
             echo "body=Automated artwork sync from ublue-os/artwork" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Generate mergeraptor app token
+        if: steps.changes.outputs.has_changes == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
+        with:
+          app-id: ${{ secrets.MERGERAPTOR_APP_ID }}
+          private-key: ${{ secrets.MERGERAPTOR_PRIVATE_KEY }}
+
       - name: Create Pull Request
         if: steps.changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@3ffccacd46053766916f087ce41d627c0b8cf2d1 # v8.1.3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # An app token: GitHub starts no CI for PRs made with the built-in
+          # token (#1625).
+          token: ${{ steps.app-token.outputs.token }}
           branch: artwork/automated-sync-${{ github.run_id }}
           title: "artwork: sync new wallpapers from ublue-os/artwork"
           body: ${{ steps.pr-body.outputs.body }}

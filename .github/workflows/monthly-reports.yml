@@ -9,8 +9,9 @@ on:
   workflow_dispatch: # Allow manual triggering for testing
 
 permissions:
-  contents: write # For git commits
-  pull-requests: write # For creating PRs
+  # Pushes and PRs use the mergeraptor app token (#1625), so the built-in
+  # token only reads.
+  contents: read
 
 jobs:
   gate:
@@ -97,11 +98,18 @@ jobs:
             static/data/countme-history.json
           git diff --staged --quiet || git commit -m "docs(reports): add monthly report for $(date +%B\ %Y)"
 
+      - name: Generate mergeraptor app token
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
+        with:
+          app-id: ${{ secrets.MERGERAPTOR_APP_ID }}
+          private-key: ${{ secrets.MERGERAPTOR_PRIVATE_KEY }}
+
       - name: Push branch and create PR
         run: |
           BRANCH_NAME="monthly-report/$(date +%Y-%m)"
           # Re-add credentials for the push (persist-credentials: false on checkout)
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/projectbluefin/documentation"
           TODAY=$(date +%Y-%m-%d)
           # --force is safe here because the workflow always resets the branch with
           # git checkout -B, and actions/checkout shallow clones don't track the
@@ -135,4 +143,6 @@ jobs:
             echo "PR already exists for $BRANCH_NAME — skipping creation"
           fi
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # An app token, not GITHUB_TOKEN: GitHub starts no CI for PRs or pushes
+          # made with the built-in token (#1625).
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
