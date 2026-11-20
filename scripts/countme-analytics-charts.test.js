@@ -71,6 +71,7 @@ const {
   parseCount,
   compactWeek,
   BLUEFIN_FAMILY_IMAGES,
+  PerImageUsage,
   default: CountmeAnalyticsCharts,
 } = mod;
 
@@ -414,6 +415,44 @@ test("a Utah day with no reports stays on the axis as a gap", () => {
   );
   assert.deepEqual(days, ["2026-09-20", "2026-09-21", "2026-09-22"]);
   assert.deepEqual(streams.stable, [4, null, 5]);
+});
+
+test("Bluefin Server reads the latest stream, not the bootc channel set", () => {
+  const { days, streams } = familyDaily(
+    [
+      { day: "2026-09-22", image: "server/main:latest", n: 7 },
+      { day: "2026-09-23", image: "server/main:latest", n: 9 },
+    ],
+    "server",
+  );
+  assert.deepEqual(days, ["2026-09-22", "2026-09-23"]);
+  assert.deepEqual(streams.latest, [7, 9]);
+  assert.deepEqual(streams.unknown, [null, null]);
+  assert.equal("stable" in streams, false, "bootc streams must not appear");
+});
+
+test("the Server card charts its latest stream", () => {
+  const html = renderToStaticMarkup(
+    React.createElement(PerImageUsage, {
+      family: "server",
+      daily: {
+        days: [
+          { day: "2026-09-22", image: "server/main:latest", n: 7 },
+          { day: "2026-09-23", image: "server/main:latest", n: 9 },
+        ],
+      },
+    }),
+  );
+  const option = html.match(
+    /data-title="Bluefin Server daily active systems"[^>]*data-option="([^"]*)"/,
+  );
+  assert.ok(option, "the Server card must render a chart");
+  const parsed = JSON.parse(option[1].replace(/&quot;/g, '"'));
+  assert.deepEqual(
+    parsed.series.map((s) => s.name),
+    ["latest", "unknown"],
+  );
+  assert.deepEqual(parsed.series[0].data, [7, 9]);
 });
 test("daily aggregation excludes the ongoing UTC day to chart full days only", () => {
   const rows = [

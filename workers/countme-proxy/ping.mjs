@@ -1,12 +1,15 @@
 // Active-system count: each Project Bluefin system sends at most one
 // PUT /v1/ping {"image": "<image-name>/<image-flavor>:<stream>"} per day
-// (projectbluefin-countme, shipped by projectbluefin/common). The Worker keeps
+// (the projectbluefin-countme reporter; bootc images get it from
+// projectbluefin/common, Bluefin Server ships its own copy). The Worker keeps
 // one counter per UTC day and image: no per-system rows, no IPs.
 //
 // The image allowlist rejects anything that is not a known Bluefin image
 // shape. An anonymous endpoint cannot authenticate its callers.
 
-export const PING_IMAGE_FAMILIES = [
+// Bootc images and printer containers: variants and flavors, stream from
+// bootc status.
+const STANDARD_FAMILIES = [
   "dakota",
   "utah",
   "ghostscript-printer-app",
@@ -14,8 +17,14 @@ export const PING_IMAGE_FAMILIES = [
   "gutenprint-printer-app",
   "ps-printer-app",
 ];
+// Bluefin Server is a DDI: exact name, no variants or flavors, stream from
+// image-tag (`latest`). The reporter only ever sends `server/main`.
+const SERVER_FAMILIES = ["server"];
+
+export const PING_IMAGE_FAMILIES = [...STANDARD_FAMILIES, ...SERVER_FAMILIES];
 const IMAGE_RE = new RegExp(
-  `^(?:${PING_IMAGE_FAMILIES.join("|")})(?:-[a-z0-9]+){0,3}/[a-z0-9-]{1,32}:(?:stable|testing|unknown)$`,
+  `^(?:${STANDARD_FAMILIES.join("|")})(?:-[a-z0-9]+){0,3}/[a-z0-9-]{1,32}:(?:stable|testing|unknown)$` +
+    `|^server/main:(?:latest|unknown)$`,
   "u",
 );
 
