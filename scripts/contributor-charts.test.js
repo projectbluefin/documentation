@@ -167,7 +167,7 @@ test("missing, deprecated, malformed, or non-finite data is visibly unavailable"
     const html = render(data);
     assert.match(html, /role="status"/);
     assert.match(html, /Contributor metrics unavailable/);
-    assert.match(html, /schema version 2/);
+    assert.match(html, /contributor dataset is missing/);
     assert.equal(charts.length, 0);
   }
 });
@@ -185,7 +185,7 @@ test("failed refresh, incomplete coverage, and future snapshots show a visible r
   ]) {
     const html = render({ ...fixture(), ...patch });
     assert.match(html, /Current contributor metrics unavailable/);
-    assert.match(html, /retained snapshot, not a successful current refresh/);
+    assert.match(html, /Values below are the retained snapshot\./);
     assert.match(html, /role="status"/);
     assertChartCounts();
   }
