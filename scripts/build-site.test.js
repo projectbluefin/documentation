@@ -1,5 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import {
   buildMatrix,
@@ -80,4 +83,18 @@ test("a translated page built against the English root fails", () => {
 test("another locale's prefix does not satisfy the check", () => {
   assert.equal(hasLocalizedBaseUrl('<a href="/pl/x/">', "pt-BR"), false);
   assert.equal(hasLocalizedBaseUrl("<a href=/zh-Hant/x/>", "zh-Hans"), false);
+});
+
+// CI captures `--matrix` stdout straight into a GitHub Actions output. Any
+// log line before the JSON (e.g. the feed generator) makes the whole job fail.
+test("the --matrix CLI emits JSON only, without build-log noise", () => {
+  const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+  const stdout = execFileSync(
+    process.execPath,
+    [join(root, "scripts", "build-site.mjs"), "--matrix"],
+    { cwd: root, encoding: "utf8", timeout: 30000 },
+  );
+  assert.doesNotMatch(stdout, /leaderboard-feed/);
+  const matrix = JSON.parse(stdout);
+  assert.deepEqual(matrix.include[0], { part: "en" });
 });
