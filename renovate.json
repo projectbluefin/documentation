@@ -54,6 +54,11 @@
       "allowedVersions": "<6.1"
     },
     {
+      "description": "Update the overrides block by raising its version range in package.json. Left to its default, Renovate tries a lock-file-only update with `npm install <package>@<version>`, which npm refuses for an overridden package (EOVERRIDE on postcss-selector-parser, #1724), so no lock file could be written.",
+      "matchDepTypes": ["overrides"],
+      "rangeStrategy": "bump"
+    },
+    {
       "description": "A major update always waits for a person. automerge false only stops Renovate; the hive merges trusted-bot pull requests itself, so label the update needs-owner-merge (the hive's auto_merge.human_merge_labels default): the hive never merges a PR with it, and only a person's merge lands it. Never use hold, which merges as soon as someone removes it. Last matching rule wins, so keep this rule last.",
       "matchUpdateTypes": ["major"],
       "automerge": false,
