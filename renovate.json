@@ -59,6 +59,20 @@
       "rangeStrategy": "bump"
     },
     {
+      "description": "Don't offer updates to the npm pin under constraints: it must match the npm version CI runs (Node 26 ships npm 11), not the newest npm. Raise it in the same change that moves CI to a newer npm. Two Renovate apps run here, so each offer came twice (#1722, #1728).",
+      "matchManagers": ["renovate-config"],
+      "matchDepTypes": ["tool-constraint"],
+      "enabled": false
+    },
+    {
+      "description": "A Node major brings a newer bundled npm. Remind whoever merges it to raise constraints.npm in the same PR, since updates to that pin are switched off above.",
+      "matchDepNames": ["node"],
+      "matchUpdateTypes": ["major"],
+      "prBodyNotes": [
+        "**Before merging:** this Node version may bundle a newer npm. Check `npm --version` in this PR's CI log and set `constraints.npm` in `renovate.json` to match, in this same PR."
+      ]
+    },
+    {
       "description": "A major update always waits for a person. automerge false only stops Renovate; the hive merges trusted-bot pull requests itself, so label the update needs-owner-merge (the hive's auto_merge.human_merge_labels default): the hive never merges a PR with it, and only a person's merge lands it. Never use hold, which merges as soon as someone removes it. Last matching rule wins, so keep this rule last.",
       "matchUpdateTypes": ["major"],
       "automerge": false,
