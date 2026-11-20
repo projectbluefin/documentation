@@ -2052,6 +2052,44 @@ export function ContributorLeaderboard({
   );
 }
 
+function TriumphFeedLink(): React.JSX.Element {
+  return (
+    <p className={styles.triumphFeedMeta}>
+      <a
+        className={styles.triumphFeedLink}
+        href="/feeds/moments-of-triumph.xml"
+        type="application/rss+xml"
+        title="Subscribe to Moments of Triumph as RSS"
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor" />
+          <path
+            d="M3 10.5A10.5 10.5 0 0 1 13.5 21"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M3 4.5A16.5 16.5 0 0 1 19.5 21"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+        </svg>
+        <span>Subscribe via RSS</span>
+      </a>
+    </p>
+  );
+}
+
 export function RecentMilestonesLeaderboard({
   milestones,
   breadthUnlocks,
@@ -2154,6 +2192,7 @@ export function RecentMilestonesLeaderboard({
         favorite guardian!
         {error && <span className={styles.lbAccumulating}> · {error}</span>}
       </p>
+      <TriumphFeedLink />
       {items.length === 0 ? (
         <p className={styles.panelMeta}>
           <span className={styles.lbAccumulating}>
@@ -4510,6 +4549,7 @@ export function LeaderboardsSection(): React.JSX.Element {
             Milestone data {history.loading ? "loading." : "unavailable"}
             {!history.loading && history.reason ? `: ${history.reason}` : ""}
           </p>
+          <TriumphFeedLink />
         </section>
       )}
       {hiveHistory ? (

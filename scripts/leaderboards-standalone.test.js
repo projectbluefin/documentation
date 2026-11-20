@@ -271,6 +271,8 @@ test("the standalone page renders the Moments of Triumph leaderboard as a ledger
   assert.match(html, /Moments of Triumph/);
   assert.match(html, /ledger of teamwork/i);
   assert.match(html, /href="\/contributing\/"/);
+  assert.match(html, /href="\/feeds\/moments-of-triumph\.xml"/);
+  assert.match(html, /Subscribe via RSS/);
   assert.match(html, /Reached Trusted Tier/);
   assert.match(html, /Reached Builder Tier/);
   assert.match(html, /champion/);
@@ -440,6 +442,7 @@ test("missing milestone data is visible instead of disappearing", () => {
   });
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
   assert.match(html, /Milestone data unavailable/);
+  assert.match(html, /href="\/feeds\/moments-of-triumph\.xml"/);
 });
 
 test("Moments of Triumph renders an explicit error reason when refresh fails", () => {

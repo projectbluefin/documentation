@@ -140,6 +140,11 @@ the verified fallback list during discovery failures.
     combined `milestones` + `season.breadthUnlocks` list in full. Group week
     labels only from events that exist (empty weeks are intentionally not
     synthesized); test the >50-event case so Week 1 stays visible.
+  - `/feeds/moments-of-triumph.xml` mirrors that same complete stream as RSS.
+    `scripts/generate-leaderboard-feed.js` writes it before every build, and
+    `/leaderboards` advertises it with a page-only `<link rel="alternate">` and
+    the "Subscribe via RSS" pill under the description. Do not cap the feed:
+    it is a stream readers subscribe to, not a preview.
   - A baseline run without prior diff state displays "Milestone ledger accumulating".
 
 ### GNOME release seasons on /leaderboards

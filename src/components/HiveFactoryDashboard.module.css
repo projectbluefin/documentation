@@ -378,6 +378,41 @@
   margin: 0 0 1rem;
 }
 
+.triumphFeedMeta {
+  margin: 0 0 1.25rem;
+}
+
+.triumphFeedLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.32rem 0.7rem;
+  border: 1px solid var(--fx-border);
+  border-radius: 999px;
+  background: var(--fx-surface-2);
+  color: var(--fx-accent);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.triumphFeedLink:hover {
+  border-color: var(--fx-accent);
+  background: var(--fx-surface-3);
+  color: var(--fx-accent-dim);
+  text-decoration: none;
+}
+
+.triumphFeedLink svg {
+  flex: none;
+}
+
 /* ── Two-column layout ──────────────────────────────────────────────────── */
 .twoCol {
   display: grid;

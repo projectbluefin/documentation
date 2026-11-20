@@ -177,6 +177,11 @@ function failIfAny(results) {
 
 async function main() {
   const argv = process.argv.slice(2);
+  // The page feed is generated from the hive history that fetch-data (or the
+  // tracked seed for build:ci) leaves in static/data/.
+  createRequire(import.meta.url)(
+    "./generate-leaderboard-feed.js",
+  ).writeFeedFromFile();
   // An explicit `--locale` (e.g. `npm run build:ci -- --locale de` to preview
   // one translation) is a single ordinary build; hand it to Docusaurus as is.
   if (argv.includes("--locale")) {

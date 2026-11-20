@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "@docusaurus/Head";
 import Layout from "@theme/Layout";
 import Heading from "@theme/Heading";
 import { FactoryDataProvider } from "../components/factory/FactoryDataContext";
@@ -11,6 +12,14 @@ const DATASETS: DatasetKey[] = ["hiveHistory", "registry"];
 export default function LeaderboardsPage(): React.JSX.Element {
   return (
     <Layout title="Leaderboards">
+      <Head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Moments of Triumph — Bluefin Leaderboards"
+          href="/feeds/moments-of-triumph.xml"
+        />
+      </Head>
       <div className="fxRoot">
         <main className={styles.lbPage}>
           <header className={styles.lbHero}>
