@@ -56,6 +56,31 @@ function loadDashboardModule() {
           default: () => React.createElement("figure"),
         };
       }
+      if (id.includes("factory/seasonTabs")) {
+        const tabsPath = path.join(
+          __dirname,
+          "..",
+          "src",
+          "components",
+          "factory",
+          "seasonTabs.ts",
+        );
+        const transpiled = ts.transpileModule(
+          fs.readFileSync(tabsPath, "utf8"),
+          {
+            compilerOptions: {
+              target: ts.ScriptTarget.ES2020,
+              module: ts.ModuleKind.CommonJS,
+            },
+          },
+        );
+        const tabsMod = { exports: {} };
+        new Function("module", "exports", transpiled.outputText)(
+          tabsMod,
+          tabsMod.exports,
+        );
+        return tabsMod.exports;
+      }
       if (id.includes("chartTheme"))
         return {
           FX_SEVERITY: {},
