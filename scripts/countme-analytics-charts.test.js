@@ -167,59 +167,26 @@ const PROMOTED = [
   "utah-nvidia-gaming",
 ];
 
-test("the matrix rows are the images the release workflows promote", () => {
-  const { matrixRows, BLUEFIN_FAMILY_IMAGES: families } = mod;
-  const images = matrixRows().map((r) => r.image);
+test("the catalogue lists the images the release workflows promote", () => {
+  const images = BLUEFIN_FAMILY_IMAGES.filter(
+    (f) => f.delivery === "oci",
+  ).flatMap((f) => f.images);
 
-  // Each repo's execute-release.yml promotion matrix, verbatim.
+  // Each repo's execute-release.yml promotion matrix, verbatim. The family
+  // cards render these lists row by row, so a wrong entry is a wrong claim.
   assert.deepEqual(images, PROMOTED);
 
-  // Bluefin Server delivers a DDI, not a container tag, so it has no lane here
-  // even though it is a counted family.
-  assert.ok(families.some((f) => f.id === "server"));
-  assert.ok(!images.includes("server"));
+  // Bluefin Server delivers a DDI, not a container tag, so it has no stream
+  // chips even though it is a counted family.
+  const server = BLUEFIN_FAMILY_IMAGES.find((f) => f.id === "server");
+  assert.equal(server.delivery, "ddi");
+  assert.deepEqual(server.images, []);
 });
 
 test("the promotion axis is testing then stable, and nothing else", () => {
-  // :gts and :latest linger on some images from retired schemes. A column
-  // that is a dash down most of the grid is not a measurement.
+  // :gts and :latest linger on some images from retired schemes. A chip that
+  // is always a dash is not a measurement.
   assert.deepEqual(mod.STREAM_COLUMNS, ["testing", "stable"]);
-});
-
-test("an image the registry does not carry stays in the grid as a gap", () => {
-  const { matrixRows, buildStreamMatrix, STREAM_COLUMNS } = mod;
-  const rows = matrixRows();
-  const cells = buildStreamMatrix(rows, []);
-
-  assert.equal(cells.length, rows.length * STREAM_COLUMNS.length);
-  for (const cell of cells) {
-    assert.equal(cell.level, "unknown");
-    assert.equal(cell.ageDays, null, "an absent stream is a gap, never 0");
-  }
-});
-
-test("a retired tag on an image is not mistaken for a promotion lane", () => {
-  const { matrixRows, buildStreamMatrix } = mod;
-  const cells = buildStreamMatrix(matrixRows(), [
-    {
-      name: "bluefin",
-      family: "os",
-      streams: [
-        { tag: "gts", ageDays: 99, state: "stale", publishedAt: null },
-        { tag: "testing", ageDays: 1, state: "fresh", publishedAt: null },
-      ],
-    },
-  ]);
-
-  assert.ok(
-    !cells.some((c) => c.stream === "gts"),
-    ":gts is not a column, so a stale :gts tag cannot colour the grid",
-  );
-  const testing = cells.find(
-    (c) => c.image === "bluefin" && c.stream === "testing",
-  );
-  assert.equal(testing.ageDays, 1);
-  assert.equal(testing.level, "ok");
 });
 
 test("freshness splits stale by drift and treats a missing tag as unknown", () => {
@@ -240,37 +207,25 @@ test("freshness splits stale by drift and treats a missing tag as unknown", () =
   );
 });
 
-test("the matrix plots every catalogued image against every stream", () => {
-  const html = renderToStaticMarkup(
-    React.createElement(CountmeAnalyticsCharts, {
-      registry: REGISTRY_FIXTURE,
-    }),
+test("the family section shows stream ages, and states a missing snapshot instead of dashes", () => {
+  const present = renderToStaticMarkup(
+    React.createElement(CountmeAnalyticsCharts, { registry: REGISTRY_FIXTURE }),
   );
+  assert.match(present, /testing 1d/);
+  assert.doesNotMatch(present, /data-what="Image stream freshness"/);
 
-  const chart = html.match(
-    /data-title="Image stream freshness"[^>]*data-option="([^"]*)"/,
-  );
-  assert.ok(chart, "matrix echart must be present");
-
-  const option = JSON.parse(chart[1].replace(/&quot;/g, '"'));
-  assert.deepEqual(option.yAxis.data, PROMOTED);
-  assert.deepEqual(option.xAxis.data, [":testing", ":stable"]);
-  assert.equal(option.series[0].data.length, PROMOTED.length * 2);
-
-  // Every cell carries its own number, never a bare colour swatch.
-  const published = option.series[0].data.filter((c) => c.text !== "—");
-  assert.deepEqual(published.map((c) => c.text).sort(), ["● 1d", "● 1d"]);
-});
-
-test("the matrix says why it is empty rather than rendering nothing", () => {
-  const html = renderToStaticMarkup(
+  const missing = renderToStaticMarkup(
     React.createElement(CountmeAnalyticsCharts, {
       registry: { packages: [], unavailable: true, stateReason: "no token" },
+      daily: { days: [] },
     }),
   );
-
-  assert.match(html, /data-what="Image stream matrix"/);
-  assert.match(html, /data-reason="no token"/);
+  assert.match(missing, /data-what="Image stream freshness"/);
+  assert.match(missing, /data-reason="no token"/);
+  // "testing —" would read as "that tag never published" rather than
+  // "the snapshot could not be read".
+  assert.doesNotMatch(missing, /testing —/);
+  assert.match(missing, /dakota-gaming/, "the catalogue still renders");
 });
 
 /**

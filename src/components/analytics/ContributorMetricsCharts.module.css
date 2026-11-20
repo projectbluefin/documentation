@@ -31,15 +31,11 @@
 }
 
 .metricValue {
-  font-size: var(--fx-text-2xl);
+  font-size: 3rem;
   font-weight: var(--fx-weight-bold);
   color: var(--fx-text-strong);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
-}
-
-.headlineCard .metricValue {
-  font-size: 3rem;
 }
 
 .metricSubtitle,

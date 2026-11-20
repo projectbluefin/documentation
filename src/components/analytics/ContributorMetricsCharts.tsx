@@ -191,11 +191,8 @@ export default function ContributorMetricsCharts({
         />
       )}
       <div className={styles.summaryCardsGrid}>
-        {cards.map(([label, value, subtitle], index) => (
-          <div
-            key={label}
-            className={`${styles.metricCard} ${index === 0 ? styles.headlineCard : ""}`}
-          >
+        {cards.map(([label, value, subtitle]) => (
+          <div key={label} className={styles.metricCard}>
             <span className={styles.metricTitle}>{label}</span>
             <strong className={styles.metricValue}>{display(value)}</strong>
             <span className={styles.metricSubtitle}>
