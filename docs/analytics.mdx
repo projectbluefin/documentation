@@ -51,10 +51,10 @@ sudo systemctl mask --now projectbluefin-countme.timer
 A mask of the previous `bluefin-countme.timer` or `bluefin-countme.service` units, and the
 `/etc/projectbluefin/countme/disabled` opt-out file, still stop reporting.
 
-To disable countme reporting for a printer container, create a `.countme_disabled` file in its state directory (for ChairLift, in `~/printer-workspaces/<family>/<instance>/.countme_disabled` on the host, which maps to `/var/lib/<family>-printer-app/.countme_disabled` inside the container):
+To disable countme reporting for a printer container, create a `.countme_disabled` file in its state directory (for ChairLift, in `${XDG_DATA_HOME:-$HOME/.local/share}/chairlift/printers/<family>/<instance>/.countme_disabled` on the host, which maps to `/var/lib/<family>-printer-app/.countme_disabled` inside the container):
 
 ```bash
-touch ~/printer-workspaces/<family>/<instance>/.countme_disabled
+touch "${XDG_DATA_HOME:-$HOME/.local/share}/chairlift/printers/<family>/<instance>/.countme_disabled"
 ```
 
 To disable upstream Fedora countme:
