@@ -132,6 +132,14 @@ the verified fallback list during discovery failures.
   - Season breadth unlocks are recomputed fresh per release into
     `history.season.breadthUnlocks` (dated by the commit landed time) to avoid
     cache pollution.
+  - Render the **whole** season ledger, newest-first, and lead the
+    `/leaderboards` page with it. Truncation happens in two places — a newest-N
+    display slice and `mergeMilestonesLedger`'s persistence cap — and either one
+    silently drops the oldest season weeks (including Week 1). The pipeline
+    keeps every milestone (pass an unlimited cap) and the UI renders the
+    combined `milestones` + `season.breadthUnlocks` list in full. Group week
+    labels only from events that exist (empty weeks are intentionally not
+    synthesized); test the >50-event case so Week 1 stays visible.
   - A baseline run without prior diff state displays "Milestone ledger accumulating".
 
 ### GNOME release seasons on /leaderboards

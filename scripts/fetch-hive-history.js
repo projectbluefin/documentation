@@ -580,6 +580,9 @@ async function main() {
           console.log(
             `[hive-history] Detected ${diffEvents.length} new Hive milestone(s)`,
           );
+          // Keep the whole season stream: a newest-N cap here would evict the
+          // oldest milestones (and thus the earliest season weeks) from the
+          // published ledger.
           history.milestones = mergeMilestonesLedger(
             history.milestones,
             diffEvents,

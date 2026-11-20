@@ -2081,7 +2081,7 @@ export function RecentMilestonesLeaderboard({
   allEvents.sort(
     (a, b) => Date.parse(b.detectedAt || "") - Date.parse(a.detectedAt || ""),
   );
-  const items = allEvents.slice(0, 50);
+  const items = allEvents;
 
   // Group events by season-week when season information is available.
   const seasonStartMs = season?.start ? Date.parse(season.start) : NaN;
@@ -2142,8 +2142,16 @@ export function RecentMilestonesLeaderboard({
         Moments of Triumph
       </Heading>
       <p className={styles.panelMeta}>
-        Ledger of teamwork &mdash; contributors levelling up trust tiers,
-        unlocking project achievements, and crossing task landmarks.
+        Bluefin is a living project: the deployed operating system is treated
+        like a live production deployment of a "cluster". These are the
+        operations folks slaying bugs and solving problems every day.{" "}
+        <Link to="/contributing/">Join us</Link>.
+      </p>
+      <p className={styles.panelMeta}>
+        This is a ledger of teamwork &mdash; contributors levelling up trust
+        tiers, unlocking project achievements, and crossing task landmarks. Each
+        release of GNOME is treated as a Contribution Season. Follow your
+        favorite guardian!
         {error && <span className={styles.lbAccumulating}> · {error}</span>}
       </p>
       {items.length === 0 ? (
@@ -4482,28 +4490,6 @@ export function LeaderboardsSection(): React.JSX.Element {
   return (
     <div className={styles.leaderboards}>
       {hiveHistory ? (
-        <ContributorLeaderboard
-          history={hiveHistory}
-          registryEntries={registryEntries ?? []}
-          registryAvailable={registryEntries != null}
-        />
-      ) : (
-        <section id="community-builders" className={styles.panel}>
-          <Heading
-            as="h2"
-            id="community-builders-heading"
-            className={styles.panelTitle}
-          >
-            Community Builders
-          </Heading>
-          <p className={styles.unavailableNote}>
-            GitHub contribution data{" "}
-            {history.loading ? "loading." : "unavailable"}
-            {!history.loading && history.reason ? `: ${history.reason}` : ""}
-          </p>
-        </section>
-      )}
-      {hiveHistory ? (
         <RecentMilestonesLeaderboard
           milestones={hiveHistory.milestones}
           breadthUnlocks={hiveHistory.season?.breadthUnlocks}
@@ -4522,6 +4508,28 @@ export function LeaderboardsSection(): React.JSX.Element {
           </Heading>
           <p className={styles.unavailableNote}>
             Milestone data {history.loading ? "loading." : "unavailable"}
+            {!history.loading && history.reason ? `: ${history.reason}` : ""}
+          </p>
+        </section>
+      )}
+      {hiveHistory ? (
+        <ContributorLeaderboard
+          history={hiveHistory}
+          registryEntries={registryEntries ?? []}
+          registryAvailable={registryEntries != null}
+        />
+      ) : (
+        <section id="community-builders" className={styles.panel}>
+          <Heading
+            as="h2"
+            id="community-builders-heading"
+            className={styles.panelTitle}
+          >
+            Community Builders
+          </Heading>
+          <p className={styles.unavailableNote}>
+            GitHub contribution data{" "}
+            {history.loading ? "loading." : "unavailable"}
             {!history.loading && history.reason ? `: ${history.reason}` : ""}
           </p>
         </section>

@@ -126,3 +126,12 @@ test("mergeMilestonesLedger deduplicates and caps newest first", () => {
   assert.equal(merged[0].id, "e3");
   assert.equal(merged[1].id, "e1");
 });
+
+test("mergeMilestonesLedger default keeps the whole ledger unbounded", () => {
+  const events = Array.from({ length: 51 }, (_, i) => ({
+    id: `e${i}`,
+    detectedAt: new Date(Date.UTC(2026, 8, 1, 0, 0, i)).toISOString(),
+  }));
+  const merged = mergeMilestonesLedger([], events);
+  assert.equal(merged.length, 51);
+});
