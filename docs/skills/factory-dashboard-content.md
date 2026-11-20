@@ -149,24 +149,45 @@ the verified fallback list during discovery failures.
 
 ### GNOME release seasons on /leaderboards
 
-- Read the latest **published** GNOME release from
+- Read published major GNOME releases from
   [`release.gnome.org/atom.xml`](https://release.gnome.org/atom.xml), then read
-  its official release notes heading for the nickname. GNOME 51 is **A Coruña**,
-  published September 16, 2026 at 00:00 UTC; do not infer a release from an OS
-  image version or reuse a nickname for the next GNOME release.
-- A season starts at the release timestamp. Count only default-branch
-  **non-merge** commits (`parents.length <= 1`) whose committer timestamp lands
-  within the season and whose GitHub author resolves to a login. GitHub's
-  `/stats/contributors` excludes merge commits; including them here inflates the
-  season relative to Month and Week. Keep `parents` when projecting the
-  `/commits` response. Fetch every page with `since` and `until`; a partial
-  repository response cannot become a complete season. The all-time
-  `/contributors` count is a separate contract and never resets.
+  each official release notes `<h1>` heading for its nickname. GNOME 51 is
+  **A Coruña** (published September 16, 2026 at 00:00 UTC), and backfilled
+  seasons cover GNOME 43 (**Guadalajara**) through GNOME 50 (**Tokyo**) with no
+  overlaps and no gaps. Do not infer a release from an OS or Fedora version,
+  and never invent a nickname — if a GNOME release has no official nickname
+  (e.g., GNOME 42), store `name: null` with an explicit `nicknameNote` and fall
+  back to `Season of GNOME <version>`.
+- Enforce a 6-month (`183`-day) cap per season (`MAX_SEASON_DURATION_MS` in
+  `scripts/lib/gnome-season.js`). Every standard 26-week GNOME cycle (182 days)
+  satisfies this cap; if any interval exceeds 6 months, split it at the nearest
+  meaningful `ublue-os/bluefin` release and record `splitRule`.
+- A season starts at the release timestamp (half-open `[start, end)` for
+  completed seasons; `[start, now]` for the active current season). Count only
+  default-branch **non-merge** commits (`parents.length <= 1`) whose committer
+  timestamp lands within the season and whose GitHub author resolves to a login.
+  GitHub's `/stats/contributors` excludes merge commits; including them here
+  inflates the season relative to Month and Week. Keep `parents` when projecting
+  the `/commits` response. The all-time `/contributors` count is a separate
+  contract and never resets.
+- Leave the active current season (`history.season`) untouched when backfilling.
+  Backfilled prior seasons draw from the full tracked source set: all
+  `projectbluefin/*` repositories (including archived `projectbluefin/bluefin`
+  for historical coverage) plus read-only `ublue-os/bluefin` and
+  `ublue-os/bluefin-lts`. Completed historical seasons are stored in
+  `history.seasons` (ordered newest-to-oldest alongside `history.season`) and
+  reused by `generatedAt` freshness unless `--force` is passed.
+- Present all seasons as a newest-to-oldest tab strip (`SeasonTabStrip` +
+  `src/components/factory/seasonTabs.ts`) with the current season selected and
+  highlighted by default. When an upstream source fails during backfill, record
+  `failedRepos` and `stateReason` (and `unavailable: true` with `totalCommits: null`
+  if all sources fail) so missing data is never mistaken for zero commits, and
+  render the explicit reason in the UI.
 - Keep the last complete season if discovery or collection fails, with a
   visible `seasonError`. If no season has been collected, show unavailability,
   not zero. The tracked `static/data/hive-history.json` is only a seed; inspect
-  `lastContributorFetch` and `season.updatedAt` in the published JSON when
-  auditing freshness.
+  `lastContributorFetch`, `season.updatedAt`, and `seasonsGeneratedAt` in the
+  published JSON when auditing freshness.
 - Use the actual light/dark Bluefin wordmark assets for the page heading: only
   the **f** has the brand-blue accent. On narrow layouts, keep “Leaderboards”
   horizontally aligned with the mark. Broken hosted contribution tiles do not

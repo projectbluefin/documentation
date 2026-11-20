@@ -8,6 +8,15 @@ import type { SparklinePoint } from "./Sparkline";
 import ActivityCalendar from "./ActivityCalendar";
 import EChart from "./factory/EChart";
 import { useDataset } from "./factory/FactoryDataContext";
+import {
+  buildSeasonTabList,
+  filterMilestonesForSeason,
+  formatSeasonDisplayTitle,
+  resolveSelectedSeason,
+  type SeasonEntry,
+  type SeasonReleaseRange,
+  type SeasonTab,
+} from "./factory/seasonTabs";
 import styles from "./HiveFactoryDashboard.module.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -321,18 +330,19 @@ interface ContributorStat {
   weeks?: number[];
 }
 
-interface GNOMESeason {
+interface GNOMESeason extends SeasonEntry {
   version: number;
-  name: string;
+  name: string | null;
   start: string;
   source: string;
-  updatedAt: string;
+  updatedAt?: string;
   repos: string[];
   byLogin: Record<string, { commits: number; repos: Record<string, number> }>;
   weekStarts: number[];
   weeklyCommits: number[];
-  totalCommits: number;
+  totalCommits: number | null;
   breadthUnlocks?: HiveMilestoneEvent[];
+  bluefinReleases?: SeasonReleaseRange | null;
 }
 
 export interface HiveMilestoneEvent {
@@ -365,6 +375,9 @@ interface HiveHistory {
   weeklyStatsError?: string | null;
   season?: GNOMESeason | null;
   seasonError?: string | null;
+  seasons?: GNOMESeason[] | null;
+  seasonsGeneratedAt?: string | null;
+  seasonsError?: string | null;
   hiveContributorTiers?: Record<
     string,
     {
@@ -1408,12 +1421,24 @@ const MODE_COLORS: Record<string, string> = {
 // ── Token budget panel ─────────────────────────────────────────────────────
 
 // ── Nous / Strategy Lab panel ──────────────────────────────────────────────
-function ContributorWall({ history }: { history: HiveHistory | null }) {
+function ContributorWall({
+  history,
+  selectedSeason,
+}: {
+  history: HiveHistory | null;
+  selectedSeason?: GNOMESeason | null;
+}) {
   const [showAll, setShowAll] = React.useState(false);
+  const [showAllSeasonBuilders, setShowAllSeasonBuilders] =
+    React.useState(false);
 
+  const activeSeason = selectedSeason ?? history?.season ?? null;
+  const isHistoricalSeason = Boolean(
+    activeSeason && activeSeason.isCurrent === false,
+  );
   const tiers = history?.hiveContributorTiers;
   const byRepo = history?.contributorsByRepo ?? {};
-  const seasonLogins = history?.season?.byLogin ?? {};
+  const seasonLogins = activeSeason?.byLogin ?? {};
 
   const { newcomers, seasonActive, totalHiveTasks, totalTracked } =
     React.useMemo(() => {
@@ -1538,6 +1563,107 @@ function ContributorWall({ history }: { history: HiveHistory | null }) {
         totalTracked: allEntries.length,
       };
     }, [byRepo, seasonLogins, tiers]);
+
+  if (isHistoricalSeason && activeSeason) {
+    const seasonTitle = formatSeasonDisplayTitle(activeSeason);
+    const historicalBuilders = Object.entries(seasonLogins)
+      .filter(([login]) => !isBotLogin(login))
+      .map(([login, sData]) => {
+        const tierMeta = tiers?.[login];
+        const isLocal =
+          tierMeta?.primaryModel === "local" ||
+          (Number(tierMeta?.local) || 0) > 0;
+        return {
+          login,
+          seasonCommits: sData?.commits || 0,
+          repos: Object.keys(sData?.repos ?? {}),
+          tasks: Number(tierMeta?.tasks) || 0,
+          model: tierMeta?.model || (isLocal ? "Local" : undefined),
+          isLocal,
+        };
+      })
+      .filter((c) => c.seasonCommits > 0)
+      .sort(
+        (a, b) =>
+          b.seasonCommits - a.seasonCommits ||
+          b.repos.length - a.repos.length ||
+          a.login.localeCompare(b.login),
+      );
+
+    const visibleBuilders = showAllSeasonBuilders
+      ? historicalBuilders
+      : historicalBuilders.slice(0, 12);
+
+    return (
+      <section id="factory-community" className={styles.panel}>
+        <Heading
+          as="h2"
+          id="factory-community-heading"
+          className={styles.panelTitle}
+        >
+          {seasonTitle} · Active Builders
+        </Heading>
+        {activeSeason.unavailable ? (
+          <p className={styles.unavailableNote}>
+            Season contributor roster unavailable
+            {activeSeason.stateReason ? `: ${activeSeason.stateReason}` : ""}
+          </p>
+        ) : historicalBuilders.length === 0 ? (
+          <p className={styles.panelMeta}>
+            <span className={styles.lbAccumulating}>
+              No attributed commits recorded in {seasonTitle}.
+            </span>
+          </p>
+        ) : (
+          <>
+            <p className={styles.panelMeta}>
+              {historicalBuilders.length} active builders across{" "}
+              {activeSeason.repos?.length ?? 0} tracked repositories during{" "}
+              {seasonTitle}.
+            </p>
+            <div className={styles.hiveTaskGrid}>
+              {visibleBuilders.map((entry) => (
+                <Link
+                  key={entry.login}
+                  href={contributorDossierUrl(entry.login)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`${styles.hiveTaskCard} ${entry.isLocal ? styles.lbCardGold : ""}`}
+                  title={
+                    entry.repos.length > 0
+                      ? `${entry.login} · ${entry.repos.slice(0, 3).join(", ")}`
+                      : entry.login
+                  }
+                >
+                  <img
+                    src={`https://github.com/${entry.login}.png?size=40`}
+                    alt={entry.login}
+                    className={styles.hiveTaskAvatar}
+                    loading="lazy"
+                  />
+                  <span className={styles.hiveTaskPlayer}>{entry.login}</span>
+                  <span className={styles.hiveTaskCount}>
+                    {entry.seasonCommits} commits · {entry.repos.length}{" "}
+                    {entry.repos.length === 1 ? "repo" : "repos"}
+                  </span>
+                </Link>
+              ))}
+            </div>
+            {!showAllSeasonBuilders && historicalBuilders.length > 12 && (
+              <button
+                type="button"
+                className={styles.communityShowMore}
+                onClick={() => setShowAllSeasonBuilders(true)}
+                style={{ marginTop: "0.75rem" }}
+              >
+                Show all {historicalBuilders.length} builders
+              </button>
+            )}
+          </>
+        )}
+      </section>
+    );
+  }
 
   if (!tiers || Object.keys(tiers).length === 0) {
     return (
@@ -1837,13 +1963,220 @@ interface LeaderboardEntry {
 
 export function ContributorLeaderboard({
   history,
+  selectedSeason,
 }: {
   history: HiveHistory | null;
   registryEntries?: RegistryLeaderboardEntry[];
   registryAvailable?: boolean;
+  selectedSeason?: GNOMESeason | null;
 }) {
+  const isHistoricalSeason = Boolean(
+    selectedSeason && selectedSeason.isCurrent === false,
+  );
   const tiers = history?.hiveContributorTiers;
   const byRepo = history?.contributorsByRepo ?? {};
+
+  if (isHistoricalSeason && selectedSeason) {
+    const seasonTitle = formatSeasonDisplayTitle(selectedSeason);
+    const startDate = selectedSeason.start?.slice(0, 10) ?? "";
+    const endDate = selectedSeason.end?.slice(0, 10) ?? "ongoing";
+
+    if (selectedSeason.unavailable) {
+      return (
+        <section id="community-builders" className={styles.panel}>
+          <Heading
+            as="h2"
+            id="community-builders-heading"
+            className={styles.panelTitle}
+          >
+            {seasonTitle}
+          </Heading>
+          <p className={styles.unavailableNote}>
+            Season leaderboard data unavailable
+            {selectedSeason.stateReason
+              ? `: ${selectedSeason.stateReason}`
+              : ""}
+          </p>
+        </section>
+      );
+    }
+
+    const seasonRows = Object.entries(selectedSeason.byLogin ?? {})
+      .filter(([login]) => !isBotLogin(login))
+      .map(([login, sData]) => {
+        const commits = Number(sData?.commits) || 0;
+        const repoEntries = Object.entries(sData?.repos ?? {}).sort(
+          (a, b) => (b[1] ?? 0) - (a[1] ?? 0),
+        );
+        const repos = repoEntries.map(([repo]) => repo);
+        return {
+          rank: 0,
+          login,
+          projects: repos.length,
+          repos,
+          badges: computeMilestones(repos.length, 0, 0),
+          commits,
+        };
+      })
+      .filter((r) => r.commits > 0)
+      .sort(
+        (a, b) =>
+          b.commits - a.commits ||
+          b.projects - a.projects ||
+          a.login.localeCompare(b.login),
+      );
+    seasonRows.forEach((r, i) => {
+      r.rank = i + 1;
+    });
+
+    const rankedSeason = seasonRows.slice(0, 25);
+    const chartSeasonRows = seasonRows.slice(0, 6);
+    const seasonBarMax = Math.max(1, chartSeasonRows[0]?.commits ?? 1);
+    const totalCommits =
+      typeof selectedSeason.totalCommits === "number"
+        ? selectedSeason.totalCommits
+        : seasonRows.reduce((sum, r) => sum + r.commits, 0);
+
+    return (
+      <section id="community-builders" className={styles.panel}>
+        <Heading
+          as="h2"
+          id="community-builders-heading"
+          className={styles.panelTitle}
+        >
+          {seasonTitle}
+        </Heading>
+        <p className={styles.panelMeta}>
+          GNOME {selectedSeason.version}
+          {selectedSeason.name ? ` (${selectedSeason.name})` : ""} · {startDate}{" "}
+          – {endDate} · Ranked by attributed non-merge commits across tracked
+          repositories
+          {selectedSeason.nicknameNote
+            ? ` · ${selectedSeason.nicknameNote}`
+            : ""}
+        </p>
+        {selectedSeason.stateReason && (
+          <p className={styles.unavailableNote}>{selectedSeason.stateReason}</p>
+        )}
+        <div className={styles.lbMetrics}>
+          <div>
+            <strong>{seasonRows.length}</strong>
+            <span>contributors</span>
+          </div>
+          <div>
+            <strong>{totalCommits}</strong>
+            <span>commits</span>
+          </div>
+          <div>
+            <strong>{selectedSeason.repos?.length ?? 0}</strong>
+            <span>tracked projects</span>
+          </div>
+        </div>
+
+        <div className={`${styles.lbCharts} ${styles.lbChartsSingle}`}>
+          <div className={styles.lbCompare}>
+            <Heading as="h3">Top contributors · season commits</Heading>
+            {chartSeasonRows.length === 0 ? (
+              <p>No attributed commits recorded</p>
+            ) : (
+              chartSeasonRows.map((row) => (
+                <div className={styles.lbBarRow} key={row.login}>
+                  <span>{row.login}</span>
+                  <span className={styles.lbBarTrack}>
+                    <span
+                      style={{
+                        width: `${(row.commits / seasonBarMax) * 100}%`,
+                      }}
+                    />
+                  </span>
+                  <strong>{row.commits}</strong>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {rankedSeason.length === 0 ? (
+          <p className={styles.lbFallbackNote}>
+            No attributed commits recorded in {seasonTitle}.
+          </p>
+        ) : (
+          <div className={styles.lbTable}>
+            <div className={styles.lbHeader}>
+              <span className={styles.lbColRank}>#</span>
+              <span className={styles.lbColUser}>Contributor</span>
+              <span className={styles.lbColCommits}>Projects</span>
+              <span className={styles.lbColActivity}>Commits</span>
+              <span className={styles.lbColRepos}>Repos</span>
+              <span className={styles.lbColBadges}>Milestones</span>
+            </div>
+            {rankedSeason.map(
+              ({ rank, login, projects, repos, badges, commits }) => (
+                <Link
+                  key={login}
+                  href={contributorDossierUrl(login)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.lbRow}
+                >
+                  <span
+                    className={`${styles.lbColRank} ${rank <= 3 ? styles.lbTopRank : ""}`}
+                  >
+                    {String(rank).padStart(2, "0")}
+                  </span>
+                  <span className={styles.lbColUser}>
+                    <img
+                      src={`https://github.com/${login}.png?size=24`}
+                      alt={login}
+                      className={styles.lbAvatar}
+                      loading="lazy"
+                    />
+                    <span className={styles.lbLogin}>{login}</span>
+                  </span>
+                  <span className={styles.lbColCommits}>
+                    <span className={styles.lbCommitCount}>{projects}</span>
+                  </span>
+                  <span className={styles.lbColActivity}>
+                    <span className={styles.lbSparkValue}>{commits}</span>
+                  </span>
+                  <span className={styles.lbColRepos}>
+                    {repos.slice(0, 3).map((r) => (
+                      <span key={r} className={styles.lbRepoChip}>
+                        {r}
+                      </span>
+                    ))}
+                    {repos.length > 3 && (
+                      <span className={styles.lbRepoMore}>
+                        +{repos.length - 3}
+                      </span>
+                    )}
+                  </span>
+                  <span className={styles.lbColBadges}>
+                    {badges.map((b) => (
+                      <span
+                        key={b.tier}
+                        className={styles.lbBadge}
+                        style={{ borderColor: b.color, color: b.color }}
+                        title={b.title}
+                      >
+                        {b.label}
+                      </span>
+                    ))}
+                  </span>
+                </Link>
+              ),
+            )}
+          </div>
+        )}
+
+        {seasonRows.length > 25 && (
+          <p className={styles.panelMeta} style={{ marginTop: "0.5rem" }}>
+            Showing top 25 of {seasonRows.length} contributors
+          </p>
+        )}
+      </section>
+    );
+  }
 
   const { ranked, totalRanked, totalTasks, chartRows } = ((): {
     ranked: LeaderboardEntry[];
@@ -2112,8 +2445,15 @@ export function RecentMilestonesLeaderboard({
   season?: GNOMESeason | null;
   error?: string | null;
 }): React.JSX.Element {
+  const isHistoricalSeason = Boolean(season && season.isCurrent === false);
+  const seasonTitle = formatSeasonDisplayTitle(season);
+  const scopedMilestones = isHistoricalSeason
+    ? filterMilestonesForSeason(milestones, season)
+    : Array.isArray(milestones)
+      ? milestones
+      : [];
   const allEvents = [
-    ...(Array.isArray(milestones) ? milestones : []),
+    ...scopedMilestones,
     ...(Array.isArray(breadthUnlocks) ? breadthUnlocks : []),
   ];
   allEvents.sort(
@@ -2148,7 +2488,9 @@ export function RecentMilestonesLeaderboard({
           weekNum = Math.floor((eventMs - seasonStartMs) / ONE_WEEK_MS) + 1;
           label = season?.name
             ? `Season of ${season.name} · Week ${weekNum}`
-            : `Season Week ${weekNum}`;
+            : season?.version != null
+              ? `Season of GNOME ${season.version} · Week ${weekNum}`
+              : `Season Week ${weekNum}`;
         } else {
           weekNum = 0;
           label = "Pre-Season";
@@ -2169,7 +2511,10 @@ export function RecentMilestonesLeaderboard({
     }
 
     return groups;
-  }, [items, season?.name, seasonStartMs]);
+  }, [items, season?.name, season?.version, seasonStartMs]);
+  const unavailableReason = season?.unavailable
+    ? season.stateReason || error || "Season data unavailable"
+    : null;
   return (
     <section id="moments-of-triumph" className={styles.panel}>
       <Heading
@@ -2178,6 +2523,7 @@ export function RecentMilestonesLeaderboard({
         className={styles.panelTitle}
       >
         Moments of Triumph
+        {isHistoricalSeason ? ` · ${seasonTitle}` : ""}
       </Heading>
       <p className={styles.panelMeta}>
         Bluefin is a living project: the deployed operating system is treated
@@ -2193,12 +2539,18 @@ export function RecentMilestonesLeaderboard({
         {error && <span className={styles.lbAccumulating}> · {error}</span>}
       </p>
       <TriumphFeedLink />
-      {items.length === 0 ? (
+      {unavailableReason ? (
+        <p className={styles.unavailableNote}>
+          Season data unavailable: {unavailableReason}
+        </p>
+      ) : items.length === 0 ? (
         <p className={styles.panelMeta}>
           <span className={styles.lbAccumulating}>
             {error
               ? `Milestones unavailable: ${error}`
-              : "Milestone ledger accumulating — tracking promotions, landmarks, and project unlocks across factory runs"}
+              : isHistoricalSeason
+                ? `No multi-repo breadth unlocks recorded in ${seasonTitle}.`
+                : "Milestone ledger accumulating — tracking promotions, landmarks, and project unlocks across factory runs"}
           </span>
         </p>
       ) : (
@@ -4515,6 +4867,49 @@ export function LiveSection({ s }: { s: FactoryLive }): React.JSX.Element {
   );
 }
 
+export function SeasonTabStrip({
+  tabs,
+  activeTabId,
+  onSelect,
+}: {
+  tabs: SeasonTab[];
+  activeTabId: string | null;
+  onSelect: (id: string) => void;
+}): React.JSX.Element | null {
+  if (tabs.length === 0) return null;
+  return (
+    <nav className={styles.seasonTabBar} aria-label="Contribution seasons">
+      <div
+        role="tablist"
+        aria-label="Contribution seasons"
+        className={`${styles.lbTabs} ${styles.seasonTabList}`}
+      >
+        {tabs.map((tab) => {
+          const isSelected = tab.id === activeTabId;
+          return (
+            <button
+              key={tab.id}
+              id={`season-tab-${tab.id}`}
+              type="button"
+              role="tab"
+              aria-selected={isSelected}
+              aria-controls="season-leaderboard-panel"
+              tabIndex={isSelected ? 0 : -1}
+              className={`${styles.lbTab} ${styles.seasonTab} ${isSelected ? `${styles.lbTabActive} ${styles.seasonTabActive}` : ""}`}
+              onClick={() => onSelect(tab.id)}
+            >
+              <span>{tab.shortLabel}</span>
+              {tab.isCurrent && (
+                <span className={styles.seasonCurrentBadge}>Current</span>
+              )}
+            </button>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
 export function LeaderboardsSection(): React.JSX.Element {
   const history = useDataset<HiveHistory>("hiveHistory");
   const registry = useDataset<RegistryEntry>("registry");
@@ -4526,72 +4921,141 @@ export function LeaderboardsSection(): React.JSX.Element {
       ? registryData.leaderboard
       : null;
 
+  const seasonTabs = useMemo(
+    () => buildSeasonTabList(hiveHistory),
+    [hiveHistory],
+  );
+  const [selectedSeasonId, setSelectedSeasonId] = useState<string | null>(null);
+  const activeTab = resolveSelectedSeason(seasonTabs, selectedSeasonId);
+  const activeSeason = (activeTab?.season ??
+    hiveHistory?.season ??
+    null) as GNOMESeason | null;
+
+  const releaseRange = activeSeason?.bluefinReleases;
+  const releaseSummary =
+    releaseRange && releaseRange.count > 0
+      ? releaseRange.first === releaseRange.last
+        ? `${releaseRange.first} (1 Bluefin release)`
+        : `${releaseRange.first} → ${releaseRange.last} (${releaseRange.count} Bluefin releases)`
+      : null;
+
   return (
     <div className={styles.leaderboards}>
-      {hiveHistory ? (
-        <RecentMilestonesLeaderboard
-          milestones={hiveHistory.milestones}
-          breadthUnlocks={hiveHistory.season?.breadthUnlocks}
-          contributorTiers={hiveHistory.hiveContributorTiers}
-          season={hiveHistory.season}
-          error={hiveHistory.milestonesError}
-        />
-      ) : (
-        <section id="moments-of-triumph" className={styles.panel}>
-          <Heading
-            as="h2"
-            id="moments-of-triumph-heading"
-            className={styles.panelTitle}
-          >
-            Moments of Triumph
-          </Heading>
-          <p className={styles.unavailableNote}>
-            Milestone data {history.loading ? "loading." : "unavailable"}
-            {!history.loading && history.reason ? `: ${history.reason}` : ""}
-          </p>
-          <TriumphFeedLink />
-        </section>
+      {seasonTabs.length > 0 && activeTab && (
+        <>
+          <SeasonTabStrip
+            tabs={seasonTabs}
+            activeTabId={activeTab.id}
+            onSelect={setSelectedSeasonId}
+          />
+          <div className={styles.seasonBanner}>
+            <div className={styles.seasonBannerHeading}>
+              <Heading as="h2" className={styles.seasonBannerTitle}>
+                {activeTab.title}
+              </Heading>
+              <span className={styles.seasonBannerMeta}>
+                {activeTab.label} · GNOME {activeTab.season.version}
+                {activeTab.season.start
+                  ? ` · ${activeTab.season.start.slice(0, 10)} → ${activeTab.season.end ? activeTab.season.end.slice(0, 10) : "present"}`
+                  : ""}
+              </span>
+            </div>
+            {releaseSummary && (
+              <p className={styles.seasonBannerSubmeta}>{releaseSummary}</p>
+            )}
+            {activeTab.season.nicknameNote && (
+              <p className={styles.seasonBannerSubmeta}>
+                {activeTab.season.nicknameNote}
+              </p>
+            )}
+            {(activeTab.unavailable || activeTab.stateReason) && (
+              <p className={styles.unavailableNote}>
+                {activeTab.unavailable ? "Season data unavailable" : "Note"}
+                {activeTab.stateReason ? `: ${activeTab.stateReason}` : ""}
+              </p>
+            )}
+          </div>
+        </>
       )}
-      {hiveHistory ? (
-        <ContributorLeaderboard
-          history={hiveHistory}
-          registryEntries={registryEntries ?? []}
-          registryAvailable={registryEntries != null}
-        />
-      ) : (
-        <section id="community-builders" className={styles.panel}>
-          <Heading
-            as="h2"
-            id="community-builders-heading"
-            className={styles.panelTitle}
-          >
-            Community Builders
-          </Heading>
-          <p className={styles.unavailableNote}>
-            GitHub contribution data{" "}
-            {history.loading ? "loading." : "unavailable"}
-            {!history.loading && history.reason ? `: ${history.reason}` : ""}
-          </p>
-        </section>
-      )}
-      {hiveHistory ? (
-        <ContributorWall history={hiveHistory} />
-      ) : (
-        <section id="factory-community" className={styles.panel}>
-          <Heading
-            as="h2"
-            id="factory-community-heading"
-            className={styles.panelTitle}
-          >
-            Factory Community
-          </Heading>
-          <p className={styles.unavailableNote}>
-            GitHub contribution data{" "}
-            {history.loading ? "loading." : "unavailable"}
-            {!history.loading && history.reason ? `: ${history.reason}` : ""}
-          </p>
-        </section>
-      )}
+      <div
+        id="season-leaderboard-panel"
+        role="tabpanel"
+        aria-labelledby={activeTab ? `season-tab-${activeTab.id}` : undefined}
+        className={styles.leaderboards}
+      >
+        {hiveHistory ? (
+          <RecentMilestonesLeaderboard
+            milestones={hiveHistory.milestones}
+            breadthUnlocks={activeSeason?.breadthUnlocks}
+            contributorTiers={hiveHistory.hiveContributorTiers}
+            season={activeSeason}
+            error={
+              activeSeason?.isCurrent === false
+                ? (activeSeason.stateReason ?? null)
+                : hiveHistory.milestonesError
+            }
+          />
+        ) : (
+          <section id="moments-of-triumph" className={styles.panel}>
+            <Heading
+              as="h2"
+              id="moments-of-triumph-heading"
+              className={styles.panelTitle}
+            >
+              Moments of Triumph
+            </Heading>
+            <p className={styles.unavailableNote}>
+              Milestone data {history.loading ? "loading." : "unavailable"}
+              {!history.loading && history.reason ? `: ${history.reason}` : ""}
+            </p>
+            <TriumphFeedLink />
+          </section>
+        )}
+        {hiveHistory ? (
+          <ContributorLeaderboard
+            history={hiveHistory}
+            registryEntries={registryEntries ?? []}
+            registryAvailable={registryEntries != null}
+            selectedSeason={activeSeason}
+          />
+        ) : (
+          <section id="community-builders" className={styles.panel}>
+            <Heading
+              as="h2"
+              id="community-builders-heading"
+              className={styles.panelTitle}
+            >
+              Community Builders
+            </Heading>
+            <p className={styles.unavailableNote}>
+              GitHub contribution data{" "}
+              {history.loading ? "loading." : "unavailable"}
+              {!history.loading && history.reason ? `: ${history.reason}` : ""}
+            </p>
+          </section>
+        )}
+        {hiveHistory ? (
+          <ContributorWall
+            history={hiveHistory}
+            selectedSeason={activeSeason}
+          />
+        ) : (
+          <section id="factory-community" className={styles.panel}>
+            <Heading
+              as="h2"
+              id="factory-community-heading"
+              className={styles.panelTitle}
+            >
+              Factory Community
+            </Heading>
+            <p className={styles.unavailableNote}>
+              GitHub contribution data{" "}
+              {history.loading ? "loading." : "unavailable"}
+              {!history.loading && history.reason ? `: ${history.reason}` : ""}
+            </p>
+          </section>
+        )}
+      </div>
     </div>
   );
 }

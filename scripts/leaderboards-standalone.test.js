@@ -80,6 +80,31 @@ function loadDashboard(datasets = {}) {
             React.createElement("figure", null, summary),
         };
       }
+      if (id.includes("factory/seasonTabs")) {
+        const tabsPath = path.join(
+          __dirname,
+          "..",
+          "src",
+          "components",
+          "factory",
+          "seasonTabs.ts",
+        );
+        const transpiled = ts.transpileModule(
+          fs.readFileSync(tabsPath, "utf8"),
+          {
+            compilerOptions: {
+              target: ts.ScriptTarget.ES2020,
+              module: ts.ModuleKind.CommonJS,
+            },
+          },
+        );
+        const tabsMod = { exports: {} };
+        new Function("module", "exports", transpiled.outputText)(
+          tabsMod,
+          tabsMod.exports,
+        );
+        return tabsMod.exports;
+      }
       if (id.includes("chartTheme"))
         return {
           FX_SEVERITY: {},
@@ -459,4 +484,166 @@ test("Moments of Triumph renders an explicit error reason when refresh fails", (
   const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
   assert.match(html, /Moments of Triumph/);
   assert.match(html, /Milestones unavailable: Hive leaderboard HTTP 503/);
+});
+
+test("season tab strip orders seasons newest-to-oldest with current season selected by default", () => {
+  const season9 = {
+    id: "gnome-51",
+    seasonNumber: 9,
+    version: 51,
+    name: "A Coruña",
+    title: "Season of A Coruña",
+    start: "2026-09-16T00:00:00.000Z",
+    end: null,
+    isCurrent: true,
+    source: "https://release.gnome.org/51/",
+    repos: ["common"],
+    byLogin: { currentdev: { commits: 12, repos: { common: 12 } } },
+    weekStarts: [],
+    weeklyCommits: [],
+    totalCommits: 12,
+    breadthUnlocks: [],
+  };
+  const season8 = {
+    id: "gnome-50",
+    seasonNumber: 8,
+    version: 50,
+    name: "Tokyo",
+    title: "Season of Tokyo",
+    start: "2026-03-18T00:00:00.000Z",
+    end: "2026-09-16T00:00:00.000Z",
+    isCurrent: false,
+    source: "https://release.gnome.org/50/",
+    repos: ["common", "ublue-os/bluefin"],
+    byLogin: {
+      tokyodev: {
+        commits: 20,
+        repos: { common: 10, "ublue-os/bluefin": 10 },
+      },
+    },
+    weekStarts: [],
+    weeklyCommits: [],
+    totalCommits: 20,
+    breadthUnlocks: [],
+  };
+  const season1 = {
+    id: "gnome-43",
+    seasonNumber: 1,
+    version: 43,
+    name: "Guadalajara",
+    title: "Season of Guadalajara",
+    start: "2022-09-21T00:00:00.000Z",
+    end: "2023-03-22T00:00:00.000Z",
+    isCurrent: false,
+    source: "https://release.gnome.org/43/",
+    repos: ["ublue-os/bluefin"],
+    byLogin: { founder: { commits: 5, repos: { "ublue-os/bluefin": 5 } } },
+    weekStarts: [],
+    weeklyCommits: [],
+    totalCommits: 5,
+    breadthUnlocks: [],
+  };
+
+  const { LeaderboardsSection, ContributorLeaderboard } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: { currentdev: 12, tokyodev: 20, founder: 5 },
+      contributorsByRepo: { common: { currentdev: 12 } },
+      hiveContributorTiers: { currentdev: { tier: "trusted", tasks: 15 } },
+      milestones: [],
+      season: season9,
+      // Pass intentionally unsorted to verify newest-to-oldest ordering
+      seasons: [season1, season9, season8],
+    },
+    registry: {},
+  });
+
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /role="tablist"/);
+  const idx9 = html.indexOf("Season 9 · A Coruña");
+  const idx8 = html.indexOf("Season 8 · Tokyo");
+  const idx1 = html.indexOf("Season 1 · Guadalajara");
+  assert.ok(
+    idx9 !== -1 && idx8 !== -1 && idx1 !== -1,
+    "all season tabs must render",
+  );
+  assert.ok(
+    idx9 < idx8 && idx8 < idx1,
+    "tabs must be ordered newest to oldest",
+  );
+  assert.match(
+    html,
+    /id="season-tab-gnome-51"[^>]*aria-selected="true"/,
+    "current season tab must be selected by default",
+  );
+  assert.match(
+    html,
+    /id="season-tab-gnome-50"[^>]*aria-selected="false"/,
+    "prior season tabs must not be selected by default",
+  );
+
+  // Selecting a historical season renders its leaderboard under its "Season of …" title
+  const historicalHtml = renderToStaticMarkup(
+    React.createElement(ContributorLeaderboard, {
+      history: {
+        entries: [],
+        contributors: {},
+        contributorsByRepo: {},
+        hiveContributorTiers: {},
+      },
+      selectedSeason: season8,
+    }),
+  );
+  assert.match(historicalHtml, /Season of Tokyo/);
+  assert.match(historicalHtml, /tokyodev/);
+  assert.match(historicalHtml, /ublue-os\/bluefin/);
+});
+
+test("unavailable season data degrades gracefully with an explicit reason", () => {
+  const unavailableSeason = {
+    id: "gnome-49",
+    seasonNumber: 7,
+    version: 49,
+    name: "Brescia",
+    title: "Season of Brescia",
+    start: "2025-09-17T00:00:00.000Z",
+    end: "2026-03-18T00:00:00.000Z",
+    isCurrent: false,
+    unavailable: true,
+    stateReason: "Upstream sources unavailable: ublue-os/bluefin (HTTP 503)",
+    source: "https://release.gnome.org/49/",
+    repos: [],
+    byLogin: {},
+    weekStarts: [],
+    weeklyCommits: [],
+    totalCommits: null,
+    breadthUnlocks: [],
+  };
+  const { ContributorLeaderboard, RecentMilestonesLeaderboard } =
+    loadDashboard();
+
+  const lbHtml = renderToStaticMarkup(
+    React.createElement(ContributorLeaderboard, {
+      history: {
+        entries: [],
+        contributors: {},
+        contributorsByRepo: {},
+        hiveContributorTiers: {},
+      },
+      selectedSeason: unavailableSeason,
+    }),
+  );
+  assert.match(lbHtml, /Season of Brescia/);
+  assert.match(lbHtml, /Season leaderboard data unavailable/);
+  assert.match(lbHtml, /HTTP 503/);
+
+  const msHtml = renderToStaticMarkup(
+    React.createElement(RecentMilestonesLeaderboard, {
+      milestones: [],
+      breadthUnlocks: [],
+      season: unavailableSeason,
+    }),
+  );
+  assert.match(msHtml, /Season data unavailable/);
+  assert.match(msHtml, /HTTP 503/);
 });
