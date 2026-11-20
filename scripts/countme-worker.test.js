@@ -1158,6 +1158,8 @@ test("a Bluefin image ping is counted per day and acknowledged", async () => {
     "hplip-printer-app/main:unknown",
     "gutenprint-printer-app/main:unknown",
     "ps-printer-app/main:unknown",
+    "server/main:latest",
+    "server/main:unknown",
   ]) {
     const response = await put({ image }, db.env);
     assert.equal(response.status, 200, image);
@@ -1173,6 +1175,8 @@ test("a Bluefin image ping is counted per day and acknowledged", async () => {
       "hplip-printer-app/main:unknown",
       "gutenprint-printer-app/main:unknown",
       "ps-printer-app/main:unknown",
+      "server/main:latest",
+      "server/main:unknown",
     ],
   );
 });
@@ -1182,6 +1186,9 @@ test("pings that are not a known Bluefin image are rejected without a write", as
   for (const body of [
     { image: "fedora/main:stable" },
     { image: "dakota/main:latest" },
+    { image: "server-bogus/main:latest" },
+    { image: "server/main:stable" },
+    { image: "server/anything:latest" },
     { image: "dakota:stable" },
     {},
     "not json",

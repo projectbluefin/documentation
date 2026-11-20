@@ -154,24 +154,31 @@ workloads:
    - The endpoint strictly disallows persistent machine identifiers or tokens.
 4. **Active-system count (`PUT /v1/ping`, `GET /v1/daily.json`):** Each
    Project Bluefin system sends at most one `{"image": "<image-name>/<image-flavor>:<stream>"}`
-   per day from `projectbluefin-countme`, the `projectbluefin/common` client
-   introduced in common#1205 (timer and service follow upstream
-   `eos-phone-home`). The Worker accepting pings does not mean any image sends
-   them: confirm the client exists at the image's pinned common ref first. The Worker keeps one
-   counter per UTC day and image in `daily_pings`, created with
-   `CREATE TABLE IF NOT EXISTS` in the same `batch` as the upsert. No
-   per-system rows, no IPs.
-   - `image` must match `PING_IMAGE_FAMILIES` (`dakota`, `utah`,
+   per day from `projectbluefin-countme`: the `projectbluefin/common` client
+   for bootc images (introduced in common#1205, timer and service follow
+   upstream `eos-phone-home`), and Bluefin Server's own copy in
+   `files/os/libexec/projectbluefin-countme`. The Worker accepting pings does
+   not mean any image sends them: confirm the client exists at the image's
+   pinned ref first (common ref for bootc images, `files/os/libexec/` for
+   Server). The Worker keeps one counter per UTC day and image in
+   `daily_pings`, created with `CREATE TABLE IF NOT EXISTS` in the same `batch`
+   as the upsert. No per-system rows, no IPs.
+   - `image` must match `PING_IMAGE_FAMILIES` (`dakota`, `utah`, `server`,
      `ghostscript-printer-app`, `hplip-printer-app`, `gutenprint-printer-app`,
-     `ps-printer-app`) and a stream of `stable`, `testing`, or `unknown`;
-     anything else is a 400 with no write. This rejects non-Bluefin shapes; it
-     cannot authenticate callers.
+     `ps-printer-app`). Bootc images and printer containers accept `stable`,
+     `testing`, or `unknown`; `server` is exact-match and accepts `latest`
+     (plus `unknown` when the baked tag is outside the known channel; a DDI
+     has no variants or flavors). Anything else is a 400 with no write. This
+     rejects non-Bluefin shapes; it cannot authenticate callers.
    - For host OS images (`dakota`, `utah`), the stream is the booted ref's
      tag (`bootc status`), never `image-info.json`'s `image-tag`, which is
      fixed at build time. For printer containers, ChairLift pins immutable
      digests, reporting the stream as `unknown`. Deduplication is enforced
      client-side by a persistent `.countme_day` UTC date marker in the
      container's bind-mounted volume (`/var/lib/<family>-printer-app`).
+     Bluefin Server is a DDI: its reporter reads `image-info.json`'s
+     `image-tag` (the `latest` channel systemd-sysupdate follows) and reports
+     `server/main:latest`.
    - `{"success": true}` only after D1 confirms every statement; anything
      else is a 503, and the client retries on its next timer run.
    - `/v1/daily.json` returns `[{day, image, n}]` for 90 days. A day's `n` is

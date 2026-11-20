@@ -10,7 +10,6 @@ import {
 } from "../factory/chartTheme";
 import { FIRST_PARTY_PENDING_REASON } from "@site/scripts/lib/countme-sources.mjs";
 import {
-  DAILY_STREAMS,
   DAILY_URL,
   FIRST_PARTY_ORIGIN,
   classicPopulation,
@@ -245,7 +244,7 @@ export function freshnessLevel(stream?: GhcrStream | null): SeverityLevel {
 export const NO_RAPTORS = "No raptors reporting in, life finds a way";
 
 function dailyChartSeries(daily: FamilyDaily) {
-  return DAILY_STREAMS.map((stream) => ({
+  return Object.keys(daily.streams).map((stream) => ({
     name: stream,
     values: daily.streams[stream],
   }));
@@ -672,9 +671,9 @@ export default function CountmeAnalyticsCharts({
     const series = familyDatasets.map((f) => {
       const dayMap = new Map<string, number | null>();
       f.daily.days.forEach((day, i) => {
-        const vals = DAILY_STREAMS.map((s) => f.daily.streams[s][i]).filter(
-          (v): v is number => v !== null,
-        );
+        const vals = Object.keys(f.daily.streams)
+          .map((s) => f.daily.streams[s][i])
+          .filter((v): v is number => v !== null);
         dayMap.set(day, vals.length ? vals.reduce((a, b) => a + b, 0) : null);
       });
       return {

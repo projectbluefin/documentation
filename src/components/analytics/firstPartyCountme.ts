@@ -43,7 +43,20 @@ export interface DailyDataset {
   stateReason?: string | null;
 }
 
+/** Bootc images and printer containers report these streams. */
 export const DAILY_STREAMS = ["stable", "testing", "unknown"] as const;
+
+/**
+ * Bluefin Server is a DDI: the stream is `image-tag` (`latest`), not a bootc
+ * channel. `unknown` stays as the invalid-tag fallback the reporter emits.
+ */
+export const SERVER_DAILY_STREAMS = ["latest", "unknown"] as const;
+
+/** The axis and per-stream series `familyDaily` returns for one image family. */
+export interface FamilyDaily {
+  days: string[];
+  streams: Record<string, Array<number | null>>;
+}
 
 /**
  * One image family's daily actives per stream (`utah` matches `utah/…` and
@@ -55,7 +68,7 @@ export function familyDaily(
   rows: DailyRow[],
   family?: string,
   now: Date = new Date(),
-): { days: string[]; streams: Record<string, Array<number | null>> } {
+): FamilyDaily {
   const today = now.toISOString().slice(0, 10);
   const mine = rows.filter(
     (r) =>
@@ -76,8 +89,10 @@ export function familyDaily(
       days.push(new Date(t).toISOString().slice(0, 10));
     }
   }
+  const streamNames =
+    family === "server" ? SERVER_DAILY_STREAMS : DAILY_STREAMS;
   const streams: Record<string, Array<number | null>> = {};
-  for (const stream of DAILY_STREAMS) {
+  for (const stream of streamNames) {
     streams[stream] = days.map((day) => {
       const hits = mine.filter(
         (r) => r.day === day && r.image.endsWith(`:${stream}`),
@@ -88,12 +103,11 @@ export function familyDaily(
   return { days, streams };
 }
 
-export type FamilyDaily = ReturnType<typeof familyDaily>;
-
 /** Days on which at least one stream reported, as `measuredWeekCount` does. */
 export function measuredDays(daily: FamilyDaily): number {
+  const streams = Object.keys(daily.streams);
   return daily.days.filter((_, i) =>
-    DAILY_STREAMS.some((stream) => daily.streams[stream][i] !== null),
+    streams.some((stream) => daily.streams[stream][i] !== null),
   ).length;
 }
 
@@ -101,8 +115,9 @@ export function measuredDays(daily: FamilyDaily): number {
 export function latestDaily(
   daily: FamilyDaily,
 ): { value: number; day: string } | null {
+  const streams = Object.keys(daily.streams);
   for (let i = daily.days.length - 1; i >= 0; i -= 1) {
-    const values = DAILY_STREAMS.map((stream) => daily.streams[stream][i]);
+    const values = streams.map((stream) => daily.streams[stream][i]);
     if (values.some((v) => v !== null)) {
       return {
         value: values.reduce<number>((sum, v) => sum + (v ?? 0), 0),
@@ -183,7 +198,7 @@ function dailyTotals(daily: FamilyDaily): Map<string, number | null> {
   for (const [i, day] of daily.days.entries()) {
     if (!isDay(day)) continue;
     let total: number | null = null;
-    for (const stream of DAILY_STREAMS) {
+    for (const stream of Object.keys(daily.streams)) {
       const value = daily.streams[stream]?.[i];
       if (value === null) continue;
       if (!isCount(value)) {
