@@ -16,8 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
-  pull-requests: write
+  # Pushes and PRs use the mergeraptor app token (#1625), so the built-in
+  # token only reads.
+  contents: read
   packages: read
 
 jobs:
@@ -35,6 +36,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
@@ -57,16 +59,27 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Generate mergeraptor app token
+        if: steps.check-changes.outputs.changed == 'true'
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
+        with:
+          app-id: ${{ secrets.MERGERAPTOR_APP_ID }}
+          private-key: ${{ secrets.MERGERAPTOR_PRIVATE_KEY }}
+
       - name: Create or update PR with fresh churn data
         if: steps.check-changes.outputs.changed == 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          # An app token, not github.token: GitHub starts no CI for PRs or pushes
+          # made with the built-in token (#1625).
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           BRANCH="chore/update-churn-$(date +%Y%m%d)"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git commit -m "chore(analytics): update release churn statistics"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/projectbluefin/documentation"
           git push -u origin "$BRANCH" --force
 
           # Check if PR already exists before opening duplicate
@@ -79,5 +92,5 @@ jobs:
               --base main \
               --head "$BRANCH" \
               --title "chore(analytics): update release churn statistics" \
-              --body "Automated update of release-over-release update churn, layer reuse efficiency, and zstd compression statistics triggered by updated SBOMs and OCI manifests. Requires maintainer approval before merge per repository policy."
+              --body "Automated update of release-over-release update churn, layer reuse efficiency, and zstd compression statistics triggered by updated SBOMs and OCI manifests. The hive merges it once the site build and tests pass."
           fi

@@ -10,8 +10,9 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
-  pull-requests: write
+  # Pushes and PRs use the mergeraptor app token (#1625), so the built-in
+  # token only reads.
+  contents: read
   issues: read
   discussions: read
 
@@ -30,6 +31,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
@@ -78,16 +80,27 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
+      - name: Generate mergeraptor app token
+        if: steps.check-changes.outputs.changed == 'true' && github.ref == 'refs/heads/main'
+        id: app-token
+        uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510 # v3
+        with:
+          app-id: ${{ secrets.MERGERAPTOR_APP_ID }}
+          private-key: ${{ secrets.MERGERAPTOR_PRIVATE_KEY }}
+
       - name: Create or update PR with fresh contributor data
         if: steps.check-changes.outputs.changed == 'true' && github.ref == 'refs/heads/main'
         env:
-          GH_TOKEN: ${{ github.token }}
+          # An app token, not github.token: GitHub starts no CI for PRs or pushes
+          # made with the built-in token (#1625).
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           BRANCH="chore/update-contributor-metrics"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
           git commit -m "chore(analytics): refresh public contributor participation"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/projectbluefin/documentation"
           git push -u origin "$BRANCH" --force-with-lease
 
           # Check if PR already exists before opening duplicate
@@ -100,7 +113,7 @@ jobs:
               --base main \
               --head "$BRANCH" \
               --title "chore(analytics): refresh public contributor participation" \
-              --body "Refreshes the complete public GitHub participation snapshot. Known bots and imported fork commit history are excluded; failed collection preserves last-good history and marks unavailability. Requires maintainer approval before merge."
+              --body "Refreshes the complete public GitHub participation snapshot. Known bots and imported fork commit history are excluded; failed collection preserves last-good history and marks unavailability. The hive merges it once the site build and tests pass."
           fi
 
       # Publish the unavailable state first, then report a failed refresh honestly.
