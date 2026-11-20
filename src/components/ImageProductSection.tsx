@@ -22,7 +22,7 @@ interface ImageReleaseRecord {
   tag: string;
   url: string;
   publishedAt: string;
-  stream: "stable" | "testing" | null;
+  stream: "stable" | "testing" | "lts" | null;
   source: {
     repository: string;
     kind: "image" | "iso";

@@ -136,6 +136,11 @@ Images pages and catalog pipelines track only **`stable`** and **`testing`**
 streams. Never track `:latest`. Use `sudo bootc switch --enforce-container-sigpolicy ghcr.io/projectbluefin/<family>:stable`
 for stable switch instructions.
 
+Exception: Bluefin LTS is built in `ublue-os/bluefin-lts` and publishes the
+floating `ghcr.io/ublue-os/bluefin:lts` tag, not `:stable`/`:testing`.
+`scripts/fetch-image-releases.mjs` maps its `lts.YYYYMMDD` releases to the
+`lts` stream so `/lts` renders `bootc switch … ghcr.io/ublue-os/bluefin:lts`.
+
 ## Sidebar
 
 Add the doc id to the `Images` category in `sidebars.ts`. The doc id
