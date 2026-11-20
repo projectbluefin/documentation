@@ -294,23 +294,27 @@ No match means fetch it at runtime from `/data/thing.json` and render
 `Unavailable` with the reason on failure, the way `FactoryDataProvider` and
 `CountmeAnalyticsCharts` do.
 
-### The catalogue drives the grid, and source drives the catalogue
+### The catalogue drives the cards, and source drives the catalogue
 
-`/analytics` plots every image family `projectbluefin/common` ships into against
-every promotion stream. The row set comes from `BLUEFIN_FAMILY_IMAGES` in
+`/analytics` renders a family card for every image family
+`projectbluefin/common` ships into. The image list comes from
+`BLUEFIN_FAMILY_IMAGES` in
 `src/components/analytics/CountmeAnalyticsCharts.tsx`; the GHCR snapshot only
-fills the cells in.
+fills the `:testing` / `:stable` chips with each stream's age.
 
-That order matters. If the snapshot drove the rows, an image that stopped
-publishing would quietly vanish from the grid and the page would look healthy.
-Driven by the catalogue, it keeps its row and the cell reads `—`.
+That order matters. If the snapshot drove the cards, an image that stopped
+publishing would quietly vanish from the page and it would look healthy. Driven
+by the catalogue, the image keeps its row and the chip reads `—`. When the
+snapshot itself cannot be read, the section states that with an `Unavailable`
+block and hides the chips rather than drawing a card full of `—`.
 
 **The catalogue is derived from each repository's `execute-release.yml`
 promotion matrix — not from `common` → `docs/skills/image-registry.md`.** That
-file is a convenient summary and it was wrong when this chart was built against
-it: it omitted `dakota-gaming` and `dakota-nvidia-gaming` entirely. Both are
-promoted; neither could appear on the dashboard, because `FALLBACK_LANES` in
-`scripts/fetch-ghcr-packages.js` had been written from the same summary.
+file is a convenient summary and it was wrong when the catalogue was built
+against it: it omitted `dakota-gaming` and `dakota-nvidia-gaming` entirely.
+Both are promoted; neither could appear on the dashboard, because
+`FALLBACK_LANES` in `scripts/fetch-ghcr-packages.js` had been written from the
+same summary.
 
 Re-derive before editing either list:
 
@@ -332,13 +336,13 @@ time. An image missing from it is an image the dashboard can never show,
 however correct the component is. `scripts/fetch-ghcr-packages.test.js` pins
 `PROMOTED_IMAGES ⊆ FALLBACK_LANES`.
 
-Two more distinctions the matrix keeps straight:
+Two more distinctions the cards keep straight:
 
-- **Retired tags stay out of the columns.** `:latest` and `:gts` still sit on
-  some images from older schemes. They are named in the panel note and
-  the retired images are named on their family card.
-- **Bluefin Server ships a DDI**, not a container tag, so it is a counted family
-  with no row in the OCI matrix at all — `delivery: "ddi"` marks it.
+- **Only promotion streams become chips.** `:latest` and `:gts` still sit on
+  some images from older schemes; nothing promotes through them, so a chip for
+  one would be a permanent dash.
+- **Bluefin Server ships a DDI**, not a container tag, so it is a counted
+  family with no stream chips at all — `delivery: "ddi"` marks it.
 
 ### Tests pin the copy
 
