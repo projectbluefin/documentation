@@ -239,7 +239,11 @@ function extractSeasonProjectUnlocks(
  * Merges new milestone events into an existing ledger, deduplicating by id
  * and capping at maxEntries, sorted newest first.
  */
-function mergeMilestonesLedger(existing = [], newEvents = [], maxEntries = 50) {
+function mergeMilestonesLedger(
+  existing = [],
+  newEvents = [],
+  maxEntries = Infinity,
+) {
   const seen = new Set();
   const merged = [];
 

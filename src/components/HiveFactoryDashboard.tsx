@@ -2052,6 +2052,44 @@ export function ContributorLeaderboard({
   );
 }
 
+function TriumphFeedLink(): React.JSX.Element {
+  return (
+    <p className={styles.triumphFeedMeta}>
+      <a
+        className={styles.triumphFeedLink}
+        href="/feeds/moments-of-triumph.xml"
+        type="application/rss+xml"
+        title="Subscribe to Moments of Triumph as RSS"
+      >
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="5.5" cy="18.5" r="2.5" fill="currentColor" />
+          <path
+            d="M3 10.5A10.5 10.5 0 0 1 13.5 21"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+          <path
+            d="M3 4.5A16.5 16.5 0 0 1 19.5 21"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+          />
+        </svg>
+        <span>Subscribe via RSS</span>
+      </a>
+    </p>
+  );
+}
+
 export function RecentMilestonesLeaderboard({
   milestones,
   breadthUnlocks,
@@ -2081,7 +2119,7 @@ export function RecentMilestonesLeaderboard({
   allEvents.sort(
     (a, b) => Date.parse(b.detectedAt || "") - Date.parse(a.detectedAt || ""),
   );
-  const items = allEvents.slice(0, 50);
+  const items = allEvents;
 
   // Group events by season-week when season information is available.
   const seasonStartMs = season?.start ? Date.parse(season.start) : NaN;
@@ -2142,10 +2180,19 @@ export function RecentMilestonesLeaderboard({
         Moments of Triumph
       </Heading>
       <p className={styles.panelMeta}>
-        Ledger of teamwork &mdash; contributors levelling up trust tiers,
-        unlocking project achievements, and crossing task landmarks.
+        Bluefin is a living project: the deployed operating system is treated
+        like a live production deployment of a "cluster". These are the
+        operations folks slaying bugs and solving problems every day.{" "}
+        <Link to="/contributing/">Join us</Link>.
+      </p>
+      <p className={styles.panelMeta}>
+        This is a ledger of teamwork &mdash; contributors levelling up trust
+        tiers, unlocking project achievements, and crossing task landmarks. Each
+        release of GNOME is treated as a Contribution Season. Follow your
+        favorite guardian!
         {error && <span className={styles.lbAccumulating}> · {error}</span>}
       </p>
+      <TriumphFeedLink />
       {items.length === 0 ? (
         <p className={styles.panelMeta}>
           <span className={styles.lbAccumulating}>
@@ -4482,28 +4529,6 @@ export function LeaderboardsSection(): React.JSX.Element {
   return (
     <div className={styles.leaderboards}>
       {hiveHistory ? (
-        <ContributorLeaderboard
-          history={hiveHistory}
-          registryEntries={registryEntries ?? []}
-          registryAvailable={registryEntries != null}
-        />
-      ) : (
-        <section id="community-builders" className={styles.panel}>
-          <Heading
-            as="h2"
-            id="community-builders-heading"
-            className={styles.panelTitle}
-          >
-            Community Builders
-          </Heading>
-          <p className={styles.unavailableNote}>
-            GitHub contribution data{" "}
-            {history.loading ? "loading." : "unavailable"}
-            {!history.loading && history.reason ? `: ${history.reason}` : ""}
-          </p>
-        </section>
-      )}
-      {hiveHistory ? (
         <RecentMilestonesLeaderboard
           milestones={hiveHistory.milestones}
           breadthUnlocks={hiveHistory.season?.breadthUnlocks}
@@ -4522,6 +4547,29 @@ export function LeaderboardsSection(): React.JSX.Element {
           </Heading>
           <p className={styles.unavailableNote}>
             Milestone data {history.loading ? "loading." : "unavailable"}
+            {!history.loading && history.reason ? `: ${history.reason}` : ""}
+          </p>
+          <TriumphFeedLink />
+        </section>
+      )}
+      {hiveHistory ? (
+        <ContributorLeaderboard
+          history={hiveHistory}
+          registryEntries={registryEntries ?? []}
+          registryAvailable={registryEntries != null}
+        />
+      ) : (
+        <section id="community-builders" className={styles.panel}>
+          <Heading
+            as="h2"
+            id="community-builders-heading"
+            className={styles.panelTitle}
+          >
+            Community Builders
+          </Heading>
+          <p className={styles.unavailableNote}>
+            GitHub contribution data{" "}
+            {history.loading ? "loading." : "unavailable"}
             {!history.loading && history.reason ? `: ${history.reason}` : ""}
           </p>
         </section>
