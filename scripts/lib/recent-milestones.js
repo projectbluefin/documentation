@@ -175,6 +175,10 @@ function extractSeasonProjectUnlocks(
 ) {
   if (!season || !commitsByRepo) return [];
   const startMs = Date.parse(season.start);
+  const endMs =
+    season.end != null && Number.isFinite(Date.parse(season.end))
+      ? Date.parse(season.end)
+      : null;
   const unlocks = [];
 
   // Group first commit dates per contributor: login -> Array<{ repo, dateMs, dateStr }>
@@ -188,7 +192,12 @@ function extractSeasonProjectUnlocks(
       if (item?.parents?.length > 1) continue; // skip merges
       const dateStr = item?.commit?.committer?.date;
       const dateMs = Date.parse(dateStr);
-      if (!Number.isFinite(dateMs) || (startMs && dateMs < startMs)) continue;
+      if (
+        !Number.isFinite(dateMs) ||
+        (Number.isFinite(startMs) && dateMs < startMs) ||
+        (endMs != null && dateMs >= endMs)
+      )
+        continue;
 
       let userRepos = contributorFirsts.get(login);
       if (!userRepos) {
@@ -203,6 +212,7 @@ function extractSeasonProjectUnlocks(
   }
 
   // For each contributor, sort their distinct repos chronologically by first commit date
+  const seasonKey = season.id || String(season.version);
   for (const [login, repoMap] of contributorFirsts.entries()) {
     const sortedProjects = Array.from(repoMap.values()).sort(
       (a, b) => a.dateMs - b.dateMs,
@@ -213,7 +223,7 @@ function extractSeasonProjectUnlocks(
         // The commit that crossed the threshold is the Nth project (0-indexed: tier.count - 1)
         const triggeringProject = sortedProjects[tier.count - 1];
         unlocks.push({
-          id: `season-${season.version}-${login}-breadth-${tier.count}`,
+          id: `season-${seasonKey}-${login}-breadth-${tier.count}`,
           login,
           type: "project_unlock",
           value: tier.count,

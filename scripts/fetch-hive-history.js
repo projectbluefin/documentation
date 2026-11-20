@@ -49,8 +49,12 @@ const fs = require("fs");
 const path = require("path");
 const { githubToken, githubHeaders } = require("./lib/request-queue");
 const {
+  parseGnomeReleases,
   releaseFromFeed,
+  parseGnomeNickname,
+  formatSeasonTitle,
   parseSeason,
+  buildSeasonWindows,
   collectSeason,
   fetchSeasonCommits,
 } = require("./lib/gnome-season");
@@ -115,6 +119,14 @@ const FALLBACK_FACTORY_REPOS = [
 // Repositories that are forks or upstreams but core to projectbluefin development
 const ALLOWED_CORE_FORKS = new Set(["dakota-iso", "chairlift"]);
 const EXCLUDED_REPOS = new Set(["lab"]);
+
+// Read-only upstream Bluefin repositories included in backfilled historical seasons
+// (ublue-os/* is strictly read-only per AGENTS.md).
+const EXTERNAL_LEADERBOARD_REPOS = ["ublue-os/bluefin", "ublue-os/bluefin-lts"];
+// Archived projectbluefin repos with historical commits prior to archival.
+const HISTORICAL_ARCHIVED_ORG_REPOS = ["bluefin"];
+// Creation timestamp of ublue-os/bluefin (earliest commit in Bluefin history).
+const BLUEFIN_PROJECT_START = "2023-03-08T18:39:32Z";
 
 // GitHub bot and automation accounts to exclude from human contributor lists
 const BOT_LOGINS = new Set([
@@ -489,6 +501,91 @@ async function fetchContributorWeeklyStats(
   };
 }
 
+function backfillReposForHistory(trackedRepos = []) {
+  return [
+    ...new Set([
+      ...trackedRepos.filter((r) => !EXCLUDED_REPOS.has(r)),
+      ...HISTORICAL_ARCHIVED_ORG_REPOS,
+      ...EXTERNAL_LEADERBOARD_REPOS,
+    ]),
+  ].sort();
+}
+
+async function fetchBluefinReleases(request) {
+  const releases = [];
+  let url = `${GH_API}/repos/ublue-os/bluefin/releases?per_page=100`;
+  while (url) {
+    const res = await request(url);
+    if (!res.ok)
+      throw new Error(`ublue-os/bluefin releases: HTTP ${res.status}`);
+    const page = await res.json();
+    if (!Array.isArray(page))
+      throw new Error("ublue-os/bluefin releases: invalid response");
+    for (const r of page) {
+      if (r?.tag_name && (r?.published_at || r?.created_at)) {
+        releases.push({
+          tag_name: r.tag_name,
+          published_at: r.published_at || r.created_at,
+          prerelease: Boolean(r.prerelease),
+        });
+      }
+    }
+    const next = res.headers.get("Link")?.match(/<([^>]+)>;\s*rel="next"/)?.[1];
+    if (next && new URL(next).origin !== "https://api.github.com")
+      throw new Error("ublue-os/bluefin releases: unsafe pagination URL");
+    url = next || null;
+  }
+  return releases;
+}
+
+async function resolveGnomeNicknames(gnomeReleases, request) {
+  const resolved = [];
+  for (const rel of gnomeReleases) {
+    let name = null;
+    let nicknameNote = null;
+    try {
+      const res = await request(rel.source);
+      if (res.ok) {
+        const html = await res.text();
+        name = parseGnomeNickname(rel.version, html);
+        if (name == null) {
+          nicknameNote = `GNOME ${rel.version} has no official release nickname`;
+        }
+      } else {
+        nicknameNote = `GNOME ${rel.version} release notes unavailable (HTTP ${res.status})`;
+      }
+    } catch (err) {
+      nicknameNote = `GNOME ${rel.version} nickname lookup failed: ${err.message}`;
+    }
+    resolved.push({ ...rel, name, nicknameNote });
+  }
+  return resolved;
+}
+
+function summarizeCurrentBluefinReleases(bluefinReleases, startIso) {
+  const startMs = Date.parse(startIso);
+  if (!Number.isFinite(startMs) || !Array.isArray(bluefinReleases)) return null;
+  const inWindow = bluefinReleases
+    .filter((r) => Date.parse(r.published_at) >= startMs)
+    .sort((a, b) => Date.parse(a.published_at) - Date.parse(b.published_at));
+  if (inWindow.length === 0) {
+    return {
+      count: 0,
+      first: null,
+      last: null,
+      firstDate: null,
+      lastDate: null,
+    };
+  }
+  return {
+    count: inWindow.length,
+    first: inWindow[0].tag_name,
+    last: inWindow[inWindow.length - 1].tag_name,
+    firstDate: inWindow[0].published_at,
+    lastDate: inWindow[inWindow.length - 1].published_at,
+  };
+}
+
 function loadHistory(file = OUTPUT_FILE) {
   try {
     if (fs.existsSync(file)) {
@@ -695,6 +792,7 @@ async function main() {
   }
 
   // A GNOME release defines the season boundary, independent of the OS image version.
+  let gnomeFeedText = null;
   try {
     const feedResponse = await fetch("https://release.gnome.org/atom.xml", {
       signal: AbortSignal.timeout(15000),
@@ -702,6 +800,7 @@ async function main() {
     if (!feedResponse.ok)
       throw new Error(`GNOME release feed: HTTP ${feedResponse.status}`);
     const feed = await feedResponse.text();
+    gnomeFeedText = feed;
     const release = releaseFromFeed(feed);
     const notesResponse = await fetch(release.source, {
       signal: AbortSignal.timeout(15000),
@@ -764,6 +863,175 @@ async function main() {
     console.warn(`[hive-history] ${history.seasonError}`);
   }
 
+  // ── Backfill prior GNOME release seasons (immutable once completed) ────────
+  // Current season (history.season) stays completely untouched; prior seasons
+  // draw from all tracked projectbluefin/* repos + read-only ublue-os/bluefin
+  // and ublue-os/bluefin-lts so every historical contributor lands in a season.
+  if (history.season && gnomeFeedText) {
+    try {
+      const ghReq = (url) =>
+        fetch(url, {
+          headers: ghHeaders(),
+          signal: AbortSignal.timeout(30000),
+        });
+      const webReq = (url) =>
+        fetch(url, { signal: AbortSignal.timeout(15000) });
+      const isBot = (login) => login.endsWith("[bot]") || BOT_LOGINS.has(login);
+
+      const allGnomeReleases = parseGnomeReleases(gnomeFeedText);
+      const currentStartMs = Date.parse(history.season.start);
+      const earliestMs = Date.parse(BLUEFIN_PROJECT_START);
+
+      // Keep only GNOME releases from the release active at BLUEFIN_PROJECT_START up to currentSeason.start
+      let startIdx = 0;
+      for (let i = 0; i < allGnomeReleases.length; i++) {
+        if (allGnomeReleases[i].timestamp <= earliestMs) startIdx = i;
+      }
+      const relevantPriorReleases = allGnomeReleases
+        .slice(startIdx)
+        .filter((r) => r.timestamp < currentStartMs);
+
+      const existingById = new Map(
+        (Array.isArray(history.seasons) ? history.seasons : [])
+          .filter((s) => s && s.id)
+          .map((s) => [s.id, s]),
+      );
+
+      let bluefinReleases = [];
+      let bluefinReleasesError = null;
+      try {
+        bluefinReleases = await fetchBluefinReleases(ghReq);
+      } catch (err) {
+        bluefinReleasesError = err.message;
+        console.warn(
+          `[hive-history] Failed to fetch ublue-os/bluefin releases: ${err.message}`,
+        );
+      }
+
+      const releasesWithNicknames = await resolveGnomeNicknames(
+        relevantPriorReleases,
+        webReq,
+      );
+
+      const priorWindows = buildSeasonWindows(
+        releasesWithNicknames,
+        bluefinReleases,
+        {
+          earliestDate: BLUEFIN_PROJECT_START,
+          currentSeasonStart: history.season.start,
+        },
+      );
+
+      const backfillRepos = backfillReposForHistory(trackedRepos);
+      const populatedPrior = [];
+
+      for (const win of priorWindows) {
+        const cached = existingById.get(win.id);
+        const hasValidCache =
+          !forceRefresh &&
+          cached &&
+          !cached.unavailable &&
+          (!cached.failedRepos || cached.failedRepos.length === 0) &&
+          typeof cached.generatedAt === "string" &&
+          Number.isFinite(Date.parse(cached.generatedAt));
+
+        if (hasValidCache) {
+          populatedPrior.push({
+            ...win,
+            ...cached,
+            seasonNumber: win.seasonNumber,
+            title: win.title,
+            name: win.name,
+            nicknameNote: win.nicknameNote,
+            boundaryMilestone: win.boundaryMilestone,
+            splitRule: win.splitRule,
+            bluefinReleases: win.bluefinReleases,
+          });
+          continue;
+        }
+
+        console.log(
+          `[hive-history] Backfilling Season ${win.seasonNumber} (${win.title}: ${win.start.slice(0, 10)} → ${win.end.slice(0, 10)}) across ${backfillRepos.length} repos...`,
+        );
+        const { byRepo, failedRepos } = await fetchSeasonCommits(
+          backfillRepos,
+          win.start,
+          win.end,
+          ghReq,
+          { allowPartial: true },
+        );
+
+        const succeededRepos = Object.keys(byRepo).sort();
+        const allFailed = succeededRepos.length === 0 && failedRepos.length > 0;
+        const stats = allFailed
+          ? {
+              byLogin: {},
+              weekStarts: [],
+              weeklyCommits: [],
+              totalCommits: null,
+            }
+          : collectSeason(win, byRepo, Date.parse(win.end), isBot);
+        const breadthUnlocks = allFailed
+          ? []
+          : extractSeasonProjectUnlocks(win, byRepo, isBot);
+
+        const stateReason = allFailed
+          ? `Upstream sources unavailable: ${failedRepos.map((f) => `${f.repo} (${f.reason})`).join(", ")}`
+          : failedRepos.length > 0
+            ? `Partial source failure (${failedRepos.length}/${backfillRepos.length}): ${failedRepos.map((f) => f.repo).join(", ")}`
+            : bluefinReleasesError
+              ? `ublue-os/bluefin release tags unavailable: ${bluefinReleasesError}`
+              : null;
+
+        populatedPrior.push({
+          ...win,
+          ...stats,
+          contributorCount: allFailed
+            ? null
+            : Object.keys(stats.byLogin).length,
+          repos: succeededRepos,
+          failedRepos,
+          unavailable: allFailed,
+          stateReason,
+          breadthUnlocks,
+          generatedAt: new Date().toISOString(),
+        });
+        console.log(
+          `[hive-history] Season ${win.seasonNumber} (${win.title}): ${stats.totalCommits ?? "unavailable"} commits, ${allFailed ? "unavailable" : Object.keys(stats.byLogin).length} contributors${failedRepos.length ? ` (${failedRepos.length} failed repos)` : ""}`,
+        );
+      }
+
+      const currentSeasonNumber = populatedPrior.length + 1;
+      const currentSeasonEntry = {
+        ...history.season,
+        id: `gnome-${history.season.version}`,
+        seasonNumber: currentSeasonNumber,
+        title: formatSeasonTitle(history.season),
+        end: null,
+        isCurrent: true,
+        unavailable: false,
+        stateReason: history.seasonError || null,
+        failedRepos: [],
+        boundaryMilestone: `GNOME ${history.season.version} (${history.season.name}) → ongoing`,
+        splitRule: null,
+        bluefinReleases: summarizeCurrentBluefinReleases(
+          bluefinReleases,
+          history.season.start,
+        ),
+        contributorCount: Object.keys(history.season.byLogin || {}).length,
+        generatedAt: history.season.updatedAt || new Date().toISOString(),
+      };
+
+      // Store newest-to-oldest so consumers and tabs read directly in display order.
+      history.seasons = [currentSeasonEntry, ...populatedPrior.reverse()];
+      history.seasonsGeneratedAt = new Date().toISOString();
+      history.seasonsError = null;
+    } catch (err) {
+      history.seasonsError = `Historical seasons unavailable: ${err.message}${Array.isArray(history.seasons) && history.seasons.length > 0 ? "; showing last complete snapshot" : ""}`;
+      console.warn(`[hive-history] ${history.seasonsError}`);
+    }
+  }
+
   // ── Write output ─────────────────────────────────────────────────────────
   fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
   fs.writeFileSync(OUTPUT_FILE, JSON.stringify(history, null, 2), "utf8");
@@ -779,17 +1047,24 @@ if (require.main === module) {
 
 module.exports = {
   accumulateRepoStats,
+  backfillReposForHistory,
+  BLUEFIN_PROJECT_START,
   computeStatsWindows,
   createStatsAccumulator,
+  EXTERNAL_LEADERBOARD_REPOS,
   extractHiveContributorTiers,
   extractMetrics,
+  fetchBluefinReleases,
   fetchContributors,
   fetchContributorWeeklyStats,
   finalizeContributorStats,
+  HISTORICAL_ARCHIVED_ORG_REPOS,
   loadHistory,
   MAX_WEEKLY_SERIES,
   MAX_WEEKS,
   registryHeaders,
+  resolveGnomeNicknames,
   safeNum,
+  summarizeCurrentBluefinReleases,
   trackedProjectRepos,
 };
