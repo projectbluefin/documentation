@@ -179,10 +179,13 @@ the verified fallback list during discovery failures.
   reused by `generatedAt` freshness unless `--force` is passed.
 - Present all seasons as a newest-to-oldest tab strip (`SeasonTabStrip` +
   `src/components/factory/seasonTabs.ts`) with the current season selected and
-  highlighted by default. When an upstream source fails during backfill, record
-  `failedRepos` and `stateReason` (and `unavailable: true` with `totalCommits: null`
-  if all sources fail) so missing data is never mistaken for zero commits, and
-  render the explicit reason in the UI.
+  highlighted by default. Tab bars must wrap responsively (`flex-wrap: wrap`)
+  rather than scrolling horizontally (`overflow-x: auto`), which introduces
+  unwanted scrollbars across desktop and mobile viewports. When an upstream
+  source fails during backfill, record `failedRepos` and `stateReason` (and
+  `unavailable: true` with `totalCommits: null` if all sources fail) so missing
+  data is never mistaken for zero commits, and render the explicit reason in the
+  UI.
 - Keep the last complete season if discovery or collection fails, with a
   visible `seasonError`. If no season has been collected, show unavailability,
   not zero. The tracked `static/data/hive-history.json` is only a seed; inspect
