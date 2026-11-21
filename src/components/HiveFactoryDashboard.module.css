@@ -2220,20 +2220,20 @@
 
 .seasonTabBar {
   margin-bottom: 0.75rem;
-  overflow-x: auto;
-  scrollbar-width: thin;
 }
 
 .seasonTabList {
-  display: flex;
-  flex-wrap: nowrap;
+  display: flex !important;
+  flex-wrap: wrap !important;
   gap: 0.5rem;
   padding-bottom: 0.25rem;
   border-bottom: 1px solid var(--ifm-color-emphasis-200);
 }
 
 .seasonTab {
-  flex: 0 0 auto;
+  flex: 0 0 auto !important;
+  width: auto !important;
+  max-width: 100%;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
