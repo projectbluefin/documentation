@@ -73,6 +73,12 @@
       ]
     },
     {
+      "description": "pages.yml, pdf.yml, deploy-countme-worker.yml, open-discussion.yml, workers/countme-proxy/**, wrangler.countme.toml are human-merge paths in the hive. Give their updates their own branches, so a pin-only update to them is a PR of its own that the hive's pin-only exception can merge, instead of being held with other workflows. Renovate doesn't merge these updates itself, because its own merge would skip the hive's hold on these files. The hive merges a pin-only update, and anything else, a major included, waits for a person. The countme worker files aren't covered by the pin-only exception, so their updates always wait for a person.",
+      "matchFileNames": [".github/workflows/pages.yml", ".github/workflows/pdf.yml", ".github/workflows/deploy-countme-worker.yml", ".github/workflows/open-discussion.yml", "workers/countme-proxy/**", "wrangler.countme.toml"],
+      "additionalBranchPrefix": "human-merge-paths-",
+      "automerge": false
+    },
+    {
       "description": "A major update always waits for a person. automerge false only stops Renovate; the hive merges trusted-bot pull requests itself, so label the update needs-owner-merge (the hive's auto_merge.human_merge_labels default): the hive never merges a PR with it, and only a person's merge lands it. Never use hold, which merges as soon as someone removes it. Last matching rule wins, so keep this rule last.",
       "matchUpdateTypes": ["major"],
       "automerge": false,
