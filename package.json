@@ -93,7 +93,7 @@
     "prettier": "3.10.1",
     "satori": "0.63.2",
     "typescript": "6.0.3",
-    "wrangler": "4.164.0"
+    "wrangler": "4.165.0"
   },
   "overrides": {
     "react": "$react",
