@@ -342,19 +342,21 @@ interface GNOMESeason extends SeasonEntry {
   weeklyCommits: number[];
   totalCommits: number | null;
   breadthUnlocks?: HiveMilestoneEvent[];
+  firstContributions?: HiveMilestoneEvent[];
   bluefinReleases?: SeasonReleaseRange | null;
 }
 
 export interface HiveMilestoneEvent {
   id: string;
   login: string;
-  type: "tier_up" | "task_landmark" | "project_unlock";
+  type: "tier_up" | "task_landmark" | "project_unlock" | "first_contribution";
   title: string;
   detail: string;
   detectedAt: string;
   tier?: string;
   value?: number;
   repo?: string;
+  commitUrl?: string;
   badge?: {
     label: string;
     color: string;
@@ -2426,12 +2428,14 @@ function TriumphFeedLink(): React.JSX.Element {
 export function RecentMilestonesLeaderboard({
   milestones,
   breadthUnlocks,
+  firstContributions,
   contributorTiers,
   season,
   error,
 }: {
   milestones?: HiveMilestoneEvent[];
   breadthUnlocks?: HiveMilestoneEvent[];
+  firstContributions?: HiveMilestoneEvent[];
   contributorTiers?: Record<
     string,
     {
@@ -2455,6 +2459,7 @@ export function RecentMilestonesLeaderboard({
   const allEvents = [
     ...scopedMilestones,
     ...(Array.isArray(breadthUnlocks) ? breadthUnlocks : []),
+    ...(Array.isArray(firstContributions) ? firstContributions : []),
   ];
   allEvents.sort(
     (a, b) => Date.parse(b.detectedAt || "") - Date.parse(a.detectedAt || ""),
@@ -2586,16 +2591,23 @@ export function RecentMilestonesLeaderboard({
                         contributorMeta.local > 0);
                     const modelName =
                       contributorMeta?.model || (isLocal ? "Local" : undefined);
-                    const accentColor = isLocal
-                      ? "var(--ifm-color-primary)"
-                      : m.badge?.color || "var(--fx-accent)";
+                    const isFirstContribution = m.type === "first_contribution";
+                    const platinum = isLocal && !isFirstContribution;
+                    // Gold wins over the local-model platinum treatment: the
+                    // FIRST milestone is about the contributor's start, and
+                    // the Local tag stays visible independently below.
+                    const accentColor = isFirstContribution
+                      ? "var(--fx-gold)"
+                      : platinum
+                        ? "var(--ifm-color-primary)"
+                        : m.badge?.color || "var(--fx-accent)";
                     return (
                       <Link
                         key={m.id}
-                        href={contributorDossierUrl(m.login)}
+                        href={m.commitUrl ?? contributorDossierUrl(m.login)}
                         target="_blank"
                         rel="noreferrer"
-                        className={`${styles.triumphEmblem} ${isLocal ? styles.triumphPlatinum : ""}`}
+                        className={`${styles.triumphEmblem} ${platinum ? styles.triumphPlatinum : ""}`}
                         style={
                           {
                             "--emblem-accent": accentColor,
@@ -2631,12 +2643,12 @@ export function RecentMilestonesLeaderboard({
                               )}
                               {m.badge && (
                                 <span
-                                  className={`${styles.emblemBadge} ${isLocal ? styles.emblemBadgePlatinum : ""}`}
+                                  className={`${styles.emblemBadge} ${platinum ? styles.emblemBadgePlatinum : ""}`}
                                   style={{
-                                    borderColor: isLocal
+                                    borderColor: platinum
                                       ? undefined
                                       : m.badge.color,
-                                    color: isLocal ? undefined : m.badge.color,
+                                    color: platinum ? undefined : m.badge.color,
                                   }}
                                 >
                                   {m.badge.label}
@@ -4987,6 +4999,7 @@ export function LeaderboardsSection(): React.JSX.Element {
           <RecentMilestonesLeaderboard
             milestones={hiveHistory.milestones}
             breadthUnlocks={activeSeason?.breadthUnlocks}
+            firstContributions={activeSeason?.firstContributions}
             contributorTiers={hiveHistory.hiveContributorTiers}
             season={activeSeason}
             error={

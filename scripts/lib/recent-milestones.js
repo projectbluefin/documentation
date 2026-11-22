@@ -159,30 +159,27 @@ const BREADTH_TIER_THRESHOLDS = [
 ];
 
 /**
- * Extracts season project breadth level-up milestones from season commits.
- * Emits an event only when a contributor crosses the breadth thresholds (2, 3, 5, 7, 10 distinct repos)
- * in the season, dated by the commit that unlocked that distinct project.
+ * Collects each contributor's earliest commit per repo within the season
+ * window, keyed by login. Merge commits and bots are excluded, and only
+ * commits whose committer date falls inside `[start, end)` are kept.
  *
- * @param {Object} season - GNOME season metadata (version, name, start)
- * @param {Record<string, Array<{author: {login: string}, commit: {committer: {date: string}}, parents: any[]}>>} commitsByRepo
+ * @param {Object} season - GNOME season metadata (version, name, start, end)
+ * @param {Record<string, Array<{author: {login: string}, commit: {committer: {date: string}}, parents: any[], htmlUrl?: string}>>} commitsByRepo
  * @param {(login: string) => boolean} isBot
- * @returns {Array<MilestoneEvent>}
+ * @returns {Map<string, Map<string, { repo: string, dateMs: number, dateStr: string, htmlUrl?: string }>>}
  */
-function extractSeasonProjectUnlocks(
+function collectContributorFirstCommits(
   season,
   commitsByRepo = {},
   isBot = () => false,
 ) {
-  if (!season || !commitsByRepo) return [];
+  const contributorFirsts = new Map();
+  if (!season || !commitsByRepo) return contributorFirsts;
   const startMs = Date.parse(season.start);
   const endMs =
     season.end != null && Number.isFinite(Date.parse(season.end))
       ? Date.parse(season.end)
       : null;
-  const unlocks = [];
-
-  // Group first commit dates per contributor: login -> Array<{ repo, dateMs, dateStr }>
-  const contributorFirsts = new Map();
 
   for (const [repo, commits] of Object.entries(commitsByRepo)) {
     if (!Array.isArray(commits)) continue;
@@ -206,10 +203,41 @@ function extractSeasonProjectUnlocks(
       }
       const existing = userRepos.get(repo);
       if (!existing || dateMs < existing.dateMs) {
-        userRepos.set(repo, { repo, dateMs, dateStr });
+        userRepos.set(repo, {
+          repo,
+          dateMs,
+          dateStr,
+          htmlUrl: item.htmlUrl,
+        });
       }
     }
   }
+
+  return contributorFirsts;
+}
+
+/**
+ * Extracts season project breadth level-up milestones from season commits.
+ * Emits an event only when a contributor crosses the breadth thresholds (2, 3, 5, 7, 10 distinct repos)
+ * in the season, dated by the commit that unlocked that distinct project.
+ *
+ * @param {Object} season - GNOME season metadata (version, name, start)
+ * @param {Record<string, Array<{author: {login: string}, commit: {committer: {date: string}}, parents: any[]}>>} commitsByRepo
+ * @param {(login: string) => boolean} isBot
+ * @returns {Array<MilestoneEvent>}
+ */
+function extractSeasonProjectUnlocks(
+  season,
+  commitsByRepo = {},
+  isBot = () => false,
+) {
+  if (!season || !commitsByRepo) return [];
+  const unlocks = [];
+  const contributorFirsts = collectContributorFirstCommits(
+    season,
+    commitsByRepo,
+    isBot,
+  );
 
   // For each contributor, sort their distinct repos chronologically by first commit date
   const seasonKey = season.id || String(season.version);
@@ -246,6 +274,97 @@ function extractSeasonProjectUnlocks(
 }
 
 /**
+ * Extracts each contributor's first contribution milestone for a season: one
+ * gold-badged event per login, dated by their earliest in-window commit. The
+ * caller owns cross-season de-duplication so exactly one event is emitted per
+ * contributor across all seasons (in the season that holds their earliest
+ * commit).
+ *
+ * @param {Object} season - GNOME season metadata (version, name, start)
+ * @param {Record<string, Array<{author: {login: string}, commit: {committer: {date: string}}, parents: any[]}>>} commitsByRepo
+ * @param {(login: string) => boolean} isBot
+ * @returns {Array<MilestoneEvent>}
+ */
+function extractSeasonFirstContributions(
+  season,
+  commitsByRepo = {},
+  isBot = () => false,
+) {
+  if (!season || !commitsByRepo) return [];
+  const contributorFirsts = collectContributorFirstCommits(
+    season,
+    commitsByRepo,
+    isBot,
+  );
+
+  const seasonKey = season.id || String(season.version);
+  const events = [];
+  for (const [login, repoMap] of contributorFirsts.entries()) {
+    const sortedProjects = Array.from(repoMap.values()).sort(
+      (a, b) => a.dateMs - b.dateMs,
+    );
+    const first = sortedProjects[0];
+    if (!first) continue;
+
+    events.push({
+      id: `season-${seasonKey}-${login}-first`,
+      login,
+      type: "first_contribution",
+      repo: first.repo,
+      title: "First Contribution",
+      detail: `First contribution to Bluefin (via ${first.repo})`,
+      detectedAt: first.dateStr,
+      commitUrl: first.htmlUrl,
+      badge: {
+        label: "FIRST",
+        color: "var(--fx-gold)",
+      },
+    });
+  }
+
+  // Sort chronologically newest first
+  events.sort((a, b) => Date.parse(b.detectedAt) - Date.parse(a.detectedAt));
+  return events;
+}
+
+/**
+ * Resolves exactly one first-contribution event per login to the season that
+ * holds their globally earliest in-window commit.
+ *
+ * Input seasons each carry their raw `firstContributionCandidates` (all logins
+ * seen in that window). Ownership is computed across every season on each run
+ * rather than carried forward, so it is order-independent and self-healing: a
+ * season whose sources failed on an earlier run can reclaim a contributor once
+ * it recovers, and the newer season that provisionally held the marker drops
+ * it. Returns owned events aligned to `seasons` by index.
+ *
+ * @param {Array<{firstContributionCandidates?: Array<MilestoneEvent>}>} seasons
+ * @returns {Array<Array<MilestoneEvent>>}
+ */
+function assignFirstContributionOwners(seasons = []) {
+  const singleOwner = new Map(); // login -> { index, ms }
+
+  seasons.forEach((season, index) => {
+    for (const event of season?.firstContributionCandidates ?? []) {
+      if (!event?.login) continue;
+      const ms = Date.parse(event.detectedAt);
+      const prior = singleOwner.get(event.login);
+      if (!prior || ms < prior.ms) {
+        singleOwner.set(event.login, { index, ms });
+      }
+    }
+  });
+
+  return seasons.map((season, index) => {
+    const owned = (season?.firstContributionCandidates ?? []).filter(
+      (event) => event?.login && singleOwner.get(event.login)?.index === index,
+    );
+    owned.sort((a, b) => Date.parse(b.detectedAt) - Date.parse(a.detectedAt));
+    return owned;
+  });
+}
+
+/**
  * Merges new milestone events into an existing ledger, deduplicating by id
  * and capping at maxEntries, sorted newest first.
  */
@@ -276,5 +395,7 @@ module.exports = {
   tierDetail,
   diffMilestones,
   extractSeasonProjectUnlocks,
+  extractSeasonFirstContributions,
+  assignFirstContributionOwners,
   mergeMilestonesLedger,
 };

@@ -34,13 +34,30 @@ export interface SeasonEntry {
   breadthUnlocks?: Array<{
     id: string;
     login: string;
-    type: "tier_up" | "task_landmark" | "project_unlock";
+    type: "tier_up" | "task_landmark" | "project_unlock" | "first_contribution";
     title: string;
     detail: string;
     detectedAt: string;
     tier?: string;
     value?: number;
     repo?: string;
+    badge?: {
+      label: string;
+      color: string;
+    };
+  }>;
+  /** One milestone per contributor whose first-ever commit landed in this season. */
+  firstContributions?: Array<{
+    id: string;
+    login: string;
+    type: "tier_up" | "task_landmark" | "project_unlock" | "first_contribution";
+    title: string;
+    detail: string;
+    detectedAt: string;
+    tier?: string;
+    value?: number;
+    repo?: string;
+    commitUrl?: string;
     badge?: {
       label: string;
       color: string;

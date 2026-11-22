@@ -59,7 +59,9 @@ const {
   fetchSeasonCommits,
 } = require("./lib/gnome-season");
 const {
+  assignFirstContributionOwners,
   diffMilestones,
+  extractSeasonFirstContributions,
   extractSeasonProjectUnlocks,
   mergeMilestonesLedger,
 } = require("./lib/recent-milestones");
@@ -81,6 +83,11 @@ const MAX_ENTRIES = 168;
 const CONTRIBUTOR_TTL_MS = 6 * 60 * 60 * 1000;
 const WEEKLY_STATS_TTL_MS = 6 * 60 * 60 * 1000;
 const SEASON_TTL_MS = 6 * 60 * 60 * 1000;
+
+// Bump when the per-season derived data shape changes. Cached historical
+// seasons stamped with an older version are re-fetched so they gain the new
+// fields (e.g. firstContribution markers) instead of silently staying empty.
+const SEASON_FIRST_CONTRIB_VERSION = 2;
 
 // GitHub's stats/contributors endpoint returns 52 weekly buckets per contributor.
 const MAX_WEEKS = 52;
@@ -792,6 +799,7 @@ async function main() {
   }
 
   // A GNOME release defines the season boundary, independent of the OS image version.
+  const isBot = (login) => login.endsWith("[bot]") || BOT_LOGINS.has(login);
   let gnomeFeedText = null;
   try {
     const feedResponse = await fetch("https://release.gnome.org/atom.xml", {
@@ -813,6 +821,7 @@ async function main() {
       forceRefresh ||
       history.season?.version !== season.version ||
       !Number.isFinite(fetchedAt) ||
+      history.season?.firstContribVersion !== SEASON_FIRST_CONTRIB_VERSION ||
       Date.now() - fetchedAt > SEASON_TTL_MS
     ) {
       const now = Date.now();
@@ -826,14 +835,19 @@ async function main() {
             signal: AbortSignal.timeout(30000),
           }),
       );
+      const previousFirsts =
+        history.season?.version === season.version
+          ? {
+              firstContributions: history.season.firstContributions,
+              firstContributionCandidates:
+                history.season.firstContributionCandidates,
+              firstContribVersion: history.season.firstContribVersion,
+            }
+          : {};
       history.season = {
         ...season,
-        ...collectSeason(
-          season,
-          commits,
-          now,
-          (login) => login.endsWith("[bot]") || BOT_LOGINS.has(login),
-        ),
+        ...collectSeason(season, commits, now, isBot),
+        ...previousFirsts,
         repos: [...trackedRepos].sort(),
         updatedAt: new Date().toISOString(),
       };
@@ -842,11 +856,7 @@ async function main() {
       );
       // Extract season project breadth level-ups (stored per-season, not in persistent ledger)
       try {
-        const unlocks = extractSeasonProjectUnlocks(
-          season,
-          commits,
-          (login) => login.endsWith("[bot]") || BOT_LOGINS.has(login),
-        );
+        const unlocks = extractSeasonProjectUnlocks(season, commits, isBot);
         history.season.breadthUnlocks = unlocks;
         console.log(
           `[hive-history] Extracted ${unlocks.length} season breadth milestone(s)`,
@@ -854,6 +864,22 @@ async function main() {
       } catch (err) {
         console.warn(
           `[hive-history] Failed to extract season project unlocks: ${err.message}`,
+        );
+      }
+      // Cache the raw per-season candidates. Which season ultimately shows a
+      // contributor's marker is recomputed across all seasons every run, so a
+      // season whose sources failed earlier can reclaim it after recovery
+      // without leaving a duplicate in a newer season.
+      try {
+        history.season.firstContributionCandidates =
+          extractSeasonFirstContributions(season, commits, isBot);
+        console.log(
+          `[hive-history] Extracted ${history.season.firstContributionCandidates.length} first-contribution candidate(s)`,
+        );
+      } catch (err) {
+        history.season.firstContributionCandidates ??= [];
+        console.warn(
+          `[hive-history] Failed to extract season first contributions: ${err.message}`,
         );
       }
     }
@@ -876,7 +902,6 @@ async function main() {
         });
       const webReq = (url) =>
         fetch(url, { signal: AbortSignal.timeout(15000) });
-      const isBot = (login) => login.endsWith("[bot]") || BOT_LOGINS.has(login);
 
       const allGnomeReleases = parseGnomeReleases(gnomeFeedText);
       const currentStartMs = Date.parse(history.season.start);
@@ -932,6 +957,7 @@ async function main() {
           cached &&
           !cached.unavailable &&
           (!cached.failedRepos || cached.failedRepos.length === 0) &&
+          cached.firstContribVersion === SEASON_FIRST_CONTRIB_VERSION &&
           typeof cached.generatedAt === "string" &&
           Number.isFinite(Date.parse(cached.generatedAt));
 
@@ -974,6 +1000,11 @@ async function main() {
         const breadthUnlocks = allFailed
           ? []
           : extractSeasonProjectUnlocks(win, byRepo, isBot);
+        // Raw candidates for this window; global ownership is resolved after
+        // every season (cached and fresh) is assembled.
+        const firstContributionCandidates = allFailed
+          ? []
+          : extractSeasonFirstContributions(win, byRepo, isBot);
 
         const stateReason = allFailed
           ? `Upstream sources unavailable: ${failedRepos.map((f) => `${f.repo} (${f.reason})`).join(", ")}`
@@ -994,6 +1025,8 @@ async function main() {
           unavailable: allFailed,
           stateReason,
           breadthUnlocks,
+          firstContributionCandidates,
+          firstContribVersion: SEASON_FIRST_CONTRIB_VERSION,
           generatedAt: new Date().toISOString(),
         });
         console.log(
@@ -1021,6 +1054,23 @@ async function main() {
         contributorCount: Object.keys(history.season.byLogin || {}).length,
         generatedAt: history.season.updatedAt || new Date().toISOString(),
       };
+
+      // Resolve exactly one first-contribution marker per contributor into the
+      // season holding their globally earliest commit. Recomputed from raw
+      // candidates every run (cached seasons included), so ownership does not
+      // depend on fetch order or on an earlier partial-source failure.
+      const firstContributionPools = [currentSeasonEntry, ...populatedPrior];
+      const ownedFirstContributions = assignFirstContributionOwners(
+        firstContributionPools,
+      );
+      firstContributionPools.forEach((seasonEntry, index) => {
+        seasonEntry.firstContributions = ownedFirstContributions[index];
+      });
+      history.season.firstContributions = currentSeasonEntry.firstContributions;
+      history.season.firstContribVersion = SEASON_FIRST_CONTRIB_VERSION;
+      console.log(
+        `[hive-history] First-contribution markers: ${ownedFirstContributions.reduce((total, events) => total + events.length, 0)} across ${firstContributionPools.length} seasons`,
+      );
 
       // Store newest-to-oldest so consumers and tabs read directly in display order.
       history.seasons = [currentSeasonEntry, ...populatedPrior.reverse()];
