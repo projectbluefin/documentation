@@ -6,17 +6,23 @@ const { tmpdir } = require("node:os");
 
 const {
   accumulateRepoStats,
+  backfillReposForHistory,
   computeStatsWindows,
   createStatsAccumulator,
   extractHiveContributorTiers,
+  EXTERNAL_LEADERBOARD_REPOS,
   extractMetrics,
+  fetchBluefinReleases,
   fetchContributors,
   fetchContributorWeeklyStats,
   finalizeContributorStats,
+  HISTORICAL_ARCHIVED_ORG_REPOS,
   loadHistory,
   MAX_WEEKS,
   registryHeaders,
+  resolveGnomeNicknames,
   safeNum,
+  summarizeCurrentBluefinReleases,
   trackedProjectRepos,
 } = require("./fetch-hive-history.js");
 
@@ -605,4 +611,230 @@ test("extractHiveContributorTiers filters out agents and preserves registration 
     primaryModel: "local",
     registeredAt: "2026-08-01T00:00:00Z",
   });
+});
+
+// ── Season backfill helpers ──────────────────────────────────────────────────
+
+/** Minimal fetch-like Response stand-in for injected request functions. */
+function fakeResponse({ ok = true, status = 200, body, text, link } = {}) {
+  return {
+    ok,
+    status,
+    headers: { get: (name) => (name === "Link" ? (link ?? null) : null) },
+    json: async () => body,
+    text: async () => text,
+  };
+}
+
+test("backfillReposForHistory adds archived and upstream repos, drops excluded, dedupes and sorts", () => {
+  const repos = backfillReposForHistory(["utah", "lab", "common", "common"]);
+  assert.deepEqual(
+    repos,
+    [
+      ...new Set([
+        "common",
+        "utah",
+        ...HISTORICAL_ARCHIVED_ORG_REPOS,
+        ...EXTERNAL_LEADERBOARD_REPOS,
+      ]),
+    ].sort(),
+  );
+  assert.ok(!repos.includes("lab"), "excluded repo must not be backfilled");
+});
+
+test("backfillReposForHistory with no tracked repos still covers historical sources", () => {
+  const repos = backfillReposForHistory();
+  for (const r of [
+    ...HISTORICAL_ARCHIVED_ORG_REPOS,
+    ...EXTERNAL_LEADERBOARD_REPOS,
+  ])
+    assert.ok(repos.includes(r), `${r} missing`);
+});
+
+test("fetchBluefinReleases follows GitHub pagination and normalizes entries", async () => {
+  const page2 =
+    "https://api.github.com/repos/ublue-os/bluefin/releases?per_page=100&page=2";
+  const seen = [];
+  const request = async (url) => {
+    seen.push(url);
+    if (seen.length === 1)
+      return fakeResponse({
+        link: `<${page2}>; rel="next", <${page2}>; rel="last"`,
+        body: [
+          {
+            tag_name: "v1",
+            published_at: "2024-01-01T00:00:00Z",
+            prerelease: false,
+          },
+          {
+            tag_name: "v2-rc",
+            published_at: null,
+            created_at: "2024-02-01T00:00:00Z",
+            prerelease: 1,
+          },
+          { tag_name: "draft-no-dates" },
+          { published_at: "2024-03-01T00:00:00Z" },
+          null,
+        ],
+      });
+    return fakeResponse({
+      body: [{ tag_name: "v3", published_at: "2024-04-01T00:00:00Z" }],
+    });
+  };
+
+  const releases = await fetchBluefinReleases(request);
+
+  assert.deepEqual(seen, [
+    "https://api.github.com/repos/ublue-os/bluefin/releases?per_page=100",
+    page2,
+  ]);
+  assert.deepEqual(releases, [
+    { tag_name: "v1", published_at: "2024-01-01T00:00:00Z", prerelease: false },
+    {
+      tag_name: "v2-rc",
+      published_at: "2024-02-01T00:00:00Z",
+      prerelease: true,
+    },
+    { tag_name: "v3", published_at: "2024-04-01T00:00:00Z", prerelease: false },
+  ]);
+});
+
+test("fetchBluefinReleases refuses a next-page link off api.github.com", async () => {
+  let calls = 0;
+  const request = async () => {
+    calls++;
+    // Only the first page advertises a next link, so a broken guard ends
+    // after one extra request instead of looping.
+    return fakeResponse({
+      link:
+        calls === 1
+          ? '<https://evil.example/repos/ublue-os/bluefin/releases?page=2>; rel="next"'
+          : null,
+      body: [],
+    });
+  };
+  await assert.rejects(fetchBluefinReleases(request), /unsafe pagination URL/);
+  assert.equal(calls, 1, "must not follow the off-origin link");
+});
+
+test("fetchBluefinReleases rejects on HTTP errors and non-array bodies", async () => {
+  await assert.rejects(
+    fetchBluefinReleases(async () => fakeResponse({ ok: false, status: 403 })),
+    /ublue-os\/bluefin releases: HTTP 403/,
+  );
+  await assert.rejects(
+    fetchBluefinReleases(async () =>
+      fakeResponse({ body: { message: "nope" } }),
+    ),
+    /invalid response/,
+  );
+});
+
+test("resolveGnomeNicknames records a nickname or a reason for every release", async () => {
+  const releases = [
+    { version: "48", source: "https://release.gnome.org/48/" },
+    { version: "47", source: "https://release.gnome.org/47/" },
+    { version: "46", source: "https://release.gnome.org/46/" },
+    { version: "45", source: "https://release.gnome.org/45/" },
+    { version: "44", source: "https://release.gnome.org/44/" },
+  ];
+  const pages = {
+    "https://release.gnome.org/48/": fakeResponse({
+      text: "<h1>GNOME 48, &ldquo;Bengaluru&rdquo;</h1>".replace(
+        /&ldquo;|&rdquo;/g,
+        '"',
+      ),
+    }),
+    "https://release.gnome.org/47/": fakeResponse({
+      text: "<h1>GNOME 47</h1>",
+    }),
+    "https://release.gnome.org/46/": fakeResponse({ ok: false, status: 404 }),
+    // Heading names a different release: parseGnomeNickname throws.
+    "https://release.gnome.org/44/": fakeResponse({
+      text: '<h1>GNOME 43, "Guadalajara"</h1>',
+    }),
+  };
+  const request = async (url) => {
+    if (url === "https://release.gnome.org/45/")
+      throw new Error("socket hang up");
+    return pages[url];
+  };
+
+  const resolved = await resolveGnomeNicknames(releases, request);
+
+  assert.equal(
+    resolved.length,
+    releases.length,
+    "one entry per release, in order",
+  );
+  assert.deepEqual(
+    resolved.map((r) => r.version),
+    ["48", "47", "46", "45", "44"],
+  );
+  assert.equal(resolved[0].name, "Bengaluru");
+  assert.equal(resolved[0].nicknameNote, null);
+  assert.equal(resolved[0].source, "https://release.gnome.org/48/");
+
+  assert.equal(resolved[1].name, null);
+  assert.equal(
+    resolved[1].nicknameNote,
+    "GNOME 47 has no official release nickname",
+  );
+
+  assert.equal(resolved[2].name, null);
+  assert.equal(
+    resolved[2].nicknameNote,
+    "GNOME 46 release notes unavailable (HTTP 404)",
+  );
+
+  assert.equal(resolved[3].name, null);
+  assert.equal(
+    resolved[3].nicknameNote,
+    "GNOME 45 nickname lookup failed: socket hang up",
+  );
+
+  assert.equal(resolved[4].name, null);
+  assert.match(
+    resolved[4].nicknameNote,
+    /^GNOME 44 nickname lookup failed: .*mismatch/,
+  );
+});
+
+test("summarizeCurrentBluefinReleases summarizes in-window releases oldest to newest", () => {
+  const releases = [
+    { tag_name: "late", published_at: "2026-03-20T00:00:00Z" },
+    { tag_name: "before", published_at: "2026-02-28T23:59:59Z" },
+    { tag_name: "boundary", published_at: "2026-03-01T00:00:00Z" },
+    { tag_name: "mid", published_at: "2026-03-10T00:00:00Z" },
+    { tag_name: "bad-date", published_at: "not a date" },
+  ];
+  assert.deepEqual(
+    summarizeCurrentBluefinReleases(releases, "2026-03-01T00:00:00Z"),
+    {
+      count: 3,
+      first: "boundary",
+      last: "late",
+      firstDate: "2026-03-01T00:00:00Z",
+      lastDate: "2026-03-20T00:00:00Z",
+    },
+  );
+});
+
+test("summarizeCurrentBluefinReleases returns an empty summary when nothing is in window", () => {
+  assert.deepEqual(
+    summarizeCurrentBluefinReleases(
+      [{ tag_name: "old", published_at: "2025-01-01T00:00:00Z" }],
+      "2026-03-01T00:00:00Z",
+    ),
+    { count: 0, first: null, last: null, firstDate: null, lastDate: null },
+  );
+});
+
+test("summarizeCurrentBluefinReleases returns null for an invalid start or non-array input", () => {
+  assert.equal(summarizeCurrentBluefinReleases([], "garbage"), null);
+  assert.equal(
+    summarizeCurrentBluefinReleases(null, "2026-03-01T00:00:00Z"),
+    null,
+  );
+  assert.equal(summarizeCurrentBluefinReleases(undefined, undefined), null);
 });
