@@ -21,6 +21,17 @@ const isTranslation = (process.env.DOCUSAURUS_CURRENT_LOCALE ?? "en") !== "en";
 const staticAsset = (path: string) =>
   isTranslation ? `${siteUrl}/${path}` : path;
 
+// Rspack's realContentHash pass finds asset hashes by plain substring search,
+// so any 8-hex-character run in a bundle that happens to equal another asset's
+// hash (the docs embed large hex-heavy data: commit SHAs, digests) is treated
+// as a reference: it gets rewritten, or the build panics with "circular hash
+// dependency" (#1760). With the pass off, filenames keep Rspack's own content
+// hash, which still changes whenever the chunk's modules change.
+const noRealContentHash = () => ({
+  name: "no-real-content-hash",
+  configureWebpack: () => ({ optimization: { realContentHash: false } }),
+});
+
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
 const config: Config = {
@@ -112,6 +123,7 @@ const config: Config = {
   ],
 
   plugins: [
+    noRealContentHash,
     ...(isTranslation ? [dropStaticCopy] : []),
     [
       "@easyops-cn/docusaurus-search-local",
