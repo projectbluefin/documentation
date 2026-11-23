@@ -26,6 +26,62 @@ test("collectEvents merges milestones and breadth unlocks newest-first", () => {
   );
 });
 
+test("collectEvents folds in season first-contribution markers, newest-first", () => {
+  const history = {
+    milestones: [
+      { id: "m1", detectedAt: at("2026-11-01T00:00:00Z"), title: "a" },
+    ],
+    season: {
+      breadthUnlocks: [
+        { id: "b1", detectedAt: at("2026-11-02T00:00:00Z"), title: "b" },
+      ],
+      firstContributions: [
+        {
+          id: "season-51-newcomer-first",
+          login: "newcomer",
+          type: "first_contribution",
+          title: "First Contribution",
+          detail: "First contribution to Bluefin (via common)",
+          detectedAt: at("2026-11-03T00:00:00Z"),
+          badge: { label: "FIRST", color: "var(--fx-gold)" },
+        },
+      ],
+    },
+  };
+  assert.deepEqual(
+    collectEvents(history).map((e) => e.id),
+    ["season-51-newcomer-first", "b1", "m1"],
+  );
+});
+
+test("buildFeed labels a first-contribution milestone", () => {
+  const xml = buildFeed(
+    {
+      season: {
+        firstContributions: [
+          {
+            id: "season-51-newcomer-first",
+            login: "newcomer",
+            type: "first_contribution",
+            title: "First Contribution",
+            detail: "First contribution to Bluefin (via common)",
+            detectedAt: "2026-11-03T00:00:00Z",
+            commitUrl:
+              "https://github.com/projectbluefin/common/commit/newcomer-first",
+          },
+        ],
+      },
+    },
+    new Date("2026-11-04T00:00:00Z"),
+  );
+  assert.match(xml, /<category>First contribution<\/category>/);
+  assert.match(xml, /First Contribution — newcomer/);
+  assert.match(
+    xml,
+    /<link>https:\/\/github\.com\/projectbluefin\/common\/commit\/newcomer-first<\/link>/,
+  );
+});
+
 test("collectEvents keeps the whole stream and ignores records without an id", () => {
   const milestones = Array.from({ length: 60 }, (_, i) => ({
     id: `m${i}`,

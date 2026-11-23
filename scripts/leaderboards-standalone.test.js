@@ -445,6 +445,70 @@ test("Moments of Triumph highlights local contributors in gold with local label"
     "local contributor card must be distinguished in platinum",
   );
 });
+test("Moments of Triumph renders first-contribution markers in gold", () => {
+  const { LeaderboardsSection } = loadDashboard({
+    hiveHistory: {
+      entries: [],
+      contributors: {},
+      contributorsByRepo: {},
+      hiveContributorTiers: {
+        newcomer: {
+          tier: "trusted",
+          tasks: 5,
+          local: 1,
+          primaryModel: "local",
+        },
+      },
+      milestones: [],
+      season: {
+        version: 51,
+        name: "A Coruña",
+        start: "2026-09-16T00:00:00.000Z",
+        source: "https://release.gnome.org/51/",
+        updatedAt: "2026-09-22T00:00:00Z",
+        repos: ["common"],
+        byLogin: {},
+        weekStarts: [],
+        weeklyCommits: [],
+        totalCommits: 1,
+        breadthUnlocks: [],
+        firstContributions: [
+          {
+            id: "season-51-newcomer-first",
+            login: "newcomer",
+            type: "first_contribution",
+            title: "First Contribution",
+            detail: "First contribution to Bluefin (via common)",
+            detectedAt: "2026-09-19T08:00:00Z",
+            commitUrl:
+              "https://github.com/projectbluefin/common/commit/newcomer-first",
+            badge: { label: "FIRST", color: "var(--fx-gold)" },
+          },
+        ],
+      },
+    },
+    registry: {},
+  });
+  const html = renderToStaticMarkup(React.createElement(LeaderboardsSection));
+  assert.match(html, /First Contribution/);
+  assert.match(html, /FIRST/);
+  assert.match(
+    html,
+    /href="https:\/\/github\.com\/projectbluefin\/common\/commit\/newcomer-first"/,
+    "a FIRST card must link to the exact commit",
+  );
+  assert.match(html, /Local/, "the local model tag must remain visible");
+  assert.match(
+    html,
+    /var\(--fx-gold\)/,
+    "first contributions must render gold",
+  );
+  assert.doesNotMatch(
+    html,
+    /triumphPlatinum/,
+    "the gold FIRST milestone must not be downgraded to the local platinum style",
+  );
+});
 test("Moments of Triumph shows accumulating status when ledger has no events yet", () => {
   const { LeaderboardsSection } = loadDashboard({
     hiveHistory: {

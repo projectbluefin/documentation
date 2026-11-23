@@ -1,19 +1,19 @@
 ---
 name: factory-dashboard-content
-version: "1.1"
-last_updated: "2026-09-06"
+version: "1.2"
+last_updated: "2026-11-23"
 id: factory-dashboard-content
-one_line_purpose: Write and verify copy, data, and charts on /factory.
+one_line_purpose: Write and verify copy, data, and charts on /factory and /leaderboards.
 entry_point: docs/skills/factory-dashboard-content.md
 category: meta
 status: active
-tags: [factory, dashboard, echarts, theming]
-  description: >-
-    Write and verify copy, data, and charts on the /factory dashboard and
-    /analytics pages. Use when editing a factory or contributor panel title or
-    summary, adding a lane or image to the dashboard, touching countme adoption
-    or contributor analytics numbers, or styling an ECharts chart in
-    src/components/factory/ or src/components/analytics/.
+tags: [factory, leaderboards, dashboard, echarts, theming]
+description: >-
+  Write and verify copy, data, and charts on the /factory, /analytics, and
+  /leaderboards pages. Use when editing a factory or contributor panel title or
+  summary, adding a lane or image to the dashboard, touching countme adoption or
+  contributor analytics numbers, or styling an ECharts chart in
+  src/components/factory/ or src/components/analytics/.
 metadata:
   type: procedure
 ---
@@ -132,19 +132,38 @@ the verified fallback list during discovery failures.
   - Season breadth unlocks are recomputed fresh per release into
     `history.season.breadthUnlocks` (dated by the commit landed time) to avoid
     cache pollution.
+  - **First contributions are gold:** `extractSeasonFirstContributions` dates
+    each login by their earliest in-window commit. Each season caches its raw
+    candidates in `firstContributionCandidates`, then
+    `assignFirstContributionOwners` resolves exactly one marker per login into
+    the season holding the earliest commit — recomputed every run, so a season
+    whose sources failed earlier reclaims the contributor on recovery without a
+    duplicate in a newer season. The owned set lands in
+    `history.season.firstContributions`; rendered through the same milestone
+    emblem with `badge: { label: "FIRST", color: "var(--fx-gold)" }`, so the
+    existing `--emblem-accent` styling makes the whole card gold. Each marker
+    keeps the earliest commit's `commitUrl` (from `fetchSeasonCommits`) and the
+    card links to that exact commit instead of the dossier, so a FIRST is
+    verifiable in one click. Gold takes precedence over the local-model platinum
+    treatment (the Local tag remains). Bump `SEASON_FIRST_CONTRIB_VERSION` when
+    the derived shape changes so cached historical seasons refetch and gain the
+    markers.
   - Render the **whole** season ledger, newest-first, and lead the
     `/leaderboards` page with it. Truncation happens in two places — a newest-N
     display slice and `mergeMilestonesLedger`'s persistence cap — and either one
     silently drops the oldest season weeks (including Week 1). The pipeline
     keeps every milestone (pass an unlimited cap) and the UI renders the
-    combined `milestones` + `season.breadthUnlocks` list in full. Group week
-    labels only from events that exist (empty weeks are intentionally not
-    synthesized); test the >50-event case so Week 1 stays visible.
-  - `/feeds/moments-of-triumph.xml` mirrors that same complete stream as RSS.
-    `scripts/generate-leaderboard-feed.js` writes it before every build, and
-    `/leaderboards` advertises it with a page-only `<link rel="alternate">` and
-    the "Subscribe via RSS" pill under the description. Do not cap the feed:
-    it is a stream readers subscribe to, not a preview.
+    combined `milestones` + `season.breadthUnlocks` + `season.firstContributions`
+    list in full. Group week labels only from events that exist (empty weeks are
+    intentionally not synthesized); test the >50-event case so Week 1 stays
+    visible.
+  - `/feeds/moments-of-triumph.xml` mirrors that same complete stream as RSS,
+    including `season.firstContributions` (`TYPE_LABELS.first_contribution` =
+    "First contribution"). `scripts/generate-leaderboard-feed.js` writes it
+    before every build, and `/leaderboards` advertises it with a page-only
+    `<link rel="alternate">` and the "Subscribe via RSS" pill under the
+    description. Do not cap the feed: it is a stream readers subscribe to, not a
+    preview.
   - A baseline run without prior diff state displays "Milestone ledger accumulating".
 
 ### GNOME release seasons on /leaderboards
@@ -430,6 +449,8 @@ change.
       totals intact.
 - [ ] `/leaderboards` is readable at desktop and 390px in both themes; the
       wordmark and heading remain on one line with no horizontal overflow.
+- [ ] Each `/leaderboards` First Contribution card links to its exact GitHub
+      commit, stays gold for local contributors, and the RSS item uses the same URL.
 
 ## Sources
 

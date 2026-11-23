@@ -1,7 +1,9 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const {
+  assignFirstContributionOwners,
   diffMilestones,
+  extractSeasonFirstContributions,
   extractSeasonProjectUnlocks,
   mergeMilestonesLedger,
   tierRank,
@@ -110,6 +112,128 @@ test("extractSeasonProjectUnlocks emits level-ups when reaching breadth tiers (2
   assert.equal(unlocks[0].detectedAt, "2026-09-19T15:00:00Z");
   assert.equal(unlocks[0].repo, "dakota");
   assert.match(unlocks[0].title, /Reached Contributor Breadth/);
+});
+
+test("extractSeasonFirstContributions emits one gold event per contributor dated by their earliest commit", () => {
+  const season = {
+    version: 51,
+    name: "A Coruña",
+    start: "2026-09-16T00:00:00Z",
+  };
+  const commitsByRepo = {
+    common: [
+      {
+        author: { login: "elena" },
+        commit: { committer: { date: "2026-09-20T10:00:00Z" } },
+        parents: [{}],
+      },
+      // Merge commits never establish a first contribution.
+      {
+        author: { login: "frank" },
+        commit: { committer: { date: "2026-09-17T08:00:00Z" } },
+        parents: [{}, {}],
+      },
+      // Bot commits are ignored.
+      {
+        author: { login: "renovate[bot]" },
+        commit: { committer: { date: "2026-09-18T08:00:00Z" } },
+        parents: [{}],
+      },
+    ],
+    dakota: [
+      {
+        author: { login: "elena" },
+        commit: { committer: { date: "2026-09-18T09:00:00Z" } },
+        parents: [{}],
+        htmlUrl: "https://github.com/projectbluefin/dakota/commit/elena-dakota",
+      },
+      {
+        author: { login: "frank" },
+        commit: { committer: { date: "2026-09-19T09:00:00Z" } },
+        parents: [{}],
+        htmlUrl: "https://github.com/projectbluefin/dakota/commit/frank-dakota",
+      },
+    ],
+  };
+
+  const events = extractSeasonFirstContributions(
+    season,
+    commitsByRepo,
+    (login) => login.endsWith("[bot]"),
+  );
+
+  // One event per human, newest first; bots and merge-only authors excluded.
+  assert.deepEqual(
+    events.map((e) => e.login),
+    ["frank", "elena"],
+  );
+
+  const elena = events.find((e) => e.login === "elena");
+  assert.equal(elena.type, "first_contribution");
+  assert.equal(elena.detectedAt, "2026-09-18T09:00:00Z"); // earliest of her commits
+  assert.equal(elena.repo, "dakota");
+  assert.equal(elena.id, "season-51-elena-first");
+  assert.equal(
+    elena.commitUrl,
+    "https://github.com/projectbluefin/dakota/commit/elena-dakota",
+  );
+  assert.equal(elena.badge.label, "FIRST");
+  assert.equal(elena.badge.color, "var(--fx-gold)");
+});
+
+test("assignFirstContributionOwners recomputes ownership so partial-source recovery does not duplicate", () => {
+  const firstContribution = (id, login, detectedAt) => ({
+    id,
+    login,
+    type: "first_contribution",
+    detectedAt,
+  });
+  const aliceEarly = firstContribution(
+    "season-49-alice-first",
+    "alice",
+    "2025-01-10T00:00:00Z",
+  );
+  const aliceLate = firstContribution(
+    "season-51-alice-first",
+    "alice",
+    "2026-10-10T00:00:00Z",
+  );
+  const bobLate = firstContribution(
+    "season-51-bob-first",
+    "bob",
+    "2026-10-11T00:00:00Z",
+  );
+
+  // Run 1: the older season's sources failed, so the newer season
+  // provisionally holds alice's marker.
+  const failedRun = [
+    { firstContributionCandidates: [] },
+    { firstContributionCandidates: [aliceLate, bobLate] },
+  ];
+  const firstOwners = assignFirstContributionOwners(failedRun);
+  assert.deepEqual(firstOwners[0], []);
+  assert.deepEqual(firstOwners[1].map((e) => e.login).sort(), ["alice", "bob"]);
+
+  // Run 2: the older season recovers. Alice's earlier commit must move back to
+  // it; the newer season keeps only bob — never both.
+  const recoveredRun = [
+    { firstContributionCandidates: [aliceEarly] },
+    { firstContributionCandidates: [aliceLate, bobLate] },
+  ];
+  const owners = assignFirstContributionOwners(recoveredRun);
+  assert.deepEqual(
+    owners[0].map((e) => e.id),
+    ["season-49-alice-first"],
+  );
+  assert.deepEqual(
+    owners[1].map((e) => e.id),
+    ["season-51-bob-first"],
+  );
+  assert.equal(
+    owners.flat().filter((e) => e.login === "alice").length,
+    1,
+    "exactly one alice marker across all seasons after recovery",
+  );
 });
 
 test("mergeMilestonesLedger deduplicates and caps newest first", () => {

@@ -2,9 +2,10 @@
 /**
  * Builds the RSS feed for the /leaderboards "Moments of Triumph" stream.
  *
- * The page renders `hive-history.json`'s `milestones` and
- * `season.breadthUnlocks` as one newest-first ledger. This feed mirrors that
- * stream so readers can subscribe to it without polling the page.
+ * The page renders `hive-history.json`'s `milestones`,
+ * `season.breadthUnlocks`, and `season.firstContributions` as one newest-first
+ * ledger. This feed mirrors that stream so readers can subscribe to it without
+ * polling the page.
  *
  * Runs at build time (see scripts/build-site.mjs) and writes into
  * static/feeds/, which is generated output and gitignored.
@@ -28,6 +29,7 @@ const TYPE_LABELS = {
   tier_up: "Trust tier",
   task_landmark: "Task landmark",
   project_unlock: "Project unlock",
+  first_contribution: "First contribution",
 };
 
 const CHANNEL_DESCRIPTION =
@@ -57,8 +59,11 @@ function collectEvents(history = {}) {
   const breadthUnlocks = Array.isArray(history.season?.breadthUnlocks)
     ? history.season.breadthUnlocks
     : [];
+  const firstContributions = Array.isArray(history.season?.firstContributions)
+    ? history.season.firstContributions
+    : [];
 
-  return [...milestones, ...breadthUnlocks]
+  return [...milestones, ...breadthUnlocks, ...firstContributions]
     .filter((event) => event && event.id && event.detectedAt)
     .sort((a, b) => Date.parse(b.detectedAt) - Date.parse(a.detectedAt));
 }
@@ -73,10 +78,12 @@ function buildFeed(history = {}, now = new Date()) {
 
   const items = events.map((event) => {
     const pubDate = rfc822(event.detectedAt);
+    const linkUrl =
+      event.commitUrl ?? `${DOSSIER_BASE}/${encodeURIComponent(event.login)}`;
     const lines = [
       "    <item>",
       `      <title>${escapeXml(`${event.title} — ${event.login}`)}</title>`,
-      `      <link>${escapeXml(`${DOSSIER_BASE}/${encodeURIComponent(event.login)}`)}</link>`,
+      `      <link>${escapeXml(linkUrl)}</link>`,
       `      <guid isPermaLink="false">${escapeXml(event.id)}</guid>`,
     ];
     if (pubDate) lines.push(`      <pubDate>${pubDate}</pubDate>`);

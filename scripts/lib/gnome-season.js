@@ -418,11 +418,12 @@ async function fetchSeasonCommits(
           const page = await response.json();
           if (!Array.isArray(page))
             throw new Error(`${repo}: invalid commit response`);
-          for (const { author, commit, parents } of page) {
+          for (const { author, commit, parents, html_url } of page) {
             commits.push({
               author: author ? { login: author.login } : null,
               commit: { committer: { date: commit?.committer?.date } },
               parents,
+              htmlUrl: html_url,
             });
           }
           const next = response.headers
