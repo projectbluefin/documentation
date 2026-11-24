@@ -3,7 +3,7 @@ services:
     network_mode: "host"
     container_name: docsy
     command: bash -c "npm i . && npm run start"
-    image: docker.io/library/node:latest@sha256:c18e48adb93fd04bc41b6ab8f12bd9c83791644afba36359ef6bb225353fef1d
+    image: docker.io/library/node:latest@sha256:e895d2f59be44bad77d8ca8e811a102dfc0b2e355089215af6aeaff8dc29edd9
     working_dir: /srv/docs
     volumes:
       - "./:/srv/docs:Z"
