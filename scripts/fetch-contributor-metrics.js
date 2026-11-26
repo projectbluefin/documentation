@@ -32,6 +32,7 @@ const COMMENTS = `comments(first: 25) { ${PAGE} nodes { ${RESOURCE} } }`;
 const REVIEWS = `reviews(first: 25) { ${PAGE} nodes { id submittedAt state ${AUTHOR} } }`;
 const REPLIES = `replies(first: 25) { ${PAGE} nodes { ${RESOURCE} } }`;
 const DISCUSSION_COMMENTS = `comments(first: 25) { ${PAGE} nodes { ${RESOURCE} ${REPLIES} } }`;
+const PR_RESOURCE = `id createdAt mergedAt ${AUTHOR}`;
 
 function requireValue(condition, sourceCode = "invalid_source_response") {
   if (!condition)
@@ -45,10 +46,113 @@ function referenceTime(asOf) {
   return time;
 }
 
+function computeQuantile(sortedNumbers, q) {
+  if (!Array.isArray(sortedNumbers) || sortedNumbers.length === 0) return null;
+  const pos = (sortedNumbers.length - 1) * q;
+  const base = Math.floor(pos);
+  const rest = pos - base;
+  const next = sortedNumbers[base + 1];
+  if (next !== undefined) {
+    return (
+      Math.round(
+        (sortedNumbers[base] + rest * (next - sortedNumbers[base])) * 10,
+      ) / 10
+    );
+  }
+  return Math.round(sortedNumbers[base] * 10) / 10;
+}
+
+function buildDevelopmentMetrics({ pullRequests = [], asOf, isBot }) {
+  const now = referenceTime(asOf);
+  const nowMs = now.getTime();
+  const weekMs = 7 * 86_400_000;
+  const thirtyDaysMs = 30 * 86_400_000;
+  const windows = [];
+
+  for (let i = 0; i < 52; i++) {
+    const endMs = nowMs - i * weekMs;
+    const startMs = endMs - weekMs;
+    windows.push({
+      index: i,
+      start: new Date(startMs).toISOString(),
+      end: new Date(endMs).toISOString(),
+      mergedPRs: 0,
+      repositories: new Set(),
+      durationsHours: [],
+    });
+  }
+
+  let mergedPRs30d = 0;
+  const start30dMs = nowMs - thirtyDaysMs;
+  for (const pr of pullRequests) {
+    if (!pr.mergedAt) continue;
+    const mergedTime = new Date(pr.mergedAt);
+    if (!Number.isFinite(mergedTime.getTime())) continue;
+    const mergedMs = mergedTime.getTime();
+    if (mergedMs > nowMs) continue;
+    const author = pr.author;
+    if (author?.__typename === "Bot" || (author?.login && isBot(author.login)))
+      continue;
+
+    let durationHours = null;
+    if (pr.createdAt) {
+      const createdTime = new Date(pr.createdAt);
+      if (
+        Number.isFinite(createdTime.getTime()) &&
+        mergedMs >= createdTime.getTime()
+      ) {
+        durationHours = (mergedMs - createdTime.getTime()) / 3_600_000;
+      }
+    }
+    if (mergedMs > start30dMs && mergedMs <= nowMs) {
+      mergedPRs30d++;
+    }
+
+    for (const w of windows) {
+      const startMs = new Date(w.start).getTime();
+      const endMs = new Date(w.end).getTime();
+      if (mergedMs > startMs && mergedMs <= endMs) {
+        w.mergedPRs++;
+        if (pr.repositoryId) w.repositories.add(pr.repositoryId);
+        if (durationHours !== null) w.durationsHours.push(durationHours);
+      }
+    }
+  }
+
+  const formattedWindows = windows.map((w) => {
+    w.durationsHours.sort((a, b) => a - b);
+    return {
+      start: w.start,
+      end: w.end,
+      mergedPRs: w.mergedPRs,
+      activeRepositories: w.repositories.size,
+      medianDurationHours: computeQuantile(w.durationsHours, 0.5),
+      p75DurationHours: computeQuantile(w.durationsHours, 0.75),
+    };
+  });
+
+  const currentWindow = formattedWindows[0] || null;
+  return {
+    current: {
+      mergedPRs7d: currentWindow ? currentWindow.mergedPRs : null,
+      mergedPRs30d,
+      activeRepositories7d: currentWindow
+        ? currentWindow.activeRepositories
+        : null,
+      medianDurationHours7d: currentWindow
+        ? currentWindow.medianDurationHours
+        : null,
+      p75DurationHours7d: currentWindow ? currentWindow.p75DurationHours : null,
+    },
+    windows: formattedWindows,
+  };
+}
+
 /** Pure aggregation: all counts are identity unions, never event or monthly sums. */
 async function aggregateContributions({
   repositories,
   events,
+  pullRequests = [],
   asOf,
   complete,
 }) {
@@ -131,6 +235,11 @@ async function aggregateContributions({
     });
     month.setUTCMonth(month.getUTCMonth() + 1);
   }
+  const development = buildDevelopmentMetrics({
+    pullRequests,
+    asOf: now,
+    isBot,
+  });
   return {
     schemaVersion: 2,
     org: ORG,
@@ -153,6 +262,7 @@ async function aggregateContributions({
         KINDS.map((kind) => [kind, byType[kind].size]),
       ),
     },
+    development,
     contributors,
     months,
   };
@@ -167,7 +277,21 @@ function unavailableData(previous, reason = FAILURE_REASON) {
     previous.coverage &&
     previous.summary
   ) {
-    return { ...previous, unavailable: true, stateReason: reason };
+    return {
+      ...previous,
+      development: previous.development ?? {
+        current: {
+          mergedPRs7d: null,
+          mergedPRs30d: null,
+          activeRepositories7d: null,
+          medianDurationHours7d: null,
+          p75DurationHours7d: null,
+        },
+        windows: [],
+      },
+      unavailable: true,
+      stateReason: reason,
+    };
   }
   return {
     schemaVersion: 2,
@@ -186,6 +310,16 @@ function unavailableData(previous, reason = FAILURE_REASON) {
       activeContributors90d: null,
       activeRepositories90d: null,
       byType90d: Object.fromEntries(KINDS.map((kind) => [kind, null])),
+    },
+    development: {
+      current: {
+        mergedPRs7d: null,
+        mergedPRs30d: null,
+        activeRepositories7d: null,
+        medianDurationHours7d: null,
+        p75DurationHours7d: null,
+      },
+      windows: [],
     },
     contributors: [],
     months: [],
@@ -352,6 +486,7 @@ function createClient(fetchImpl, token, stats, waitImpl) {
 
 async function collectRepository(repo, client, asOf) {
   const events = [];
+  const pullRequests = [];
   function record(node, kind, at = node.createdAt) {
     events.push({ repositoryId: repo.id, kind, at, author: node.author });
   }
@@ -401,11 +536,18 @@ async function collectRepository(repo, client, asOf) {
       "Repository",
       repo.id,
       "pullRequests",
-      `${RESOURCE} ${COMMENTS} ${REVIEWS}`,
+      `${PR_RESOURCE} ${COMMENTS} ${REVIEWS}`,
       "ContributorPullRequests",
     ),
     async (pr) => {
       record(pr, "changes");
+      pullRequests.push({
+        id: pr.id,
+        repositoryId: repo.id,
+        createdAt: pr.createdAt,
+        mergedAt: pr.mergedAt,
+        author: pr.author,
+      });
       await comments("PullRequest", pr);
       await connectionPages(
         page(
@@ -509,7 +651,7 @@ async function collectRepository(repo, client, asOf) {
       },
     );
   }
-  return events;
+  return { events, pullRequests };
 }
 
 /** Injectable transport exercises the same discovery and nested pagination as the CLI. */
@@ -593,9 +735,12 @@ async function collectContributorMetrics({
     );
     // Wait for every worker before reporting request totals or accepting a complete scan.
     requireValue(batches.every((batch) => batch !== null));
+    const allEvents = batches.flatMap((b) => b.events);
+    const allPRs = batches.flatMap((b) => b.pullRequests);
     return await aggregateContributions({
       repositories,
-      events: batches.flat(),
+      events: allEvents,
+      pullRequests: allPRs,
       asOf: stamp,
       complete: true,
     });
@@ -710,6 +855,8 @@ module.exports = {
   OUTPUT_FILE,
   KINDS,
   FAILURE_REASON,
+  computeQuantile,
+  buildDevelopmentMetrics,
   aggregateContributions,
   unavailableData,
   collectContributorMetrics,

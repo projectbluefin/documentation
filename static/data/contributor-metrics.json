@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "org": "projectbluefin",
-  "generatedAt": "2026-11-26T02:09:05.335Z",
+  "generatedAt": "2026-11-26T21:13:54.025Z",
   "unavailable": false,
   "stateReason": null,
   "coverage": {
@@ -367,27 +367,448 @@
         "archived": false
       }
     ],
-    "kinds": [
-      "changes",
-      "issues",
-      "comments",
-      "reviews",
-      "discussions"
-    ],
+    "kinds": ["changes", "issues", "comments", "reviews", "discussions"],
     "complete": true,
     "unlinkedAuthors": 1633
   },
   "summary": {
-    "totalContributors": 486,
-    "activeContributors90d": 162,
+    "totalContributors": 487,
+    "activeContributors90d": 161,
     "activeRepositories90d": 41,
     "byType90d": {
-      "changes": 57,
-      "issues": 115,
-      "comments": 121,
+      "changes": 58,
+      "issues": 112,
+      "comments": 122,
       "reviews": 21,
       "discussions": 0
     }
+  },
+  "development": {
+    "current": {
+      "mergedPRs7d": 232,
+      "mergedPRs30d": 1084,
+      "activeRepositories7d": 24,
+      "medianDurationHours7d": 3.8,
+      "p75DurationHours7d": 24.5
+    },
+    "windows": [
+      {
+        "start": "2026-11-19T21:13:54.025Z",
+        "end": "2026-11-26T21:13:54.025Z",
+        "mergedPRs": 232,
+        "activeRepositories": 24,
+        "medianDurationHours": 3.8,
+        "p75DurationHours": 24.5
+      },
+      {
+        "start": "2026-11-12T21:13:54.025Z",
+        "end": "2026-11-19T21:13:54.025Z",
+        "mergedPRs": 340,
+        "activeRepositories": 24,
+        "medianDurationHours": 2.4,
+        "p75DurationHours": 16.2
+      },
+      {
+        "start": "2026-11-05T21:13:54.025Z",
+        "end": "2026-11-12T21:13:54.025Z",
+        "mergedPRs": 186,
+        "activeRepositories": 19,
+        "medianDurationHours": 3,
+        "p75DurationHours": 15.6
+      },
+      {
+        "start": "2026-10-29T21:13:54.025Z",
+        "end": "2026-11-05T21:13:54.025Z",
+        "mergedPRs": 241,
+        "activeRepositories": 18,
+        "medianDurationHours": 2.9,
+        "p75DurationHours": 46
+      },
+      {
+        "start": "2026-10-22T21:13:54.025Z",
+        "end": "2026-10-29T21:13:54.025Z",
+        "mergedPRs": 322,
+        "activeRepositories": 25,
+        "medianDurationHours": 2.2,
+        "p75DurationHours": 13.4
+      },
+      {
+        "start": "2026-10-15T21:13:54.025Z",
+        "end": "2026-10-22T21:13:54.025Z",
+        "mergedPRs": 106,
+        "activeRepositories": 16,
+        "medianDurationHours": 7.8,
+        "p75DurationHours": 47.4
+      },
+      {
+        "start": "2026-10-08T21:13:54.025Z",
+        "end": "2026-10-15T21:13:54.025Z",
+        "mergedPRs": 236,
+        "activeRepositories": 26,
+        "medianDurationHours": 4.3,
+        "p75DurationHours": 25.9
+      },
+      {
+        "start": "2026-10-01T21:13:54.025Z",
+        "end": "2026-10-08T21:13:54.025Z",
+        "mergedPRs": 339,
+        "activeRepositories": 23,
+        "medianDurationHours": 5.1,
+        "p75DurationHours": 19.4
+      },
+      {
+        "start": "2026-09-24T21:13:54.025Z",
+        "end": "2026-10-01T21:13:54.025Z",
+        "mergedPRs": 560,
+        "activeRepositories": 24,
+        "medianDurationHours": 4.5,
+        "p75DurationHours": 16.5
+      },
+      {
+        "start": "2026-09-17T21:13:54.025Z",
+        "end": "2026-09-24T21:13:54.025Z",
+        "mergedPRs": 432,
+        "activeRepositories": 20,
+        "medianDurationHours": 15.8,
+        "p75DurationHours": 68.4
+      },
+      {
+        "start": "2026-09-10T21:13:54.025Z",
+        "end": "2026-09-17T21:13:54.025Z",
+        "mergedPRs": 242,
+        "activeRepositories": 21,
+        "medianDurationHours": 3.1,
+        "p75DurationHours": 27.8
+      },
+      {
+        "start": "2026-09-03T21:13:54.025Z",
+        "end": "2026-09-10T21:13:54.025Z",
+        "mergedPRs": 210,
+        "activeRepositories": 19,
+        "medianDurationHours": 1.8,
+        "p75DurationHours": 28.2
+      },
+      {
+        "start": "2026-08-27T21:13:54.025Z",
+        "end": "2026-09-03T21:13:54.025Z",
+        "mergedPRs": 28,
+        "activeRepositories": 8,
+        "medianDurationHours": 0.2,
+        "p75DurationHours": 16.9
+      },
+      {
+        "start": "2026-08-20T21:13:54.025Z",
+        "end": "2026-08-27T21:13:54.025Z",
+        "mergedPRs": 79,
+        "activeRepositories": 12,
+        "medianDurationHours": 18.1,
+        "p75DurationHours": 246
+      },
+      {
+        "start": "2026-08-13T21:13:54.025Z",
+        "end": "2026-08-20T21:13:54.025Z",
+        "mergedPRs": 95,
+        "activeRepositories": 11,
+        "medianDurationHours": 0.6,
+        "p75DurationHours": 4.7
+      },
+      {
+        "start": "2026-08-06T21:13:54.025Z",
+        "end": "2026-08-13T21:13:54.025Z",
+        "mergedPRs": 213,
+        "activeRepositories": 14,
+        "medianDurationHours": 0.7,
+        "p75DurationHours": 6.2
+      },
+      {
+        "start": "2026-07-30T21:13:54.025Z",
+        "end": "2026-08-06T21:13:54.025Z",
+        "mergedPRs": 183,
+        "activeRepositories": 15,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 0.6
+      },
+      {
+        "start": "2026-07-23T21:13:54.025Z",
+        "end": "2026-07-30T21:13:54.025Z",
+        "mergedPRs": 223,
+        "activeRepositories": 12,
+        "medianDurationHours": 0,
+        "p75DurationHours": 0.8
+      },
+      {
+        "start": "2026-07-16T21:13:54.025Z",
+        "end": "2026-07-23T21:13:54.025Z",
+        "mergedPRs": 72,
+        "activeRepositories": 12,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 2.6
+      },
+      {
+        "start": "2026-07-09T21:13:54.025Z",
+        "end": "2026-07-16T21:13:54.025Z",
+        "mergedPRs": 3,
+        "activeRepositories": 2,
+        "medianDurationHours": 0.9,
+        "p75DurationHours": 4.2
+      },
+      {
+        "start": "2026-07-02T21:13:54.025Z",
+        "end": "2026-07-09T21:13:54.025Z",
+        "mergedPRs": 5,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.3,
+        "p75DurationHours": 47.2
+      },
+      {
+        "start": "2026-06-25T21:13:54.025Z",
+        "end": "2026-07-02T21:13:54.025Z",
+        "mergedPRs": 25,
+        "activeRepositories": 10,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 1.4
+      },
+      {
+        "start": "2026-06-18T21:13:54.025Z",
+        "end": "2026-06-25T21:13:54.025Z",
+        "mergedPRs": 357,
+        "activeRepositories": 17,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 0.6
+      },
+      {
+        "start": "2026-06-11T21:13:54.025Z",
+        "end": "2026-06-18T21:13:54.025Z",
+        "mergedPRs": 147,
+        "activeRepositories": 12,
+        "medianDurationHours": 0.2,
+        "p75DurationHours": 0.8
+      },
+      {
+        "start": "2026-06-04T21:13:54.025Z",
+        "end": "2026-06-11T21:13:54.025Z",
+        "mergedPRs": 506,
+        "activeRepositories": 16,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 0.5
+      },
+      {
+        "start": "2026-05-28T21:13:54.025Z",
+        "end": "2026-06-04T21:13:54.025Z",
+        "mergedPRs": 472,
+        "activeRepositories": 16,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 3.8
+      },
+      {
+        "start": "2026-05-21T21:13:54.025Z",
+        "end": "2026-05-28T21:13:54.025Z",
+        "mergedPRs": 174,
+        "activeRepositories": 8,
+        "medianDurationHours": 0.7,
+        "p75DurationHours": 2.5
+      },
+      {
+        "start": "2026-05-14T21:13:54.025Z",
+        "end": "2026-05-21T21:13:54.025Z",
+        "mergedPRs": 23,
+        "activeRepositories": 3,
+        "medianDurationHours": 19.5,
+        "p75DurationHours": 121.7
+      },
+      {
+        "start": "2026-05-07T21:13:54.025Z",
+        "end": "2026-05-14T21:13:54.025Z",
+        "mergedPRs": 57,
+        "activeRepositories": 7,
+        "medianDurationHours": 0,
+        "p75DurationHours": 0.3
+      },
+      {
+        "start": "2026-04-30T21:13:54.025Z",
+        "end": "2026-05-07T21:13:54.025Z",
+        "mergedPRs": 76,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.2,
+        "p75DurationHours": 1.6
+      },
+      {
+        "start": "2026-04-23T21:13:54.025Z",
+        "end": "2026-04-30T21:13:54.025Z",
+        "mergedPRs": 25,
+        "activeRepositories": 5,
+        "medianDurationHours": 1.4,
+        "p75DurationHours": 26.7
+      },
+      {
+        "start": "2026-04-16T21:13:54.025Z",
+        "end": "2026-04-23T21:13:54.025Z",
+        "mergedPRs": 42,
+        "activeRepositories": 6,
+        "medianDurationHours": 0,
+        "p75DurationHours": 1.5
+      },
+      {
+        "start": "2026-04-09T21:13:54.025Z",
+        "end": "2026-04-16T21:13:54.025Z",
+        "mergedPRs": 56,
+        "activeRepositories": 5,
+        "medianDurationHours": 0.2,
+        "p75DurationHours": 3.5
+      },
+      {
+        "start": "2026-04-02T21:13:54.025Z",
+        "end": "2026-04-09T21:13:54.025Z",
+        "mergedPRs": 26,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.6,
+        "p75DurationHours": 0.7
+      },
+      {
+        "start": "2026-03-26T21:13:54.025Z",
+        "end": "2026-04-02T21:13:54.025Z",
+        "mergedPRs": 59,
+        "activeRepositories": 6,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 2.4
+      },
+      {
+        "start": "2026-03-19T21:13:54.025Z",
+        "end": "2026-03-26T21:13:54.025Z",
+        "mergedPRs": 3,
+        "activeRepositories": 2,
+        "medianDurationHours": 0.6,
+        "p75DurationHours": 5.7
+      },
+      {
+        "start": "2026-03-12T21:13:54.025Z",
+        "end": "2026-03-19T21:13:54.025Z",
+        "mergedPRs": 19,
+        "activeRepositories": 4,
+        "medianDurationHours": 0,
+        "p75DurationHours": 1.1
+      },
+      {
+        "start": "2026-03-05T21:13:54.025Z",
+        "end": "2026-03-12T21:13:54.025Z",
+        "mergedPRs": 19,
+        "activeRepositories": 5,
+        "medianDurationHours": 0.2,
+        "p75DurationHours": 1.9
+      },
+      {
+        "start": "2026-02-26T21:13:54.025Z",
+        "end": "2026-03-05T21:13:54.025Z",
+        "mergedPRs": 9,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.3,
+        "p75DurationHours": 6.3
+      },
+      {
+        "start": "2026-02-19T21:13:54.025Z",
+        "end": "2026-02-26T21:13:54.025Z",
+        "mergedPRs": 11,
+        "activeRepositories": 4,
+        "medianDurationHours": 23.3,
+        "p75DurationHours": 55.1
+      },
+      {
+        "start": "2026-02-12T21:13:54.025Z",
+        "end": "2026-02-19T21:13:54.025Z",
+        "mergedPRs": 15,
+        "activeRepositories": 3,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 1.1
+      },
+      {
+        "start": "2026-02-05T21:13:54.025Z",
+        "end": "2026-02-12T21:13:54.025Z",
+        "mergedPRs": 7,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 41.4
+      },
+      {
+        "start": "2026-01-29T21:13:54.025Z",
+        "end": "2026-02-05T21:13:54.025Z",
+        "mergedPRs": 14,
+        "activeRepositories": 4,
+        "medianDurationHours": 9.1,
+        "p75DurationHours": 47.9
+      },
+      {
+        "start": "2026-01-22T21:13:54.025Z",
+        "end": "2026-01-29T21:13:54.025Z",
+        "mergedPRs": 29,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.3,
+        "p75DurationHours": 2.7
+      },
+      {
+        "start": "2026-01-15T21:13:54.025Z",
+        "end": "2026-01-22T21:13:54.025Z",
+        "mergedPRs": 21,
+        "activeRepositories": 6,
+        "medianDurationHours": 2.2,
+        "p75DurationHours": 11.3
+      },
+      {
+        "start": "2026-01-08T21:13:54.025Z",
+        "end": "2026-01-15T21:13:54.025Z",
+        "mergedPRs": 21,
+        "activeRepositories": 6,
+        "medianDurationHours": 4.5,
+        "p75DurationHours": 20.9
+      },
+      {
+        "start": "2026-01-01T21:13:54.025Z",
+        "end": "2026-01-08T21:13:54.025Z",
+        "mergedPRs": 29,
+        "activeRepositories": 7,
+        "medianDurationHours": 0.4,
+        "p75DurationHours": 2.1
+      },
+      {
+        "start": "2025-12-25T21:13:54.025Z",
+        "end": "2026-01-01T21:13:54.025Z",
+        "mergedPRs": 32,
+        "activeRepositories": 6,
+        "medianDurationHours": 6.6,
+        "p75DurationHours": 37.7
+      },
+      {
+        "start": "2025-12-18T21:13:54.025Z",
+        "end": "2025-12-25T21:13:54.025Z",
+        "mergedPRs": 16,
+        "activeRepositories": 3,
+        "medianDurationHours": 1.5,
+        "p75DurationHours": 9
+      },
+      {
+        "start": "2025-12-11T21:13:54.025Z",
+        "end": "2025-12-18T21:13:54.025Z",
+        "mergedPRs": 35,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 19.5
+      },
+      {
+        "start": "2025-12-04T21:13:54.025Z",
+        "end": "2025-12-11T21:13:54.025Z",
+        "mergedPRs": 29,
+        "activeRepositories": 4,
+        "medianDurationHours": 0.4,
+        "p75DurationHours": 24.6
+      },
+      {
+        "start": "2025-11-27T21:13:54.025Z",
+        "end": "2025-12-04T21:13:54.025Z",
+        "mergedPRs": 30,
+        "activeRepositories": 3,
+        "medianDurationHours": 0.1,
+        "p75DurationHours": 0.6
+      }
+    ]
   },
   "contributors": [
     {
@@ -406,7 +827,7 @@
       "id": "MDQ6VXNlcjc1MTc2MDE2",
       "login": "notaf0e",
       "firstContributionAt": "2026-08-23T22:35:14.000Z",
-      "lastContributionAt": "2026-11-25T16:46:47.000Z"
+      "lastContributionAt": "2026-11-26T17:00:23.000Z"
     },
     {
       "id": "MDQ6VXNlcjc1MzI0MDc3",
@@ -550,7 +971,7 @@
       "id": "MDQ6VXNlcjcxODM2Mg==",
       "login": "j1mc",
       "firstContributionAt": "2026-10-03T03:17:46.000Z",
-      "lastContributionAt": "2026-10-30T16:19:53.000Z"
+      "lastContributionAt": "2026-11-26T16:24:35.000Z"
     },
     {
       "id": "MDQ6VXNlcjcyMDM2MDY5",
@@ -808,13 +1229,13 @@
       "id": "MDQ6VXNlcjE4NzQ0NTIx",
       "login": "mendezr",
       "firstContributionAt": "2026-08-30T19:10:57.000Z",
-      "lastContributionAt": "2026-11-24T12:45:54.000Z"
+      "lastContributionAt": "2026-11-26T20:11:12.000Z"
     },
     {
       "id": "MDQ6VXNlcjE4OTIyMjU=",
       "login": "ahmedadan",
       "firstContributionAt": "2025-08-03T17:39:13.000Z",
-      "lastContributionAt": "2026-11-24T20:20:47.000Z"
+      "lastContributionAt": "2026-11-26T15:07:13.000Z"
     },
     {
       "id": "MDQ6VXNlcjE5MDUxMjE=",
@@ -967,6 +1388,12 @@
       "lastContributionAt": "2026-08-07T21:02:41.000Z"
     },
     {
+      "id": "MDQ6VXNlcjExODQ1OQ==",
+      "login": "idvoretskyi",
+      "firstContributionAt": "2026-11-26T17:22:52.000Z",
+      "lastContributionAt": "2026-11-26T17:22:52.000Z"
+    },
+    {
       "id": "MDQ6VXNlcjExOTM0NjI4",
       "login": "bryce-harrison",
       "firstContributionAt": "2026-05-09T00:46:31.000Z",
@@ -994,7 +1421,7 @@
       "id": "MDQ6VXNlcjEyMTI3ODc3",
       "login": "kylerankin",
       "firstContributionAt": "2026-08-04T01:23:58.000Z",
-      "lastContributionAt": "2026-11-25T11:48:33.000Z"
+      "lastContributionAt": "2026-11-26T15:19:19.000Z"
     },
     {
       "id": "MDQ6VXNlcjEyMzk1OTEy",
@@ -1006,7 +1433,7 @@
       "id": "MDQ6VXNlcjEyNjQxMDk=",
       "login": "castrojo",
       "firstContributionAt": "2023-03-08T19:19:39.000Z",
-      "lastContributionAt": "2026-11-25T13:30:43.000Z"
+      "lastContributionAt": "2026-11-26T21:01:59.000Z"
     },
     {
       "id": "MDQ6VXNlcjEyNzc5MTc=",
@@ -1090,7 +1517,7 @@
       "id": "MDQ6VXNlcjEzOTQ1NTI=",
       "login": "jeefy",
       "firstContributionAt": "2023-08-09T02:43:03.000Z",
-      "lastContributionAt": "2026-11-25T21:14:07.000Z"
+      "lastContributionAt": "2026-11-26T19:17:16.000Z"
     },
     {
       "id": "MDQ6VXNlcjEzOTUyODE2",
@@ -1282,7 +1709,7 @@
       "id": "MDQ6VXNlcjI1NTE5OTY0",
       "login": "andrew-pyle",
       "firstContributionAt": "2026-11-20T21:20:35.000Z",
-      "lastContributionAt": "2026-11-20T21:20:35.000Z"
+      "lastContributionAt": "2026-11-26T18:16:59.000Z"
     },
     {
       "id": "MDQ6VXNlcjI2MDkzMjMx",
@@ -1744,7 +2171,7 @@
       "id": "MDQ6VXNlcjMwMzMzMQ==",
       "login": "cheese",
       "firstContributionAt": "2026-11-17T08:11:14.000Z",
-      "lastContributionAt": "2026-11-17T08:16:17.000Z"
+      "lastContributionAt": "2026-11-26T16:47:21.000Z"
     },
     {
       "id": "MDQ6VXNlcjMwNDUyOQ==",
@@ -2014,7 +2441,7 @@
       "id": "MDQ6VXNlcjQyMzE5MDkw",
       "login": "marczuverink",
       "firstContributionAt": "2026-10-10T13:55:41.000Z",
-      "lastContributionAt": "2026-11-25T22:49:00.000Z"
+      "lastContributionAt": "2026-11-26T17:43:50.000Z"
     },
     {
       "id": "MDQ6VXNlcjQyMzg1OQ==",
@@ -2152,7 +2579,7 @@
       "id": "MDQ6VXNlcjU4NDA0NDE=",
       "login": "hanthor",
       "firstContributionAt": "2025-01-04T16:27:59.000Z",
-      "lastContributionAt": "2026-11-26T01:26:57.000Z"
+      "lastContributionAt": "2026-11-26T20:44:54.000Z"
     },
     {
       "id": "MDQ6VXNlcjU4NjU0NDQx",
@@ -2218,7 +2645,7 @@
       "id": "MDQ6VXNlcjUwMzg0Mzg2",
       "login": "juanresendiz813",
       "firstContributionAt": "2026-09-29T04:13:02.000Z",
-      "lastContributionAt": "2026-11-25T04:47:22.000Z"
+      "lastContributionAt": "2026-11-26T16:31:45.000Z"
     },
     {
       "id": "MDQ6VXNlcjUwNjM3",
@@ -2266,7 +2693,7 @@
       "id": "MDQ6VXNlcjUyMDc4ODg1",
       "login": "MiMillieuh",
       "firstContributionAt": "2026-11-04T14:55:49.000Z",
-      "lastContributionAt": "2026-11-07T18:24:13.000Z"
+      "lastContributionAt": "2026-11-26T09:46:40.000Z"
     },
     {
       "id": "MDQ6VXNlcjUyMTMyOTg0",
@@ -2386,7 +2813,7 @@
       "id": "MDQ6VXNlcjY3NzIzMzU=",
       "login": "Danathar",
       "firstContributionAt": "2026-05-30T19:26:09.000Z",
-      "lastContributionAt": "2026-11-26T01:29:10.000Z"
+      "lastContributionAt": "2026-11-26T16:44:30.000Z"
     },
     {
       "id": "MDQ6VXNlcjY3ODU5NzM=",
@@ -2554,7 +2981,7 @@
       "id": "U_kgDOB6Qcpg",
       "login": "HuntedRaven7",
       "firstContributionAt": "2026-08-09T19:51:39.000Z",
-      "lastContributionAt": "2026-11-24T21:31:38.000Z"
+      "lastContributionAt": "2026-11-26T10:44:06.000Z"
     },
     {
       "id": "U_kgDOB7IIPg",
@@ -3010,7 +3437,7 @@
       "id": "U_kgDOCV7PMg",
       "login": "Karibhou",
       "firstContributionAt": "2026-10-16T19:07:11.000Z",
-      "lastContributionAt": "2026-11-26T01:29:52.000Z"
+      "lastContributionAt": "2026-11-26T16:41:59.000Z"
     },
     {
       "id": "U_kgDOCVQ4MA",
@@ -3530,8 +3957,8 @@
     },
     {
       "month": "2026-11",
-      "contributors": 81,
-      "cumulativeContributors": 486
+      "contributors": 83,
+      "cumulativeContributors": 487
     }
   ]
 }
