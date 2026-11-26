@@ -188,7 +188,7 @@ export default function DevelopmentMetricsCharts({
         />
       )}
 
-      <div className={styles.summaryCardsGrid}>
+      <div className={styles.developmentCardsGrid}>
         {cards.map(([label, value, subtitle]) => (
           <div key={label} className={styles.metricCard}>
             <span className={styles.metricTitle}>{label}</span>

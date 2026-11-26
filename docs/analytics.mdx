@@ -78,9 +78,10 @@ See the [Homebrew analytics documentation](https://docs.brew.sh/Analytics) for a
 
 ### Contributor Metrics Methodology
 
-These charts measure participation, not pull request throughput. A contributor is
-one identifiable GitHub account with a recorded public contribution in a repository
-currently owned by `projectbluefin`. Each account is counted once across the organization.
+The contributor charts measure participation, not pull request throughput. A
+contributor is one identifiable GitHub account with a recorded public contribution
+in a repository currently owned by `projectbluefin`. Each account is counted once
+across the organization.
 
 - **Ways to contribute:** code and documentation changes, pull requests, issues,
   comments, submitted reviews, and GitHub Discussions, including replies. Changes
@@ -109,3 +110,16 @@ and [pagination documentation](https://docs.github.com/en/graphql/guides/using-p
 The precise local definition is implemented in `scripts/fetch-contributor-metrics.js`.
 Community forum discussions at [ublue-os/bluefin](https://github.com/ublue-os/bluefin/discussions)
 are outside this organization and are not mixed into its totals.
+
+### Development Metrics Methodology
+
+These charts measure merged pull request flow, not individual productivity.
+
+- **Merged PRs:** pull requests merged in public `projectbluefin` repositories,
+  counted in rolling 7-day (168-hour) UTC windows ending at collection time, plus a
+  trailing 30-day total. The chart shows the last 52 such windows.
+- **Merge cycle:** elapsed time from pull request creation to merge, including draft
+  time. Median and P75 cover pull requests merged in the latest 7-day window.
+- **Exclusions:** known bots and bot account types are excluded.
+- **Freshness:** a failed collection retains the last successful snapshot with a
+  visible reason.
