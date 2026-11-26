@@ -1071,3 +1071,59 @@ test("each bare requireValue on the repository_activity REST path records its ow
     );
   }
 });
+test("computeQuantile calculates median and percentiles accurately", () => {
+  const { computeQuantile } = require("./fetch-contributor-metrics");
+  assert.equal(computeQuantile([], 0.5), null);
+  assert.equal(computeQuantile([10], 0.5), 10);
+  assert.equal(computeQuantile([10, 20], 0.5), 15);
+  assert.equal(computeQuantile([10, 20, 30, 40], 0.75), 32.5);
+});
+
+test("buildDevelopmentMetrics aggregates 52 rolling 7-day UTC windows and excludes bots", () => {
+  const { buildDevelopmentMetrics } = require("./fetch-contributor-metrics");
+  const asOf = "2026-10-24T00:00:00.000Z";
+  const isBot = (login) => login.includes("bot");
+  const pullRequests = [
+    // In latest window: 2026-10-17 00:00:00 to 2026-10-24 00:00:00
+    {
+      id: "PR1",
+      repositoryId: "R1",
+      createdAt: "2026-10-19T00:00:00Z",
+      mergedAt: "2026-10-20T00:00:00Z", // 24h
+      author: { login: "developer1", __typename: "User" },
+    },
+    {
+      id: "PR2",
+      repositoryId: "R2",
+      createdAt: "2026-10-21T00:00:00Z",
+      mergedAt: "2026-10-23T00:00:00Z", // 48h
+      author: { login: "developer2", __typename: "User" },
+    },
+    // Bot PR in latest window (excluded)
+    {
+      id: "PR_BOT",
+      repositoryId: "R1",
+      createdAt: "2026-10-20T00:00:00Z",
+      mergedAt: "2026-10-21T00:00:00Z",
+      author: { login: "renovate-bot", __typename: "Bot" },
+    },
+    // Previous window: 2026-10-10 00:00:00 to 2026-10-17 00:00:00
+    {
+      id: "PR3",
+      repositoryId: "R1",
+      createdAt: "2026-10-11T00:00:00Z",
+      mergedAt: "2026-10-12T00:00:00Z", // 24h
+      author: { login: "developer3", __typename: "User" },
+    },
+  ];
+
+  const dev = buildDevelopmentMetrics({ pullRequests, asOf, isBot });
+  assert.equal(dev.windows.length, 52);
+  assert.equal(dev.current.mergedPRs7d, 2);
+  assert.equal(dev.current.mergedPRs30d, 3);
+  assert.equal(dev.current.activeRepositories7d, 2);
+  assert.equal(dev.current.medianDurationHours7d, 36);
+  assert.equal(dev.windows[0].mergedPRs, 2);
+  assert.equal(dev.windows[1].mergedPRs, 1);
+  assert.equal(dev.windows[2].mergedPRs, 0);
+});

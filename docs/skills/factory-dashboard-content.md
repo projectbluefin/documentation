@@ -251,6 +251,12 @@ history, not a leaderboard, monthly report snapshots, or hosted Hive.
 - **Verify the actual surface.** Check both themes and narrow layouts, a verified
   zero, missing data and too few points. `EChart` owns the accessible numbers table
   and accumulating state; component tests should exercise it, not a mocked echo.
+- **Development flow & PR velocity:** `/analytics` includes a rolling 7-day
+  development flow section derived from public merged PR history.
+  - Merged PR count tracks completed collaboration in a trailing 168-hour UTC window.
+  - Elapsed time (`mergedAt - createdAt`) measures open-to-merge duration (including draft time),
+    reflecting maintainer responsiveness rather than developer productivity.
+  - Known automated bots are excluded. Gaps are displayed as gaps (`null`), never coerced to zero.
 
 ### CountMe: first-party stream counts only
 
