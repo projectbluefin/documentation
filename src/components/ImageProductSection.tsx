@@ -44,6 +44,8 @@ interface ImageDownloadRecord {
   unavailable?: boolean;
   /** Superseded installer kept downloadable but no longer built or tested. */
   retired?: boolean;
+  /** Announced installer that is shown only once its probe succeeds. */
+  optional?: boolean;
 }
 
 interface ProductReleaseData {
@@ -97,23 +99,37 @@ const driverRows: DriverRow[] = (driverFile.streams ?? []).flatMap(
   (stream) => stream.history ?? [],
 );
 
-// Installer media file extensions per product; unlisted products ship ISOs.
-const INSTALLER_EXTENSIONS: Partial<Record<ImageProductKey, string[]>> = {
-  utah: [".raw.xz", ".iso"],
-};
+// An image's installer card when it ships more than the default ISO card.
+interface InstallerMedia {
+  /** Installer file extensions; every other product ships `.iso` only. */
+  extensions: string[];
+  /** Stream-neutral card title, for media not tied to a publication stream. */
+  title: string;
+  description: React.ReactNode;
+  /** Entry label per installer file name. */
+  labels: Record<string, string>;
+}
 
-// Replaces the generic description on a product's installer card.
-const INSTALLER_NOTES: Partial<Record<ImageProductKey, React.ReactNode>> = {
-  utah: (
-    <>
-      Raw GPT disk image built from <code>utah:stable</code> that boots live and
-      installs with gnome-setup. UEFI, Secure Boot off; write to a USB stick
-      with Fedora Media Writer (Select .iso file → choose the .raw.xz).{" "}
-      <Link to="https://github.com/projectbluefin/utah#download-and-image-streams">
-        Install instructions
-      </Link>
-    </>
-  ),
+const INSTALLER_MEDIA: Partial<Record<ImageProductKey, InstallerMedia>> = {
+  utah: {
+    extensions: [".raw.xz", ".iso"],
+    title: "UTAH USB Installer",
+    description: (
+      <>
+        Built from <code>:stable</code>. Boots live and installs with
+        gnome-setup. UEFI, Secure Boot off; write the disk image to a USB stick
+        with Fedora Media Writer (Select .iso file → choose the .raw.xz).{" "}
+        <Link to="https://github.com/projectbluefin/utah#download-and-image-streams">
+          Install instructions
+        </Link>
+      </>
+    ),
+    labels: {
+      "utah-installer-latest.raw.xz": "USB disk image (Fedora Media Writer)",
+      "utah-installer-latest.iso": "ISO (USB writers, Ventoy, VMs)",
+      "utah-live-latest.iso": "Live ISO (fisherman installer)",
+    },
+  },
 };
 
 /**
@@ -301,9 +317,12 @@ export function ProductDownloadsAndVersions({
   const stableDownloads = downloads.filter((d) => d.stream === "stable");
   const testingDownloads = downloads.filter((d) => d.stream === "testing");
 
-  const extensions = INSTALLER_EXTENSIONS[product] ?? [".iso"];
+  const media = INSTALLER_MEDIA[product];
+  const extensions = media?.extensions ?? [".iso"];
+  // Optional media appear only once the fetcher finds them published.
   const isInstaller = (item: ImageDownloadRecord) =>
-    extensions.some((ext) => item.name.endsWith(ext));
+    extensions.some((ext) => item.name.endsWith(ext)) &&
+    !(item.optional && item.unavailable);
 
   const toEntries = (list: ImageDownloadRecord[]): DownloadEntry[] => {
     const installers = list.filter(isInstaller);
@@ -318,11 +337,13 @@ export function ProductDownloadsAndVersions({
         (item) => item.name === `${iso.name}-CHECKSUM.sigstore.json`,
       );
       return {
-        label: iso.name.includes("nvidia")
-          ? "Nvidia"
-          : iso.name.includes("gdx")
-            ? "GDX (Nvidia Workstation)"
-            : "AMD / Intel",
+        label:
+          media?.labels[iso.name] ??
+          (iso.name.includes("nvidia")
+            ? "Nvidia"
+            : iso.name.includes("gdx")
+              ? "GDX (Nvidia Workstation)"
+              : "AMD / Intel"),
         isoUrl: iso.url,
         isoFilename: iso.name,
         torrentUrl: torrent?.url,
@@ -337,15 +358,9 @@ export function ProductDownloadsAndVersions({
 
   // Current media are the card's entries; retired ones follow in a section.
   const installerCard = (list: ImageDownloadRecord[]) => {
-    const entries = toEntries(list.filter((d) => !d.retired));
     const retired = toEntries(list.filter((d) => d.retired));
     return {
-      medium:
-        entries.length > 0 &&
-        entries.every((entry) => !entry.isoFilename.endsWith(".iso"))
-          ? "USB Disk Image"
-          : "ISO",
-      entries,
+      entries: toEntries(list.filter((d) => !d.retired)),
       sections: retired.length
         ? [{ label: "Previous installer (retired)", entries: retired }]
         : undefined,
@@ -371,10 +386,10 @@ export function ProductDownloadsAndVersions({
           {hasStableInstaller && (
             <DownloadCard
               variant="bluefin"
-              title={`${product.toUpperCase()} Stable ${stableCard.medium}`}
+              title={media?.title ?? `${product.toUpperCase()} Stable ISO`}
               recommended
               description={
-                INSTALLER_NOTES[product] ??
+                media?.description ??
                 "Production release installer with verified checksums."
               }
               entries={stableCard.entries}
@@ -385,10 +400,10 @@ export function ProductDownloadsAndVersions({
           {hasTestingInstaller && (
             <DownloadCard
               variant="dakotaraptor"
-              title={`${product.toUpperCase()} Testing ${testingCard.medium}`}
+              title={media?.title ?? `${product.toUpperCase()} Testing ISO`}
               recommended={!hasStableInstaller}
               description={
-                INSTALLER_NOTES[product] ??
+                media?.description ??
                 "Current automated testing build for verification and hardware testing."
               }
               entries={testingCard.entries}

@@ -662,7 +662,7 @@ test("ProductDownloadsAndVersions and ProductReleaseAssets render server downloa
   );
 });
 
-test("ProductDownloadsAndVersions offers Utah's disk image first and lists the live ISO as retired", () => {
+test("ProductDownloadsAndVersions offers Utah's disk image, the hybrid ISO once published, and the retired live ISO", () => {
   const BASE = "https://projectbluefin.dev";
   const download = (name, extra = {}) => ({
     name,
@@ -674,9 +674,8 @@ test("ProductDownloadsAndVersions offers Utah's disk image first and lists the l
     unavailable: false,
     ...extra,
   });
-  const { ProductDownloadsAndVersions } = loadComponent(
-    path.join(COMPONENTS_DIR, "ImageProductSection.tsx"),
-    {
+  const section = (isoPublished) =>
+    loadComponent(path.join(COMPONENTS_DIR, "ImageProductSection.tsx"), {
       "@site/static/data/image-releases.json": {
         products: {
           utah: {
@@ -685,6 +684,13 @@ test("ProductDownloadsAndVersions offers Utah's disk image first and lists the l
               download("utah-installer-latest.raw.xz"),
               download("utah-installer-latest.raw.xz-CHECKSUM"),
               download("utah-installer-latest.raw.xz-CHECKSUM.sigstore.json"),
+              ...[
+                "utah-installer-latest.iso",
+                "utah-installer-latest.iso-CHECKSUM",
+                "utah-installer-latest.iso-CHECKSUM.sigstore.json",
+              ].map((name) =>
+                download(name, { optional: true, unavailable: !isoPublished }),
+              ),
               download("utah-live-latest.iso", { retired: true }),
               download("utah-live-latest.iso-CHECKSUM", { retired: true }),
             ],
@@ -698,34 +704,55 @@ test("ProductDownloadsAndVersions offers Utah's disk image first and lists the l
           },
         },
       },
-    },
-  );
+    }).ProductDownloadsAndVersions;
 
-  const html = render(ProductDownloadsAndVersions, { product: "utah" });
-  assert.ok(html.includes("UTAH Testing USB Disk Image"), html);
-  assert.ok(html.includes("UEFI, Secure Boot off; write to a USB"));
-  assert.ok(html.includes("Fedora Media Writer"));
+  const before = render(section(false), { product: "utah" });
+  assert.ok(before.includes("UTAH USB Installer"), before);
+  assert.ok(!before.includes("Testing"), "the card names no stream");
+  assert.ok(before.includes("Built from <code>:stable</code>"));
+  assert.ok(before.includes("UEFI, Secure Boot off; write the disk image"));
+  assert.ok(before.includes("Fedora Media Writer"));
   assert.ok(
-    html.includes(
+    before.includes(
       'href="https://github.com/projectbluefin/utah#download-and-image-streams"',
     ),
   );
-  assert.ok(html.includes("Download Disk Image"));
+  assert.ok(before.includes("USB disk image (Fedora Media Writer)"));
+  assert.ok(before.includes("Download Disk Image"));
   assert.ok(
-    html.includes(`href="${BASE}/utah-installer-latest.raw.xz-CHECKSUM"`),
+    before.includes(`href="${BASE}/utah-installer-latest.raw.xz-CHECKSUM"`),
   );
   assert.ok(
-    html.includes(
+    before.includes(
       `href="${BASE}/utah-installer-latest.raw.xz-CHECKSUM.sigstore.json"`,
     ),
   );
-  const retiredAt = html.indexOf("Previous installer (retired)");
-  assert.ok(retiredAt > html.indexOf("utah-installer-latest.raw.xz"));
-  assert.ok(html.indexOf("utah-live-latest.iso") > retiredAt);
+  assert.ok(
+    !before.includes("utah-installer-latest.iso"),
+    "an unpublished hybrid ISO is hidden",
+  );
+  const retiredAt = before.indexOf("Previous installer (retired)");
+  assert.ok(retiredAt > before.indexOf("utah-installer-latest.raw.xz"));
+  assert.ok(before.indexOf("utah-live-latest.iso") > retiredAt);
 
-  const dakota = render(ProductDownloadsAndVersions, { product: "dakota" });
+  const after = render(section(true), { product: "utah" });
+  assert.ok(after.includes("ISO (USB writers, Ventoy, VMs)"));
+  assert.ok(
+    after.includes(`href="${BASE}/utah-installer-latest.iso-CHECKSUM"`),
+  );
+  assert.ok(
+    after.includes(
+      `href="${BASE}/utah-installer-latest.iso-CHECKSUM.sigstore.json"`,
+    ),
+  );
+  const isoAt = after.indexOf(`href="${BASE}/utah-installer-latest.iso"`);
+  assert.ok(isoAt > after.indexOf("utah-installer-latest.raw.xz"));
+  assert.ok(after.indexOf("Previous installer (retired)") > isoAt);
+
+  const dakota = render(section(true), { product: "dakota" });
   assert.ok(dakota.includes("DAKOTA Testing ISO"));
   assert.ok(dakota.includes("Current automated testing build"));
+  assert.ok(dakota.includes("AMD"));
   assert.ok(dakota.includes("Download ISO"));
   assert.ok(!dakota.includes("Signature"));
   assert.ok(!dakota.includes("retired"));

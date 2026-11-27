@@ -412,17 +412,25 @@ export async function fetchImageReleases() {
     ),
   });
   // Utah installs with upstream gnome-setup from a raw GPT disk image
-  // (projectbluefin/utah#1569); its checksum is cosign-signed keylessly.
-  candidates.push({
-    key: "utah",
-    ...downloadCandidate(
-      "utah-installer-latest.raw.xz",
-      "testing",
-      "https://github.com/projectbluefin/dakota-iso/blob/main/.github/workflows/publish-utah-installer.yml",
-      "stable",
-    ),
-    signed: true,
-  });
+  // (projectbluefin/utah#1569), joined by a hybrid ISO of the same medium for
+  // USB writers, Ventoy and VMs; the ISO is shown once it is published. Both
+  // checksums are cosign-signed keylessly.
+  for (const [name, optional] of [
+    ["utah-installer-latest.raw.xz", false],
+    ["utah-installer-latest.iso", true],
+  ]) {
+    candidates.push({
+      key: "utah",
+      ...downloadCandidate(
+        name,
+        "testing",
+        "https://github.com/projectbluefin/dakota-iso/blob/main/.github/workflows/publish-utah-installer.yml",
+        "stable",
+      ),
+      signed: true,
+      ...(optional ? { optional } : {}),
+    });
+  }
   // The fisherman live ISO it replaces is no longer scheduled or tested.
   candidates.push({
     key: "utah",

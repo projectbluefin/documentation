@@ -118,12 +118,14 @@ a unified 5-part composition:
    command belongs in this section (`/dakota` keeps its table here).
    Installer publication channel differs from embedded payload channel (e.g.
    Dakota stable payload served from the testing CDN).
-   Installers are ISOs unless `INSTALLER_EXTENSIONS` in
-   `ImageProductSection.tsx` names other media for the image: Utah's card
-   offers the gnome-setup USB disk image (`utah-installer-latest.raw.xz`, its
-   `-CHECKSUM` and cosign `-CHECKSUM.sigstore.json`) and lists downloads that
-   `fetch-image-releases.mjs` marks `retired` (the old live ISO) under
-   "Previous installer (retired)".
+   Installers are ISOs on a per-stream card unless `INSTALLER_MEDIA` in
+   `ImageProductSection.tsx` gives the image its own extensions, entry labels
+   and stream-neutral card: Utah's "USB Installer" card offers the
+   gnome-setup disk image (`utah-installer-latest.raw.xz`, its `-CHECKSUM` and
+   cosign `-CHECKSUM.sigstore.json`), then the hybrid
+   `utah-installer-latest.iso` once its probe succeeds (`fetch-image-releases.mjs`
+   marks it `optional`), and lists downloads marked `retired` (the old live
+   ISO) under "Previous installer (retired)".
 4. `## Usage`: `<PerImageUsage />` embeds first-party daily active systems with
    per-family filtering and explicit unavailable fallbacks.
 5. `## Release Assets & Attestations`: `<ProductReleaseAssets />` renders
