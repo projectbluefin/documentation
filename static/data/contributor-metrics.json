@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "org": "projectbluefin",
-  "generatedAt": "2026-11-26T21:13:54.025Z",
+  "generatedAt": "2026-11-27T02:09:17.892Z",
   "unavailable": false,
   "stateReason": null,
   "coverage": {
@@ -367,7 +367,13 @@
         "archived": false
       }
     ],
-    "kinds": ["changes", "issues", "comments", "reviews", "discussions"],
+    "kinds": [
+      "changes",
+      "issues",
+      "comments",
+      "reviews",
+      "discussions"
+    ],
     "complete": true,
     "unlinkedAuthors": 1633
   },
@@ -377,436 +383,436 @@
     "activeRepositories90d": 41,
     "byType90d": {
       "changes": 58,
-      "issues": 112,
+      "issues": 111,
       "comments": 122,
-      "reviews": 21,
+      "reviews": 20,
       "discussions": 0
     }
   },
   "development": {
     "current": {
-      "mergedPRs7d": 232,
-      "mergedPRs30d": 1084,
-      "activeRepositories7d": 24,
-      "medianDurationHours7d": 3.8,
-      "p75DurationHours7d": 24.5
+      "mergedPRs7d": 222,
+      "mergedPRs30d": 1066,
+      "activeRepositories7d": 23,
+      "medianDurationHours7d": 4.1,
+      "p75DurationHours7d": 22.4
     },
     "windows": [
       {
-        "start": "2026-11-19T21:13:54.025Z",
-        "end": "2026-11-26T21:13:54.025Z",
-        "mergedPRs": 232,
-        "activeRepositories": 24,
-        "medianDurationHours": 3.8,
-        "p75DurationHours": 24.5
+        "start": "2026-11-20T02:09:17.892Z",
+        "end": "2026-11-27T02:09:17.892Z",
+        "mergedPRs": 222,
+        "activeRepositories": 23,
+        "medianDurationHours": 4.1,
+        "p75DurationHours": 22.4
       },
       {
-        "start": "2026-11-12T21:13:54.025Z",
-        "end": "2026-11-19T21:13:54.025Z",
-        "mergedPRs": 340,
-        "activeRepositories": 24,
-        "medianDurationHours": 2.4,
-        "p75DurationHours": 16.2
+        "start": "2026-11-13T02:09:17.892Z",
+        "end": "2026-11-20T02:09:17.892Z",
+        "mergedPRs": 346,
+        "activeRepositories": 25,
+        "medianDurationHours": 2.5,
+        "p75DurationHours": 17.7
       },
       {
-        "start": "2026-11-05T21:13:54.025Z",
-        "end": "2026-11-12T21:13:54.025Z",
-        "mergedPRs": 186,
+        "start": "2026-11-06T02:09:17.892Z",
+        "end": "2026-11-13T02:09:17.892Z",
+        "mergedPRs": 185,
         "activeRepositories": 19,
-        "medianDurationHours": 3,
-        "p75DurationHours": 15.6
+        "medianDurationHours": 3.1,
+        "p75DurationHours": 15.5
       },
       {
-        "start": "2026-10-29T21:13:54.025Z",
-        "end": "2026-11-05T21:13:54.025Z",
-        "mergedPRs": 241,
-        "activeRepositories": 18,
-        "medianDurationHours": 2.9,
+        "start": "2026-10-30T02:09:17.892Z",
+        "end": "2026-11-06T02:09:17.892Z",
+        "mergedPRs": 249,
+        "activeRepositories": 20,
+        "medianDurationHours": 2.4,
         "p75DurationHours": 46
       },
       {
-        "start": "2026-10-22T21:13:54.025Z",
-        "end": "2026-10-29T21:13:54.025Z",
-        "mergedPRs": 322,
+        "start": "2026-10-23T02:09:17.892Z",
+        "end": "2026-10-30T02:09:17.892Z",
+        "mergedPRs": 314,
         "activeRepositories": 25,
-        "medianDurationHours": 2.2,
-        "p75DurationHours": 13.4
+        "medianDurationHours": 2.5,
+        "p75DurationHours": 13.6
       },
       {
-        "start": "2026-10-15T21:13:54.025Z",
-        "end": "2026-10-22T21:13:54.025Z",
-        "mergedPRs": 106,
+        "start": "2026-10-16T02:09:17.892Z",
+        "end": "2026-10-23T02:09:17.892Z",
+        "mergedPRs": 113,
         "activeRepositories": 16,
-        "medianDurationHours": 7.8,
-        "p75DurationHours": 47.4
+        "medianDurationHours": 6.3,
+        "p75DurationHours": 43.2
       },
       {
-        "start": "2026-10-08T21:13:54.025Z",
-        "end": "2026-10-15T21:13:54.025Z",
-        "mergedPRs": 236,
+        "start": "2026-10-09T02:09:17.892Z",
+        "end": "2026-10-16T02:09:17.892Z",
+        "mergedPRs": 222,
         "activeRepositories": 26,
-        "medianDurationHours": 4.3,
-        "p75DurationHours": 25.9
+        "medianDurationHours": 6.5,
+        "p75DurationHours": 28.9
       },
       {
-        "start": "2026-10-01T21:13:54.025Z",
-        "end": "2026-10-08T21:13:54.025Z",
-        "mergedPRs": 339,
+        "start": "2026-10-02T02:09:17.892Z",
+        "end": "2026-10-09T02:09:17.892Z",
+        "mergedPRs": 351,
         "activeRepositories": 23,
-        "medianDurationHours": 5.1,
-        "p75DurationHours": 19.4
+        "medianDurationHours": 4.6,
+        "p75DurationHours": 19.3
       },
       {
-        "start": "2026-09-24T21:13:54.025Z",
-        "end": "2026-10-01T21:13:54.025Z",
-        "mergedPRs": 560,
+        "start": "2026-09-25T02:09:17.892Z",
+        "end": "2026-10-02T02:09:17.892Z",
+        "mergedPRs": 536,
         "activeRepositories": 24,
-        "medianDurationHours": 4.5,
-        "p75DurationHours": 16.5
+        "medianDurationHours": 4.8,
+        "p75DurationHours": 16.6
       },
       {
-        "start": "2026-09-17T21:13:54.025Z",
-        "end": "2026-09-24T21:13:54.025Z",
-        "mergedPRs": 432,
+        "start": "2026-09-18T02:09:17.892Z",
+        "end": "2026-09-25T02:09:17.892Z",
+        "mergedPRs": 455,
         "activeRepositories": 20,
-        "medianDurationHours": 15.8,
-        "p75DurationHours": 68.4
+        "medianDurationHours": 15.2,
+        "p75DurationHours": 63.4
       },
       {
-        "start": "2026-09-10T21:13:54.025Z",
-        "end": "2026-09-17T21:13:54.025Z",
-        "mergedPRs": 242,
-        "activeRepositories": 21,
-        "medianDurationHours": 3.1,
-        "p75DurationHours": 27.8
+        "start": "2026-09-11T02:09:17.892Z",
+        "end": "2026-09-18T02:09:17.892Z",
+        "mergedPRs": 244,
+        "activeRepositories": 20,
+        "medianDurationHours": 2.8,
+        "p75DurationHours": 26.4
       },
       {
-        "start": "2026-09-03T21:13:54.025Z",
-        "end": "2026-09-10T21:13:54.025Z",
-        "mergedPRs": 210,
+        "start": "2026-09-04T02:09:17.892Z",
+        "end": "2026-09-11T02:09:17.892Z",
+        "mergedPRs": 214,
         "activeRepositories": 19,
         "medianDurationHours": 1.8,
-        "p75DurationHours": 28.2
+        "p75DurationHours": 28.8
       },
       {
-        "start": "2026-08-27T21:13:54.025Z",
-        "end": "2026-09-03T21:13:54.025Z",
-        "mergedPRs": 28,
+        "start": "2026-08-28T02:09:17.892Z",
+        "end": "2026-09-04T02:09:17.892Z",
+        "mergedPRs": 24,
         "activeRepositories": 8,
-        "medianDurationHours": 0.2,
-        "p75DurationHours": 16.9
+        "medianDurationHours": 0.5,
+        "p75DurationHours": 25.2
       },
       {
-        "start": "2026-08-20T21:13:54.025Z",
-        "end": "2026-08-27T21:13:54.025Z",
-        "mergedPRs": 79,
+        "start": "2026-08-21T02:09:17.892Z",
+        "end": "2026-08-28T02:09:17.892Z",
+        "mergedPRs": 70,
         "activeRepositories": 12,
-        "medianDurationHours": 18.1,
-        "p75DurationHours": 246
+        "medianDurationHours": 2.4,
+        "p75DurationHours": 164.8
       },
       {
-        "start": "2026-08-13T21:13:54.025Z",
-        "end": "2026-08-20T21:13:54.025Z",
-        "mergedPRs": 95,
-        "activeRepositories": 11,
-        "medianDurationHours": 0.6,
-        "p75DurationHours": 4.7
-      },
-      {
-        "start": "2026-08-06T21:13:54.025Z",
-        "end": "2026-08-13T21:13:54.025Z",
-        "mergedPRs": 213,
-        "activeRepositories": 14,
+        "start": "2026-08-14T02:09:17.892Z",
+        "end": "2026-08-21T02:09:17.892Z",
+        "mergedPRs": 97,
+        "activeRepositories": 10,
         "medianDurationHours": 0.7,
-        "p75DurationHours": 6.2
+        "p75DurationHours": 18.1
       },
       {
-        "start": "2026-07-30T21:13:54.025Z",
-        "end": "2026-08-06T21:13:54.025Z",
-        "mergedPRs": 183,
-        "activeRepositories": 15,
+        "start": "2026-08-07T02:09:17.892Z",
+        "end": "2026-08-14T02:09:17.892Z",
+        "mergedPRs": 208,
+        "activeRepositories": 13,
+        "medianDurationHours": 0.7,
+        "p75DurationHours": 5.7
+      },
+      {
+        "start": "2026-07-31T02:09:17.892Z",
+        "end": "2026-08-07T02:09:17.892Z",
+        "mergedPRs": 187,
+        "activeRepositories": 16,
         "medianDurationHours": 0.1,
         "p75DurationHours": 0.6
       },
       {
-        "start": "2026-07-23T21:13:54.025Z",
-        "end": "2026-07-30T21:13:54.025Z",
-        "mergedPRs": 223,
-        "activeRepositories": 12,
+        "start": "2026-07-24T02:09:17.892Z",
+        "end": "2026-07-31T02:09:17.892Z",
+        "mergedPRs": 233,
+        "activeRepositories": 13,
         "medianDurationHours": 0,
-        "p75DurationHours": 0.8
+        "p75DurationHours": 0.9
       },
       {
-        "start": "2026-07-16T21:13:54.025Z",
-        "end": "2026-07-23T21:13:54.025Z",
-        "mergedPRs": 72,
+        "start": "2026-07-17T02:09:17.892Z",
+        "end": "2026-07-24T02:09:17.892Z",
+        "mergedPRs": 74,
         "activeRepositories": 12,
         "medianDurationHours": 0.1,
-        "p75DurationHours": 2.6
+        "p75DurationHours": 2.5
       },
       {
-        "start": "2026-07-09T21:13:54.025Z",
-        "end": "2026-07-16T21:13:54.025Z",
+        "start": "2026-07-10T02:09:17.892Z",
+        "end": "2026-07-17T02:09:17.892Z",
         "mergedPRs": 3,
         "activeRepositories": 2,
         "medianDurationHours": 0.9,
         "p75DurationHours": 4.2
       },
       {
-        "start": "2026-07-02T21:13:54.025Z",
-        "end": "2026-07-09T21:13:54.025Z",
+        "start": "2026-07-03T02:09:17.892Z",
+        "end": "2026-07-10T02:09:17.892Z",
         "mergedPRs": 5,
         "activeRepositories": 4,
         "medianDurationHours": 0.3,
         "p75DurationHours": 47.2
       },
       {
-        "start": "2026-06-25T21:13:54.025Z",
-        "end": "2026-07-02T21:13:54.025Z",
-        "mergedPRs": 25,
+        "start": "2026-06-26T02:09:17.892Z",
+        "end": "2026-07-03T02:09:17.892Z",
+        "mergedPRs": 24,
         "activeRepositories": 10,
         "medianDurationHours": 0.1,
-        "p75DurationHours": 1.4
+        "p75DurationHours": 9.9
       },
       {
-        "start": "2026-06-18T21:13:54.025Z",
-        "end": "2026-06-25T21:13:54.025Z",
+        "start": "2026-06-19T02:09:17.892Z",
+        "end": "2026-06-26T02:09:17.892Z",
         "mergedPRs": 357,
         "activeRepositories": 17,
         "medianDurationHours": 0.1,
         "p75DurationHours": 0.6
       },
       {
-        "start": "2026-06-11T21:13:54.025Z",
-        "end": "2026-06-18T21:13:54.025Z",
-        "mergedPRs": 147,
-        "activeRepositories": 12,
+        "start": "2026-06-12T02:09:17.892Z",
+        "end": "2026-06-19T02:09:17.892Z",
+        "mergedPRs": 138,
+        "activeRepositories": 11,
         "medianDurationHours": 0.2,
         "p75DurationHours": 0.8
       },
       {
-        "start": "2026-06-04T21:13:54.025Z",
-        "end": "2026-06-11T21:13:54.025Z",
-        "mergedPRs": 506,
-        "activeRepositories": 16,
+        "start": "2026-06-05T02:09:17.892Z",
+        "end": "2026-06-12T02:09:17.892Z",
+        "mergedPRs": 466,
+        "activeRepositories": 15,
         "medianDurationHours": 0.1,
         "p75DurationHours": 0.5
       },
       {
-        "start": "2026-05-28T21:13:54.025Z",
-        "end": "2026-06-04T21:13:54.025Z",
-        "mergedPRs": 472,
-        "activeRepositories": 16,
-        "medianDurationHours": 0.1,
-        "p75DurationHours": 3.8
+        "start": "2026-05-29T02:09:17.892Z",
+        "end": "2026-06-05T02:09:17.892Z",
+        "mergedPRs": 519,
+        "activeRepositories": 17,
+        "medianDurationHours": 0.2,
+        "p75DurationHours": 5.4
       },
       {
-        "start": "2026-05-21T21:13:54.025Z",
-        "end": "2026-05-28T21:13:54.025Z",
+        "start": "2026-05-22T02:09:17.892Z",
+        "end": "2026-05-29T02:09:17.892Z",
         "mergedPRs": 174,
         "activeRepositories": 8,
-        "medianDurationHours": 0.7,
-        "p75DurationHours": 2.5
+        "medianDurationHours": 0.8,
+        "p75DurationHours": 2.6
       },
       {
-        "start": "2026-05-14T21:13:54.025Z",
-        "end": "2026-05-21T21:13:54.025Z",
-        "mergedPRs": 23,
-        "activeRepositories": 3,
-        "medianDurationHours": 19.5,
-        "p75DurationHours": 121.7
+        "start": "2026-05-15T02:09:17.892Z",
+        "end": "2026-05-22T02:09:17.892Z",
+        "mergedPRs": 21,
+        "activeRepositories": 4,
+        "medianDurationHours": 21.6,
+        "p75DurationHours": 125.4
       },
       {
-        "start": "2026-05-07T21:13:54.025Z",
-        "end": "2026-05-14T21:13:54.025Z",
-        "mergedPRs": 57,
+        "start": "2026-05-08T02:09:17.892Z",
+        "end": "2026-05-15T02:09:17.892Z",
+        "mergedPRs": 61,
         "activeRepositories": 7,
         "medianDurationHours": 0,
         "p75DurationHours": 0.3
       },
       {
-        "start": "2026-04-30T21:13:54.025Z",
-        "end": "2026-05-07T21:13:54.025Z",
-        "mergedPRs": 76,
+        "start": "2026-05-01T02:09:17.892Z",
+        "end": "2026-05-08T02:09:17.892Z",
+        "mergedPRs": 74,
         "activeRepositories": 4,
         "medianDurationHours": 0.2,
         "p75DurationHours": 1.6
       },
       {
-        "start": "2026-04-23T21:13:54.025Z",
-        "end": "2026-04-30T21:13:54.025Z",
-        "mergedPRs": 25,
-        "activeRepositories": 5,
-        "medianDurationHours": 1.4,
-        "p75DurationHours": 26.7
+        "start": "2026-04-24T02:09:17.892Z",
+        "end": "2026-05-01T02:09:17.892Z",
+        "mergedPRs": 26,
+        "activeRepositories": 4,
+        "medianDurationHours": 1.5,
+        "p75DurationHours": 4.9
       },
       {
-        "start": "2026-04-16T21:13:54.025Z",
-        "end": "2026-04-23T21:13:54.025Z",
+        "start": "2026-04-17T02:09:17.892Z",
+        "end": "2026-04-24T02:09:17.892Z",
         "mergedPRs": 42,
-        "activeRepositories": 6,
+        "activeRepositories": 7,
         "medianDurationHours": 0,
         "p75DurationHours": 1.5
       },
       {
-        "start": "2026-04-09T21:13:54.025Z",
-        "end": "2026-04-16T21:13:54.025Z",
-        "mergedPRs": 56,
+        "start": "2026-04-10T02:09:17.892Z",
+        "end": "2026-04-17T02:09:17.892Z",
+        "mergedPRs": 57,
         "activeRepositories": 5,
         "medianDurationHours": 0.2,
-        "p75DurationHours": 3.5
+        "p75DurationHours": 3.1
       },
       {
-        "start": "2026-04-02T21:13:54.025Z",
-        "end": "2026-04-09T21:13:54.025Z",
+        "start": "2026-04-03T02:09:17.892Z",
+        "end": "2026-04-10T02:09:17.892Z",
         "mergedPRs": 26,
         "activeRepositories": 4,
         "medianDurationHours": 0.6,
         "p75DurationHours": 0.7
       },
       {
-        "start": "2026-03-26T21:13:54.025Z",
-        "end": "2026-04-02T21:13:54.025Z",
-        "mergedPRs": 59,
+        "start": "2026-03-27T02:09:17.892Z",
+        "end": "2026-04-03T02:09:17.892Z",
+        "mergedPRs": 60,
         "activeRepositories": 6,
         "medianDurationHours": 0.1,
-        "p75DurationHours": 2.4
+        "p75DurationHours": 2.3
       },
       {
-        "start": "2026-03-19T21:13:54.025Z",
-        "end": "2026-03-26T21:13:54.025Z",
+        "start": "2026-03-20T02:09:17.892Z",
+        "end": "2026-03-27T02:09:17.892Z",
         "mergedPRs": 3,
         "activeRepositories": 2,
         "medianDurationHours": 0.6,
         "p75DurationHours": 5.7
       },
       {
-        "start": "2026-03-12T21:13:54.025Z",
-        "end": "2026-03-19T21:13:54.025Z",
-        "mergedPRs": 19,
+        "start": "2026-03-13T02:09:17.892Z",
+        "end": "2026-03-20T02:09:17.892Z",
+        "mergedPRs": 15,
         "activeRepositories": 4,
         "medianDurationHours": 0,
         "p75DurationHours": 1.1
       },
       {
-        "start": "2026-03-05T21:13:54.025Z",
-        "end": "2026-03-12T21:13:54.025Z",
-        "mergedPRs": 19,
+        "start": "2026-03-06T02:09:17.892Z",
+        "end": "2026-03-13T02:09:17.892Z",
+        "mergedPRs": 23,
         "activeRepositories": 5,
         "medianDurationHours": 0.2,
         "p75DurationHours": 1.9
       },
       {
-        "start": "2026-02-26T21:13:54.025Z",
-        "end": "2026-03-05T21:13:54.025Z",
+        "start": "2026-02-27T02:09:17.892Z",
+        "end": "2026-03-06T02:09:17.892Z",
         "mergedPRs": 9,
         "activeRepositories": 4,
         "medianDurationHours": 0.3,
         "p75DurationHours": 6.3
       },
       {
-        "start": "2026-02-19T21:13:54.025Z",
-        "end": "2026-02-26T21:13:54.025Z",
+        "start": "2026-02-20T02:09:17.892Z",
+        "end": "2026-02-27T02:09:17.892Z",
         "mergedPRs": 11,
         "activeRepositories": 4,
         "medianDurationHours": 23.3,
         "p75DurationHours": 55.1
       },
       {
-        "start": "2026-02-12T21:13:54.025Z",
-        "end": "2026-02-19T21:13:54.025Z",
+        "start": "2026-02-13T02:09:17.892Z",
+        "end": "2026-02-20T02:09:17.892Z",
         "mergedPRs": 15,
         "activeRepositories": 3,
         "medianDurationHours": 0.1,
         "p75DurationHours": 1.1
       },
       {
-        "start": "2026-02-05T21:13:54.025Z",
-        "end": "2026-02-12T21:13:54.025Z",
+        "start": "2026-02-06T02:09:17.892Z",
+        "end": "2026-02-13T02:09:17.892Z",
         "mergedPRs": 7,
         "activeRepositories": 4,
         "medianDurationHours": 0.1,
         "p75DurationHours": 41.4
       },
       {
-        "start": "2026-01-29T21:13:54.025Z",
-        "end": "2026-02-05T21:13:54.025Z",
+        "start": "2026-01-30T02:09:17.892Z",
+        "end": "2026-02-06T02:09:17.892Z",
         "mergedPRs": 14,
         "activeRepositories": 4,
         "medianDurationHours": 9.1,
         "p75DurationHours": 47.9
       },
       {
-        "start": "2026-01-22T21:13:54.025Z",
-        "end": "2026-01-29T21:13:54.025Z",
-        "mergedPRs": 29,
+        "start": "2026-01-23T02:09:17.892Z",
+        "end": "2026-01-30T02:09:17.892Z",
+        "mergedPRs": 27,
         "activeRepositories": 4,
         "medianDurationHours": 0.3,
-        "p75DurationHours": 2.7
+        "p75DurationHours": 1.9
       },
       {
-        "start": "2026-01-15T21:13:54.025Z",
-        "end": "2026-01-22T21:13:54.025Z",
-        "mergedPRs": 21,
+        "start": "2026-01-16T02:09:17.892Z",
+        "end": "2026-01-23T02:09:17.892Z",
+        "mergedPRs": 22,
         "activeRepositories": 6,
-        "medianDurationHours": 2.2,
+        "medianDurationHours": 2.3,
         "p75DurationHours": 11.3
       },
       {
-        "start": "2026-01-08T21:13:54.025Z",
-        "end": "2026-01-15T21:13:54.025Z",
+        "start": "2026-01-09T02:09:17.892Z",
+        "end": "2026-01-16T02:09:17.892Z",
         "mergedPRs": 21,
         "activeRepositories": 6,
-        "medianDurationHours": 4.5,
+        "medianDurationHours": 5.4,
         "p75DurationHours": 20.9
       },
       {
-        "start": "2026-01-01T21:13:54.025Z",
-        "end": "2026-01-08T21:13:54.025Z",
-        "mergedPRs": 29,
+        "start": "2026-01-02T02:09:17.892Z",
+        "end": "2026-01-09T02:09:17.892Z",
+        "mergedPRs": 30,
         "activeRepositories": 7,
-        "medianDurationHours": 0.4,
-        "p75DurationHours": 2.1
+        "medianDurationHours": 0.5,
+        "p75DurationHours": 2.2
       },
       {
-        "start": "2025-12-25T21:13:54.025Z",
-        "end": "2026-01-01T21:13:54.025Z",
-        "mergedPRs": 32,
+        "start": "2025-12-26T02:09:17.892Z",
+        "end": "2026-01-02T02:09:17.892Z",
+        "mergedPRs": 31,
         "activeRepositories": 6,
-        "medianDurationHours": 6.6,
-        "p75DurationHours": 37.7
+        "medianDurationHours": 7.6,
+        "p75DurationHours": 38.9
       },
       {
-        "start": "2025-12-18T21:13:54.025Z",
-        "end": "2025-12-25T21:13:54.025Z",
+        "start": "2025-12-19T02:09:17.892Z",
+        "end": "2025-12-26T02:09:17.892Z",
         "mergedPRs": 16,
         "activeRepositories": 3,
-        "medianDurationHours": 1.5,
+        "medianDurationHours": 3,
         "p75DurationHours": 9
       },
       {
-        "start": "2025-12-11T21:13:54.025Z",
-        "end": "2025-12-18T21:13:54.025Z",
-        "mergedPRs": 35,
+        "start": "2025-12-12T02:09:17.892Z",
+        "end": "2025-12-19T02:09:17.892Z",
+        "mergedPRs": 34,
         "activeRepositories": 4,
         "medianDurationHours": 0.1,
-        "p75DurationHours": 19.5
+        "p75DurationHours": 19.6
       },
       {
-        "start": "2025-12-04T21:13:54.025Z",
-        "end": "2025-12-11T21:13:54.025Z",
-        "mergedPRs": 29,
+        "start": "2025-12-05T02:09:17.892Z",
+        "end": "2025-12-12T02:09:17.892Z",
+        "mergedPRs": 31,
         "activeRepositories": 4,
         "medianDurationHours": 0.4,
-        "p75DurationHours": 24.6
+        "p75DurationHours": 20.4
       },
       {
-        "start": "2025-11-27T21:13:54.025Z",
-        "end": "2025-12-04T21:13:54.025Z",
-        "mergedPRs": 30,
+        "start": "2025-11-28T02:09:17.892Z",
+        "end": "2025-12-05T02:09:17.892Z",
+        "mergedPRs": 20,
         "activeRepositories": 3,
         "medianDurationHours": 0.1,
-        "p75DurationHours": 0.6
+        "p75DurationHours": 0.3
       }
     ]
   },
@@ -1361,7 +1367,7 @@
       "id": "MDQ6VXNlcjExMzA0MDE5",
       "login": "dtg01100",
       "firstContributionAt": "2025-04-04T13:36:49.000Z",
-      "lastContributionAt": "2026-11-25T20:53:11.000Z"
+      "lastContributionAt": "2026-11-26T22:04:49.000Z"
     },
     {
       "id": "MDQ6VXNlcjExMzY2NDc=",
@@ -1433,7 +1439,7 @@
       "id": "MDQ6VXNlcjEyNjQxMDk=",
       "login": "castrojo",
       "firstContributionAt": "2023-03-08T19:19:39.000Z",
-      "lastContributionAt": "2026-11-26T21:01:59.000Z"
+      "lastContributionAt": "2026-11-26T21:33:28.000Z"
     },
     {
       "id": "MDQ6VXNlcjEyNzc5MTc=",
@@ -1709,7 +1715,7 @@
       "id": "MDQ6VXNlcjI1NTE5OTY0",
       "login": "andrew-pyle",
       "firstContributionAt": "2026-11-20T21:20:35.000Z",
-      "lastContributionAt": "2026-11-26T18:16:59.000Z"
+      "lastContributionAt": "2026-11-26T21:24:05.000Z"
     },
     {
       "id": "MDQ6VXNlcjI2MDkzMjMx",
@@ -2579,7 +2585,7 @@
       "id": "MDQ6VXNlcjU4NDA0NDE=",
       "login": "hanthor",
       "firstContributionAt": "2025-01-04T16:27:59.000Z",
-      "lastContributionAt": "2026-11-26T20:44:54.000Z"
+      "lastContributionAt": "2026-11-27T02:08:25.000Z"
     },
     {
       "id": "MDQ6VXNlcjU4NjU0NDQx",
@@ -2813,7 +2819,7 @@
       "id": "MDQ6VXNlcjY3NzIzMzU=",
       "login": "Danathar",
       "firstContributionAt": "2026-05-30T19:26:09.000Z",
-      "lastContributionAt": "2026-11-26T16:44:30.000Z"
+      "lastContributionAt": "2026-11-27T01:07:14.000Z"
     },
     {
       "id": "MDQ6VXNlcjY3ODU5NzM=",
@@ -3437,7 +3443,7 @@
       "id": "U_kgDOCV7PMg",
       "login": "Karibhou",
       "firstContributionAt": "2026-10-16T19:07:11.000Z",
-      "lastContributionAt": "2026-11-26T16:41:59.000Z"
+      "lastContributionAt": "2026-11-27T02:08:42.000Z"
     },
     {
       "id": "U_kgDOCVQ4MA",
