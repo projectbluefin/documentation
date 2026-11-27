@@ -42,6 +42,10 @@ interface ImageDownloadRecord {
   lastModified?: string | null;
   versions: null;
   unavailable?: boolean;
+  /** Superseded installer kept downloadable but no longer built or tested. */
+  retired?: boolean;
+  /** Announced installer that is shown only once its probe succeeds. */
+  optional?: boolean;
 }
 
 interface ProductReleaseData {
@@ -94,6 +98,39 @@ const driverFile = driverVersionsData as unknown as {
 const driverRows: DriverRow[] = (driverFile.streams ?? []).flatMap(
   (stream) => stream.history ?? [],
 );
+
+// An image's installer card when it ships more than the default ISO card.
+interface InstallerMedia {
+  /** Installer file extensions; every other product ships `.iso` only. */
+  extensions: string[];
+  /** Stream-neutral card title, for media not tied to a publication stream. */
+  title: string;
+  description: React.ReactNode;
+  /** Entry label per installer file name. */
+  labels: Record<string, string>;
+}
+
+const INSTALLER_MEDIA: Partial<Record<ImageProductKey, InstallerMedia>> = {
+  utah: {
+    extensions: [".raw.xz", ".iso"],
+    title: "UTAH USB Installer",
+    description: (
+      <>
+        Built from <code>:stable</code>. Boots live and installs with
+        gnome-setup. UEFI, Secure Boot off; write the disk image to a USB stick
+        with Fedora Media Writer (Select .iso file → choose the .raw.xz).{" "}
+        <Link to="https://github.com/projectbluefin/utah#download-and-image-streams">
+          Install instructions
+        </Link>
+      </>
+    ),
+    labels: {
+      "utah-installer-latest.raw.xz": "USB disk image (Fedora Media Writer)",
+      "utah-installer-latest.iso": "ISO (USB writers, Ventoy, VMs)",
+      "utah-live-latest.iso": "Live ISO (fisherman installer)",
+    },
+  },
+};
 
 /**
  * Release SBOMs describe only the base image. The NVIDIA driver comes from the
@@ -280,30 +317,60 @@ export function ProductDownloadsAndVersions({
   const stableDownloads = downloads.filter((d) => d.stream === "stable");
   const testingDownloads = downloads.filter((d) => d.stream === "testing");
 
+  const media = INSTALLER_MEDIA[product];
+  const extensions = media?.extensions ?? [".iso"];
+  // Optional media appear only once the fetcher finds them published.
+  const isInstaller = (item: ImageDownloadRecord) =>
+    extensions.some((ext) => item.name.endsWith(ext)) &&
+    !(item.optional && item.unavailable);
+
   const toEntries = (list: ImageDownloadRecord[]): DownloadEntry[] => {
-    const isoEntries = list.filter((item) => item.name.endsWith(".iso"));
-    return isoEntries.map((iso) => {
+    const installers = list.filter(isInstaller);
+    return installers.map((iso) => {
       const checksum = list.find(
         (item) =>
           item.name === `${iso.name}-CHECKSUM` ||
           item.name === `${iso.name}.sha256`,
       );
       const torrent = list.find((item) => item.name === `${iso.name}.torrent`);
+      const signature = list.find(
+        (item) => item.name === `${iso.name}-CHECKSUM.sigstore.json`,
+      );
       return {
-        label: iso.name.includes("nvidia")
-          ? "Nvidia"
-          : iso.name.includes("gdx")
-            ? "GDX (Nvidia Workstation)"
-            : "AMD / Intel",
+        label:
+          media?.labels[iso.name] ??
+          (iso.name.includes("nvidia")
+            ? "Nvidia"
+            : iso.name.includes("gdx")
+              ? "GDX (Nvidia Workstation)"
+              : "AMD / Intel"),
         isoUrl: iso.url,
         isoFilename: iso.name,
         torrentUrl: torrent?.url,
         checksumUrl: checksum?.url ?? `${iso.url}-CHECKSUM`,
+        signatureUrl: signature?.url,
+        buttonLabel: iso.name.endsWith(".iso")
+          ? undefined
+          : "Download Disk Image",
       };
     });
   };
 
-  const hasIso = downloads.some((d) => d.name.endsWith(".iso"));
+  // Current media are the card's entries; retired ones follow in a section.
+  const installerCard = (list: ImageDownloadRecord[]) => {
+    const retired = toEntries(list.filter((d) => d.retired));
+    return {
+      entries: toEntries(list.filter((d) => !d.retired)),
+      sections: retired.length
+        ? [{ label: "Previous installer (retired)", entries: retired }]
+        : undefined,
+    };
+  };
+
+  const hasStableInstaller = stableDownloads.some(isInstaller);
+  const hasTestingInstaller = testingDownloads.some(isInstaller);
+  const stableCard = installerCard(stableDownloads);
+  const testingCard = installerCard(testingDownloads);
 
   return (
     <section className={styles.section}>
@@ -313,28 +380,34 @@ export function ProductDownloadsAndVersions({
         </Heading>
       )}
 
-      {/* ISO installation cards for stable and testing */}
-      {hasIso ? (
+      {/* Installer cards for stable and testing */}
+      {hasStableInstaller || hasTestingInstaller ? (
         <div className={styles.downloadGrid}>
-          {stableDownloads.some((d) => d.name.endsWith(".iso")) && (
+          {hasStableInstaller && (
             <DownloadCard
               variant="bluefin"
-              title={`${product.toUpperCase()} Stable ISO`}
+              title={media?.title ?? `${product.toUpperCase()} Stable ISO`}
               recommended
-              description="Production release installer with verified checksums."
-              entries={toEntries(stableDownloads)}
+              description={
+                media?.description ??
+                "Production release installer with verified checksums."
+              }
+              entries={stableCard.entries}
+              sections={stableCard.sections}
             />
           )}
 
-          {testingDownloads.some((d) => d.name.endsWith(".iso")) && (
+          {hasTestingInstaller && (
             <DownloadCard
               variant="dakotaraptor"
-              title={`${product.toUpperCase()} Testing ISO`}
-              recommended={
-                !stableDownloads.some((d) => d.name.endsWith(".iso"))
+              title={media?.title ?? `${product.toUpperCase()} Testing ISO`}
+              recommended={!hasStableInstaller}
+              description={
+                media?.description ??
+                "Current automated testing build for verification and hardware testing."
               }
-              description="Current automated testing build for verification and hardware testing."
-              entries={toEntries(testingDownloads)}
+              entries={testingCard.entries}
+              sections={testingCard.sections}
             />
           )}
         </div>

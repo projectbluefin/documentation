@@ -661,3 +661,99 @@ test("ProductDownloadsAndVersions and ProductReleaseAssets render server downloa
     "timeline displays exactly the last 7 releases",
   );
 });
+
+test("ProductDownloadsAndVersions offers Utah's disk image, the hybrid ISO once published, and the retired live ISO", () => {
+  const BASE = "https://projectbluefin.dev";
+  const download = (name, extra = {}) => ({
+    name,
+    url: `${BASE}/${name}`,
+    stream: "testing",
+    payloadStream: "stable",
+    sourceUrl: "https://example.test/workflow",
+    versions: null,
+    unavailable: false,
+    ...extra,
+  });
+  const section = (isoPublished) =>
+    loadComponent(path.join(COMPONENTS_DIR, "ImageProductSection.tsx"), {
+      "@site/static/data/image-releases.json": {
+        products: {
+          utah: {
+            releases: [],
+            downloads: [
+              download("utah-installer-latest.raw.xz"),
+              download("utah-installer-latest.raw.xz-CHECKSUM"),
+              download("utah-installer-latest.raw.xz-CHECKSUM.sigstore.json"),
+              ...[
+                "utah-installer-latest.iso",
+                "utah-installer-latest.iso-CHECKSUM",
+                "utah-installer-latest.iso-CHECKSUM.sigstore.json",
+              ].map((name) =>
+                download(name, { optional: true, unavailable: !isoPublished }),
+              ),
+              download("utah-live-latest.iso", { retired: true }),
+              download("utah-live-latest.iso-CHECKSUM", { retired: true }),
+            ],
+          },
+          dakota: {
+            releases: [],
+            downloads: [
+              download("dakota-live-latest.iso"),
+              download("dakota-live-latest.iso-CHECKSUM"),
+            ],
+          },
+        },
+      },
+    }).ProductDownloadsAndVersions;
+
+  const before = render(section(false), { product: "utah" });
+  assert.ok(before.includes("UTAH USB Installer"), before);
+  assert.ok(!before.includes("Testing"), "the card names no stream");
+  assert.ok(before.includes("Built from <code>:stable</code>"));
+  assert.ok(before.includes("UEFI, Secure Boot off; write the disk image"));
+  assert.ok(before.includes("Fedora Media Writer"));
+  assert.ok(
+    before.includes(
+      'href="https://github.com/projectbluefin/utah#download-and-image-streams"',
+    ),
+  );
+  assert.ok(before.includes("USB disk image (Fedora Media Writer)"));
+  assert.ok(before.includes("Download Disk Image"));
+  assert.ok(
+    before.includes(`href="${BASE}/utah-installer-latest.raw.xz-CHECKSUM"`),
+  );
+  assert.ok(
+    before.includes(
+      `href="${BASE}/utah-installer-latest.raw.xz-CHECKSUM.sigstore.json"`,
+    ),
+  );
+  assert.ok(
+    !before.includes("utah-installer-latest.iso"),
+    "an unpublished hybrid ISO is hidden",
+  );
+  const retiredAt = before.indexOf("Previous installer (retired)");
+  assert.ok(retiredAt > before.indexOf("utah-installer-latest.raw.xz"));
+  assert.ok(before.indexOf("utah-live-latest.iso") > retiredAt);
+
+  const after = render(section(true), { product: "utah" });
+  assert.ok(after.includes("ISO (USB writers, Ventoy, VMs)"));
+  assert.ok(
+    after.includes(`href="${BASE}/utah-installer-latest.iso-CHECKSUM"`),
+  );
+  assert.ok(
+    after.includes(
+      `href="${BASE}/utah-installer-latest.iso-CHECKSUM.sigstore.json"`,
+    ),
+  );
+  const isoAt = after.indexOf(`href="${BASE}/utah-installer-latest.iso"`);
+  assert.ok(isoAt > after.indexOf("utah-installer-latest.raw.xz"));
+  assert.ok(after.indexOf("Previous installer (retired)") > isoAt);
+
+  const dakota = render(section(true), { product: "dakota" });
+  assert.ok(dakota.includes("DAKOTA Testing ISO"));
+  assert.ok(dakota.includes("Current automated testing build"));
+  assert.ok(dakota.includes("AMD"));
+  assert.ok(dakota.includes("Download ISO"));
+  assert.ok(!dakota.includes("Signature"));
+  assert.ok(!dakota.includes("retired"));
+});
