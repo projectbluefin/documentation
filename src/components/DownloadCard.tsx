@@ -7,6 +7,8 @@ export interface DownloadEntry {
   isoFilename: string;
   torrentUrl?: string;
   checksumUrl: string;
+  /** Sigstore bundle signing the checksum file, when one is published. */
+  signatureUrl?: string;
   buttonLabel?: string;
 }
 
@@ -97,6 +99,11 @@ function EntryRow({
         <a href={entry.checksumUrl} className={styles.secondaryLink}>
           🔐 Verify
         </a>
+        {entry.signatureUrl && (
+          <a href={entry.signatureUrl} className={styles.secondaryLink}>
+            🔏 Signature
+          </a>
+        )}
       </div>
     </div>
   );

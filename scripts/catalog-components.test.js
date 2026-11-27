@@ -661,3 +661,72 @@ test("ProductDownloadsAndVersions and ProductReleaseAssets render server downloa
     "timeline displays exactly the last 7 releases",
   );
 });
+
+test("ProductDownloadsAndVersions offers Utah's disk image first and lists the live ISO as retired", () => {
+  const BASE = "https://projectbluefin.dev";
+  const download = (name, extra = {}) => ({
+    name,
+    url: `${BASE}/${name}`,
+    stream: "testing",
+    payloadStream: "stable",
+    sourceUrl: "https://example.test/workflow",
+    versions: null,
+    unavailable: false,
+    ...extra,
+  });
+  const { ProductDownloadsAndVersions } = loadComponent(
+    path.join(COMPONENTS_DIR, "ImageProductSection.tsx"),
+    {
+      "@site/static/data/image-releases.json": {
+        products: {
+          utah: {
+            releases: [],
+            downloads: [
+              download("utah-installer-latest.raw.xz"),
+              download("utah-installer-latest.raw.xz-CHECKSUM"),
+              download("utah-installer-latest.raw.xz-CHECKSUM.sigstore.json"),
+              download("utah-live-latest.iso", { retired: true }),
+              download("utah-live-latest.iso-CHECKSUM", { retired: true }),
+            ],
+          },
+          dakota: {
+            releases: [],
+            downloads: [
+              download("dakota-live-latest.iso"),
+              download("dakota-live-latest.iso-CHECKSUM"),
+            ],
+          },
+        },
+      },
+    },
+  );
+
+  const html = render(ProductDownloadsAndVersions, { product: "utah" });
+  assert.ok(html.includes("UTAH Testing USB Disk Image"), html);
+  assert.ok(html.includes("UEFI, Secure Boot off; write to a USB"));
+  assert.ok(html.includes("Fedora Media Writer"));
+  assert.ok(
+    html.includes(
+      'href="https://github.com/projectbluefin/utah#download-and-image-streams"',
+    ),
+  );
+  assert.ok(html.includes("Download Disk Image"));
+  assert.ok(
+    html.includes(`href="${BASE}/utah-installer-latest.raw.xz-CHECKSUM"`),
+  );
+  assert.ok(
+    html.includes(
+      `href="${BASE}/utah-installer-latest.raw.xz-CHECKSUM.sigstore.json"`,
+    ),
+  );
+  const retiredAt = html.indexOf("Previous installer (retired)");
+  assert.ok(retiredAt > html.indexOf("utah-installer-latest.raw.xz"));
+  assert.ok(html.indexOf("utah-live-latest.iso") > retiredAt);
+
+  const dakota = render(ProductDownloadsAndVersions, { product: "dakota" });
+  assert.ok(dakota.includes("DAKOTA Testing ISO"));
+  assert.ok(dakota.includes("Current automated testing build"));
+  assert.ok(dakota.includes("Download ISO"));
+  assert.ok(!dakota.includes("Signature"));
+  assert.ok(!dakota.includes("retired"));
+});

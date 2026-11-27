@@ -42,6 +42,8 @@ interface ImageDownloadRecord {
   lastModified?: string | null;
   versions: null;
   unavailable?: boolean;
+  /** Superseded installer kept downloadable but no longer built or tested. */
+  retired?: boolean;
 }
 
 interface ProductReleaseData {
@@ -94,6 +96,25 @@ const driverFile = driverVersionsData as unknown as {
 const driverRows: DriverRow[] = (driverFile.streams ?? []).flatMap(
   (stream) => stream.history ?? [],
 );
+
+// Installer media file extensions per product; unlisted products ship ISOs.
+const INSTALLER_EXTENSIONS: Partial<Record<ImageProductKey, string[]>> = {
+  utah: [".raw.xz", ".iso"],
+};
+
+// Replaces the generic description on a product's installer card.
+const INSTALLER_NOTES: Partial<Record<ImageProductKey, React.ReactNode>> = {
+  utah: (
+    <>
+      Raw GPT disk image built from <code>utah:stable</code> that boots live and
+      installs with gnome-setup. UEFI, Secure Boot off; write to a USB stick
+      with Fedora Media Writer (Select .iso file → choose the .raw.xz).{" "}
+      <Link to="https://github.com/projectbluefin/utah#download-and-image-streams">
+        Install instructions
+      </Link>
+    </>
+  ),
+};
 
 /**
  * Release SBOMs describe only the base image. The NVIDIA driver comes from the
@@ -280,15 +301,22 @@ export function ProductDownloadsAndVersions({
   const stableDownloads = downloads.filter((d) => d.stream === "stable");
   const testingDownloads = downloads.filter((d) => d.stream === "testing");
 
+  const extensions = INSTALLER_EXTENSIONS[product] ?? [".iso"];
+  const isInstaller = (item: ImageDownloadRecord) =>
+    extensions.some((ext) => item.name.endsWith(ext));
+
   const toEntries = (list: ImageDownloadRecord[]): DownloadEntry[] => {
-    const isoEntries = list.filter((item) => item.name.endsWith(".iso"));
-    return isoEntries.map((iso) => {
+    const installers = list.filter(isInstaller);
+    return installers.map((iso) => {
       const checksum = list.find(
         (item) =>
           item.name === `${iso.name}-CHECKSUM` ||
           item.name === `${iso.name}.sha256`,
       );
       const torrent = list.find((item) => item.name === `${iso.name}.torrent`);
+      const signature = list.find(
+        (item) => item.name === `${iso.name}-CHECKSUM.sigstore.json`,
+      );
       return {
         label: iso.name.includes("nvidia")
           ? "Nvidia"
@@ -299,11 +327,35 @@ export function ProductDownloadsAndVersions({
         isoFilename: iso.name,
         torrentUrl: torrent?.url,
         checksumUrl: checksum?.url ?? `${iso.url}-CHECKSUM`,
+        signatureUrl: signature?.url,
+        buttonLabel: iso.name.endsWith(".iso")
+          ? undefined
+          : "Download Disk Image",
       };
     });
   };
 
-  const hasIso = downloads.some((d) => d.name.endsWith(".iso"));
+  // Current media are the card's entries; retired ones follow in a section.
+  const installerCard = (list: ImageDownloadRecord[]) => {
+    const entries = toEntries(list.filter((d) => !d.retired));
+    const retired = toEntries(list.filter((d) => d.retired));
+    return {
+      medium:
+        entries.length > 0 &&
+        entries.every((entry) => !entry.isoFilename.endsWith(".iso"))
+          ? "USB Disk Image"
+          : "ISO",
+      entries,
+      sections: retired.length
+        ? [{ label: "Previous installer (retired)", entries: retired }]
+        : undefined,
+    };
+  };
+
+  const hasStableInstaller = stableDownloads.some(isInstaller);
+  const hasTestingInstaller = testingDownloads.some(isInstaller);
+  const stableCard = installerCard(stableDownloads);
+  const testingCard = installerCard(testingDownloads);
 
   return (
     <section className={styles.section}>
@@ -313,28 +365,34 @@ export function ProductDownloadsAndVersions({
         </Heading>
       )}
 
-      {/* ISO installation cards for stable and testing */}
-      {hasIso ? (
+      {/* Installer cards for stable and testing */}
+      {hasStableInstaller || hasTestingInstaller ? (
         <div className={styles.downloadGrid}>
-          {stableDownloads.some((d) => d.name.endsWith(".iso")) && (
+          {hasStableInstaller && (
             <DownloadCard
               variant="bluefin"
-              title={`${product.toUpperCase()} Stable ISO`}
+              title={`${product.toUpperCase()} Stable ${stableCard.medium}`}
               recommended
-              description="Production release installer with verified checksums."
-              entries={toEntries(stableDownloads)}
+              description={
+                INSTALLER_NOTES[product] ??
+                "Production release installer with verified checksums."
+              }
+              entries={stableCard.entries}
+              sections={stableCard.sections}
             />
           )}
 
-          {testingDownloads.some((d) => d.name.endsWith(".iso")) && (
+          {hasTestingInstaller && (
             <DownloadCard
               variant="dakotaraptor"
-              title={`${product.toUpperCase()} Testing ISO`}
-              recommended={
-                !stableDownloads.some((d) => d.name.endsWith(".iso"))
+              title={`${product.toUpperCase()} Testing ${testingCard.medium}`}
+              recommended={!hasStableInstaller}
+              description={
+                INSTALLER_NOTES[product] ??
+                "Current automated testing build for verification and hardware testing."
               }
-              description="Current automated testing build for verification and hardware testing."
-              entries={toEntries(testingDownloads)}
+              entries={testingCard.entries}
+              sections={testingCard.sections}
             />
           )}
         </div>

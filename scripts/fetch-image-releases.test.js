@@ -488,3 +488,35 @@ test("fetchImageReleases: download probes record size, companion files and unava
     "each artifact is probed once",
   );
 });
+
+test("fetchImageReleases: Utah offers the signed gnome-setup disk image and retires the live ISO", async (t) => {
+  stubFetch(t);
+  const { products } = await fetchImageReleases();
+  const byName = Object.fromEntries(
+    products.utah.downloads.map((d) => [d.name, d]),
+  );
+  assert.deepEqual(Object.keys(byName).sort(), [
+    "utah-installer-latest.raw.xz",
+    "utah-installer-latest.raw.xz-CHECKSUM",
+    "utah-installer-latest.raw.xz-CHECKSUM.sigstore.json",
+    "utah-live-latest.iso",
+    "utah-live-latest.iso-CHECKSUM",
+  ]);
+  const medium = byName["utah-installer-latest.raw.xz"];
+  assert.equal(medium.url, `${TESTING}/utah-installer-latest.raw.xz`);
+  assert.equal(medium.stream, "testing");
+  assert.equal(medium.payloadStream, "stable");
+  assert.match(medium.sourceUrl, /\/publish-utah-installer\.yml$/);
+  assert.equal(medium.retired, undefined);
+  assert.equal("signed" in medium, false, "signed is a probe-time flag only");
+  assert.equal(
+    byName["utah-installer-latest.raw.xz-CHECKSUM.sigstore.json"].url,
+    `${TESTING}/utah-installer-latest.raw.xz-CHECKSUM.sigstore.json`,
+  );
+  for (const name of ["utah-live-latest.iso", "utah-live-latest.iso-CHECKSUM"])
+    assert.equal(byName[name].retired, true, name);
+  assert.equal(
+    products.dakota.downloads.some((d) => d.name.endsWith(".sigstore.json")),
+    false,
+  );
+});

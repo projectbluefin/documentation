@@ -402,26 +402,44 @@ export async function fetchImageReleases() {
       });
     }
   }
-  for (const [key, payloadStream] of [
-    ["dakota", "stable"],
-    ["utah", "testing"],
-  ]) {
-    candidates.push({
-      key,
-      ...downloadCandidate(
-        `${key}-live-latest.iso`,
-        "testing",
-        `https://github.com/projectbluefin/dakota-iso/blob/main/.github/workflows/${key === "dakota" ? "build-iso" : "build-iso-utah"}.yml`,
-        payloadStream,
-      ),
-    });
-  }
+  candidates.push({
+    key: "dakota",
+    ...downloadCandidate(
+      "dakota-live-latest.iso",
+      "testing",
+      "https://github.com/projectbluefin/dakota-iso/blob/main/.github/workflows/build-iso.yml",
+      "stable",
+    ),
+  });
+  // Utah installs with upstream gnome-setup from a raw GPT disk image
+  // (projectbluefin/utah#1569); its checksum is cosign-signed keylessly.
+  candidates.push({
+    key: "utah",
+    ...downloadCandidate(
+      "utah-installer-latest.raw.xz",
+      "testing",
+      "https://github.com/projectbluefin/dakota-iso/blob/main/.github/workflows/publish-utah-installer.yml",
+      "stable",
+    ),
+    signed: true,
+  });
+  // The fisherman live ISO it replaces is no longer scheduled or tested.
+  candidates.push({
+    key: "utah",
+    ...downloadCandidate(
+      "utah-live-latest.iso",
+      "testing",
+      "https://github.com/projectbluefin/dakota-iso/blob/main/.github/workflows/build-iso-utah.yml",
+      "stable",
+    ),
+    retired: true,
+  });
   const unique = [
     ...new Map(
       candidates.map((candidate) => [candidate.url, candidate]),
     ).values(),
   ];
-  const artifacts = unique.flatMap(({ key, ...candidate }) => [
+  const artifacts = unique.flatMap(({ key, signed, ...candidate }) => [
     { key, ...candidate },
     {
       key,
@@ -429,6 +447,16 @@ export async function fetchImageReleases() {
       name: `${candidate.name}-CHECKSUM`,
       url: `${candidate.url}-CHECKSUM`,
     },
+    ...(signed
+      ? [
+          {
+            key,
+            ...candidate,
+            name: `${candidate.name}-CHECKSUM.sigstore.json`,
+            url: `${candidate.url}-CHECKSUM.sigstore.json`,
+          },
+        ]
+      : []),
     ...(key === "classic" || key === "lts"
       ? [
           {

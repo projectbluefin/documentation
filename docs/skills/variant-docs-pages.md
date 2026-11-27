@@ -110,7 +110,7 @@ a unified 5-part composition:
    silhouette and hotlinked `/img/cards/dakota-*.png`) live in the `artwork`
    set there, each with a `fetch-readmes.test.js` case.
 3. `## Downloads & Image Versions`: `<ProductDownloadsAndVersions />` displays
-   available ISO cards (Stable and/or Testing depending on image type) or
+   available installer cards (Stable and/or Testing depending on image type) or
    versioned installer/DDI/netboot cards for Bluefin Server, then the major
    component cards with bump badges. Release SBOMs describe only the base
    image, so the NVIDIA card comes from the `driver-versions.json` row whose
@@ -118,6 +118,12 @@ a unified 5-part composition:
    command belongs in this section (`/dakota` keeps its table here).
    Installer publication channel differs from embedded payload channel (e.g.
    Dakota stable payload served from the testing CDN).
+   Installers are ISOs unless `INSTALLER_EXTENSIONS` in
+   `ImageProductSection.tsx` names other media for the image: Utah's card
+   offers the gnome-setup USB disk image (`utah-installer-latest.raw.xz`, its
+   `-CHECKSUM` and cosign `-CHECKSUM.sigstore.json`) and lists downloads that
+   `fetch-image-releases.mjs` marks `retired` (the old live ISO) under
+   "Previous installer (retired)".
 4. `## Usage`: `<PerImageUsage />` embeds first-party daily active systems with
    per-family filtering and explicit unavailable fallbacks.
 5. `## Release Assets & Attestations`: `<ProductReleaseAssets />` renders
